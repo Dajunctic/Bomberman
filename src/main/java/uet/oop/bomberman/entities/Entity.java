@@ -19,7 +19,7 @@ public abstract class Entity {
         this.y = yUnit * Sprite.SCALED_SIZE;
         this.img = img;
     }
-
+    /** nope    */
     public void render(GraphicsContext gc) {
         x += 1;
         y += 1;
