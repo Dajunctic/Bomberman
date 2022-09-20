@@ -12,6 +12,6 @@ public class Bomber extends Entity {
     public void update() {
         x++;
         y++;
-
+        int a = 0;
     }
 }
