@@ -10,8 +10,6 @@ public class Bomber extends Entity {
 
     @Override
     public void update() {
-        x++;
-        y++;
-        int a = 0;
+
     }
 }
