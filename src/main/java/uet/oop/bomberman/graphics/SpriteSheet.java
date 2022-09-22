@@ -1,5 +1,10 @@
 package uet.oop.bomberman.graphics;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -11,30 +16,67 @@ import java.net.URL;
  */
 public class SpriteSheet {
 
-	private String _path;
-	public final int SIZE;
-	public int[] _pixels;
+	private final String path;
+	private final int spriteNumber;
+	private int w;
+	private int h;
+	public int[] pixels;
 	public BufferedImage image;
 
-	public static SpriteSheet tiles = new SpriteSheet("/textures/classic.png", 256);
-	
-	public SpriteSheet(String path, int size) {
-		_path = path;
-		SIZE = size;
-		_pixels = new int[SIZE * SIZE];
-		load();
+
+	public SpriteSheet(String path, int spriteNumber) {
+		this.path = path;
+		this.spriteNumber = spriteNumber;
+		this.load();
 	}
-	
+
+	public int getSpriteNumber() {
+		return this.spriteNumber;
+	}
+
+	public int getW() {
+		return w;
+	}
+
+	public int getH() {
+		return h;
+	}
+
+	public int[] getPixels() {
+		return pixels;
+	}
+	public int getPixel(int i) {
+		return pixels[i];
+	}
+
 	private void load() {
 		try {
-			URL a = SpriteSheet.class.getResource(_path);
+			URL a = SpriteSheet.class.getResource(this.path);
 			image = ImageIO.read(a);
-			int w = image.getWidth();
-			int h = image.getHeight();
-			image.getRGB(0, 0, w, h, _pixels, 0, w);
+			w = image.getWidth();
+			h = image.getHeight();
+			this.pixels = new int[w * h];
+			image.getRGB(0, 0, w, h, this.pixels, 0, w);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(0);
 		}
 	}
+
+	/** Hàm dùng để debug xem pixel load lên đúng chưa.
+	 * Không dùng khi không cần thiết, đã fix các lỗi của class */
+	public Image getFxImage() {
+		WritableImage wr = new WritableImage(w, h);
+		PixelWriter pw = wr.getPixelWriter();
+		for (int x = 0; x < w; x++) {
+			for (int y = 0; y < h; y++) {
+
+				pw.setArgb(x, y, pixels[x + y * w]);
+			}
+		}
+
+		return new ImageView(wr).getImage();
+	}
+
+
 }

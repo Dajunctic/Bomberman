@@ -7,20 +7,19 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
-import uet.oop.bomberman.entities.Bomber;
-import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.Grass;
-import uet.oop.bomberman.entities.Wall;
+import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.graphics.SpriteSheet;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BombermanGame extends Application {
-    
+
+    /** 960 x 720 */
     public static final int WIDTH = 20;
     public static final int HEIGHT = 15;
-    
+
     private GraphicsContext gc;
     private Canvas canvas;
     private List<Entity> entities = new ArrayList<>();
@@ -44,9 +43,11 @@ public class BombermanGame extends Application {
         // Tao scene
         Scene scene = new Scene(root);
 
-        // Them scene vao stage
+        // Thêm scene vao stage
         stage.setScene(scene);
         stage.show();
+        stage.setTitle("Bomberman");
+
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -59,8 +60,9 @@ public class BombermanGame extends Application {
 
         createMap();
 
-        Entity bomberman = new Bomber(3, 1, Sprite.player_right.getFxImage());
+        Entity bomberman = new Bomber(96, 96, "/sprites/Player/Model");
         entities.add(bomberman);
+
     }
 
     public void createMap() {
@@ -69,9 +71,8 @@ public class BombermanGame extends Application {
                 Entity object;
                 if (j == 0 || j == HEIGHT - 1 || i == 0 || i == WIDTH - 1) {
                     object = new Wall(i, j, Sprite.wall.getFxImage());
-                }
-                else {
-                    object = new Grass(i, j, Sprite.grass.getFxImage());
+                } else {
+                    object = new Floor(i, j, Sprite.floor.getFxImage());
                 }
                 stillObjects.add(object);
             }
@@ -84,6 +85,7 @@ public class BombermanGame extends Application {
 
     public void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
         stillObjects.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gc));
     }
