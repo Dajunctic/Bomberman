@@ -1,10 +1,16 @@
 package uet.oop.bomberman.entities;
 
+import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.input.input;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
+import static uet.oop.bomberman.BombermanGame.scene;
 
 public class Bomber extends Entity {
 
@@ -52,9 +58,58 @@ public class Bomber extends Entity {
 
     @Override
     public void update() {
+        //read input form key board
+        //pressed
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                this.handleEvent(keyEvent);
+            }
+
+            private void handleEvent(KeyEvent keyEvent) {
+                switch (keyEvent.getCode()){
+                    case UP: {
+                        currentStatus=Bomber.UP;
+                        moveupdown(true);
+                        break;
+                    }
+                    case DOWN: {
+                        currentStatus=Bomber.DOWN;
+                        moveupdown(false);
+                        break;
+                    }
+                    case LEFT: {
+                        currentStatus=Bomber.LEFT;
+                        moveleftright(true);
+                        break;
+                    }
+                    case RIGHT: {
+                        currentStatus=Bomber.RIGHT;
+                        moveleftright(false);
+                        break;
+                    }
+                }
+            }
+        });
+        //released
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                currentStatus=Bomber.IDLE;
+            }});
         statusAnims[currentStatus].update();
     }
 
+
+
+    private void moveleftright(boolean left){
+        if(left) x=x-5;
+        else x=x+5;
+    }
+    private void moveupdown(boolean up){
+        if(up) y=y-5;
+        else y=y+5;
+    }
     /** Hàm render animation nên overload hàm render của Entity. */
     public void render(GraphicsContext gc) {
         gc.drawImage(statusAnims[currentStatus].getFxImage(), x, y);

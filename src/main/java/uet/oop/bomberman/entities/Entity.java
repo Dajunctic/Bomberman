@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class Entity {
@@ -25,4 +26,8 @@ public abstract class Entity {
         gc.drawImage(img, x, y);
     }
     public abstract void update();
+
+    public void handleEvent(KeyEvent keyEvent) {
+
+    }
 }
