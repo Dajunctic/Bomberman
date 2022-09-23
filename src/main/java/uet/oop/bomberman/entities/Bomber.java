@@ -70,22 +70,22 @@ public class Bomber extends Entity {
                 switch (keyEvent.getCode()){
                     case UP: {
                         currentStatus=Bomber.UP;
-                        moveupdown(true);
+                        y=y-5;
                         break;
                     }
                     case DOWN: {
                         currentStatus=Bomber.DOWN;
-                        moveupdown(false);
+                        y=y+5;
                         break;
                     }
                     case LEFT: {
                         currentStatus=Bomber.LEFT;
-                        moveleftright(true);
+                        x=x-5;
                         break;
                     }
                     case RIGHT: {
                         currentStatus=Bomber.RIGHT;
-                        moveleftright(false);
+                        x=x+5;
                         break;
                     }
                 }
@@ -102,14 +102,7 @@ public class Bomber extends Entity {
 
 
 
-    private void moveleftright(boolean left){
-        if(left) x=x-5;
-        else x=x+5;
-    }
-    private void moveupdown(boolean up){
-        if(up) y=y-5;
-        else y=y+5;
-    }
+
     /** Hàm render animation nên overload hàm render của Entity. */
     public void render(GraphicsContext gc) {
         gc.drawImage(statusAnims[currentStatus].getFxImage(), x, y);
