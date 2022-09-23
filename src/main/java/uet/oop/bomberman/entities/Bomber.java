@@ -6,14 +6,12 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
-import uet.oop.bomberman.input.input;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import static uet.oop.bomberman.BombermanGame.scene;
 
 public class Bomber extends Entity {
-
     /** Các trạng thái của nhân vật */
     public static final int IDLE = 0;
     public static final int DOWN = 1;
@@ -21,9 +19,15 @@ public class Bomber extends Entity {
     public static final int LEFT = 3;
     public static final int RIGHT = 4;
     public static final int DEAD = 5;
-
     private int currentStatus = Bomber.IDLE;
     private Anim[] statusAnims;
+    /** speed projector, properties*/
+    private double speed_x = 2;
+    private double speed_y = 2;
+    final private double acc = 0.25;
+    /** direction */
+    private double dir_x = 0;
+    private double dir_y = 0;
 
     /**
      * Đường dẫn đến folder của Model thôi không cần ảnh.
@@ -32,7 +36,7 @@ public class Bomber extends Entity {
     private final String path;
 
 
-    public Bomber(int x, int y, String path) {
+    public Bomber(double x, double y, String path) {
         super( x, y);
         this.path = path;
         load();
@@ -56,8 +60,7 @@ public class Bomber extends Entity {
         }
     }
 
-    @Override
-    public void update() {
+    private void move() {
         //read input form key board
         //pressed
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -70,25 +73,31 @@ public class Bomber extends Entity {
                 switch (keyEvent.getCode()){
                     case UP: {
                         currentStatus=Bomber.UP;
-                        y=y-5;
+                        dir_x = 0;
+                        dir_y = -1;
                         break;
                     }
                     case DOWN: {
                         currentStatus=Bomber.DOWN;
-                        y=y+5;
+                        dir_x = 0;
+                        dir_y = 1;
                         break;
                     }
                     case LEFT: {
                         currentStatus=Bomber.LEFT;
-                        x=x-5;
+                        dir_x = -1;
+                        dir_y = 0;
                         break;
                     }
                     case RIGHT: {
                         currentStatus=Bomber.RIGHT;
-                        x=x+5;
+                        dir_x = 1;
+                        dir_y = 0;
                         break;
                     }
                 }
+                speed_x += Math.abs(dir_x) * acc;
+                speed_y += Math.abs(dir_y) * acc;
             }
         });
         //released
@@ -96,12 +105,21 @@ public class Bomber extends Entity {
             @Override
             public void handle(KeyEvent keyEvent) {
                 currentStatus=Bomber.IDLE;
+                dir_x = 0;
+                dir_y = 0;
+                speed_x = 2;
+                speed_y = 2;
             }});
+
+    }
+    @Override
+    public void update() {
+
+        move();
+        x += speed_x * dir_x;
+        y += speed_y * dir_y;
         statusAnims[currentStatus].update();
     }
-
-
-
 
     /** Hàm render animation nên overload hàm render của Entity. */
     public void render(GraphicsContext gc) {

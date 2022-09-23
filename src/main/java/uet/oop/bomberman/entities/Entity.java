@@ -7,17 +7,18 @@ import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class Entity {
     /** Tọa độ của thực thể. */
-    protected int x;
-    protected int y;
-
+    protected double x;
+    protected double y;
+    protected boolean alive = false;
     protected Image img;
     /** Dành cho thực thể chuyển động theo tọa độ Pixel như Bomber, Enemy */
-    public Entity( int xPixel, int yPixel) {
+    public Entity( double xPixel, double yPixel) {
         this.x = xPixel;
         this.y = yPixel;
+        this.alive = true;
     }
 
-    public Entity( int xUnit, int yUnit, Image img) {
+    public Entity( double xUnit, double yUnit, Image img) {
         this.x = xUnit * Sprite.SCALED_SIZE;
         this.y = yUnit * Sprite.SCALED_SIZE;
         this.img = img;
@@ -27,7 +28,7 @@ public abstract class Entity {
     }
     public abstract void update();
 
-    public void handleEvent(KeyEvent keyEvent) {
-
+    public boolean exist() {
+        return this.alive;
     }
 }
