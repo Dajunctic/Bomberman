@@ -3,6 +3,6 @@ module uet.oop.bomberman {
     requires javafx.fxml;
     requires java.desktop;
 
-    opens uet.oop.bomberman to javafx.fxml;
-    exports uet.oop.bomberman;
+    exports uet.oop.bomberman.game;
+    opens uet.oop.bomberman.game to javafx.fxml;
 }
