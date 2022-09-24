@@ -23,6 +23,8 @@ public class Anim {
     private final int time;
     private int countTime;
 
+    private int startLoopFrame;
+
     /**
      * Tạo Animation từ SpriteSheet
      * VD: Anim a = new Anim(new SpriteSheet(path, number_sprites), time)
@@ -34,6 +36,7 @@ public class Anim {
         this.time = time;
         this.countTime = 0;
         this.components = new Sprite[numberFrames];
+        this.startLoopFrame = 0;
         this.load();
     }
 
@@ -53,14 +56,36 @@ public class Anim {
         }
     }
 
+    /** Cài khung hình bắt đầu trong các vòng lặp sau lần đầu.
+     * Ví dụ di chuyển có 3 frame thì chỉ cần 2 frame sau vòng lặp là đang bước đi thôi.
+     * */
+    public void setStartLoopFrame(int startFrame) {
+        this.startLoopFrame = startFrame;
+    }
+
     /** Đại khái là cứ time * 1/60s thì mới chạy 1 khung hình */
     public void update() {
+        // Ảnh động tĩnh
+        if (this.time == 0) {
+            return;
+        }
+
         this.countTime ++;
 
         if (this.countTime % this.time == 0) {
             this.currentFrame ++;
             this.currentFrame %= this.numberFrames;
+
+            if (this.currentFrame == 0) {
+                this.currentFrame = this.startLoopFrame;
+            }
         }
+    }
+
+    /** Hàm dành cho ảnh động tĩnh, tức là khi có lệnh mới đổi khung hình */
+    public void staticUpdate() {
+        this.currentFrame ++;
+        this.currentFrame %= this.numberFrames;
     }
 
     /** Trả về kiểu dữ liệu ảnh của khung hình hiện tại. */

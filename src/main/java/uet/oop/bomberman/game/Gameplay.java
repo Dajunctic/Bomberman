@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** object handler */
-public class Play {
+public class Gameplay {
 
     public static int width;
     public static int height;
@@ -26,17 +26,17 @@ public class Play {
     public static double translate_x = 0;
     public static double translate_y = 0;
 
-    public Play() {
+    public Gameplay() {
     }
 
-    /** make map from file*/
+    /** Load map from file */
     public void importing (String path) throws IOException {
         try {
             // reading files
             Reader reader = new FileReader(path);
             sourceMap = new BufferedReader(reader);
 
-            //map size intializer
+            //map size initializer
             String map_size = sourceMap.readLine();
             String[] op = map_size.split(" ");
             width = Integer.parseInt(op[0]);
@@ -93,7 +93,7 @@ public class Play {
 
     //debug
     public static void main(String[] args) throws IOException {
-        Play test = new Play();
+        Gameplay test = new Gameplay();
         test.importing("src/main/resources/maps/sandbox_map.txt");
     }
 
@@ -101,7 +101,7 @@ public class Play {
     public void update(){
         for(int i = 0; i < entities.size(); i++) {
             entities.get(i).update();
-            if (!entities.get(i).exist()) {
+            if (!entities.get(i).isExisted()) {
                 entities.remove(i);
                 i --;
             }
