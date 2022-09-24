@@ -1,17 +1,16 @@
-package uet.oop.bomberman;
+package uet.oop.bomberman.game;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,20 +20,16 @@ public class BombermanGame extends Application {
     public static final int WIDTH = 20;
     public static final int HEIGHT = 15;
 
-    //abstract map, read later
-    private char[][] map = new char [WIDTH][HEIGHT];
     private GraphicsContext gc;
     private Canvas canvas;
-    private List<Entity> entities = new ArrayList<>();
-    private List<Entity> inactive = new ArrayList<>();
     public static Scene scene;
-
+    private Play level = new Play();
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws IOException {
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
         gc = canvas.getGraphicsContext2D();
@@ -61,41 +56,19 @@ public class BombermanGame extends Application {
         };
         timer.start();
         System.out.println(timer);
-        createMap();
-        Entity bomberman = new Bomber(96, 96, "/sprites/Player/Model");
-        entities.add(bomberman);
-    }
-
-    public void createMap() {
-        for (int i = 0; i < WIDTH; i++) {
-            for (int j = 0; j < HEIGHT; j++) {
-                Entity object;
-                if (j == 0 || j == HEIGHT - 1 || i == 0 || i == WIDTH - 1) {
-                    object = new Wall(i, j, Sprite.wall.getFxImage());
-                } else {
-                    object = new Floor(i, j, Sprite.floor.getFxImage());
-                }
-                inactive.add(object);
-            }
-        }
+        level.importing("src/main/resources/maps/sandbox_map.txt");
     }
 
     /** updating */
     public void update() {
-        for(int index = 0; index < entities.size(); index ++) {
-            entities.get(index).update();
-            if (!entities.get(index).exist()){
-                entities.remove(index);
-                index --;
-            }
-
-        }
+        level.update();
     }
 
+
+
+    /** render objects */
     public void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-        inactive.forEach(g -> g.render(gc));
-        entities.forEach(g -> g.render(gc));
+        level.render(gc);
     }
 }
