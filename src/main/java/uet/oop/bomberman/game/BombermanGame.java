@@ -7,12 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
-import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BombermanGame extends Application {
 
@@ -23,7 +20,7 @@ public class BombermanGame extends Application {
     private GraphicsContext gc;
     private Canvas canvas;
     public static Scene scene;
-    private Play level = new Play();
+    private Gameplay level = new Gameplay();
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
     }

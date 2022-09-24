@@ -46,6 +46,13 @@ public class Sprite {
 	public static Sprite grass = new Sprite("/sprites/Bg/grass.png", Sprite.TILE);
 	public static Sprite portal = new Sprite("/sprites/Interactives/Functional/portal.png", Sprite.TILE);
 
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Effect tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+	public static Sprite movingLeft = new Sprite("/sprites/Player/Effect/moving_left.png", Sprite.NORMAL);
+	public static Sprite movingRight = new Sprite("/sprites/Player/Effect/moving_right.png", Sprite.NORMAL);
 
 	/** Hàm khởi tạo dành cho Sprite tách ra từ SpriteSheet. */
 	public Sprite(SpriteSheet sheet, int cx, int cy, int cropW, int cropH) {
