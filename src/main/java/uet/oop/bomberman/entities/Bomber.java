@@ -2,14 +2,14 @@ package uet.oop.bomberman.entities;
 
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
+import uet.oop.bomberman.game.Play;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-import static uet.oop.bomberman.BombermanGame.scene;
+import static uet.oop.bomberman.game.BombermanGame.scene;
+import static uet.oop.bomberman.game.Play.tile_map;
 
 public class Bomber extends Entity {
     /** Các trạng thái của nhân vật */
@@ -24,7 +24,7 @@ public class Bomber extends Entity {
     /** speed projector, properties*/
     private double speed_x = 2;
     private double speed_y = 2;
-    final private double acc = 0.25;
+    final private double acc = 0.5;
     /** direction */
     private double dir_x = 0;
     private double dir_y = 0;
@@ -114,10 +114,15 @@ public class Bomber extends Entity {
     }
     @Override
     public void update() {
-
         move();
-        x += speed_x * dir_x;
-        y += speed_y * dir_y;
+        double ref_x = x + speed_x * dir_x;
+        double ref_y = y + speed_y * dir_y;
+
+        //collision handling
+        if(tile_map[Math.max(0,Math.min(Play.height - 1,(int) Math.floor((ref_y+(double)20*48/17)/Sprite.SCALED_SIZE)))][Math.max(0, Math.min(Play.width -1,(int) Math.floor((ref_x + 24)/Sprite.SCALED_SIZE ))) ] == '0') {
+            x = ref_x;
+            y = ref_y;
+        }
         statusAnims[currentStatus].update();
     }
 
