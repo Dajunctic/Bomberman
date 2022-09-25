@@ -27,6 +27,12 @@ public class SpriteSheet {
 	public static SpriteSheet bomb = new SpriteSheet("/sprites/Player/Bomb/bomb.png", 3);
 	public static SpriteSheet explosion = new SpriteSheet("/sprites/Player/Bomb/explosion.png", 6);
 
+	//flame
+	public static SpriteSheet flame_right = new SpriteSheet("/sprites/Player/Flame/flame_right.png", 6);
+	public static SpriteSheet flame_left = new SpriteSheet("/sprites/Player/Flame/flame_left.png", 6);
+	public static SpriteSheet flame_down = new SpriteSheet("/sprites/Player/Flame/flame_down.png", 6);
+	public static SpriteSheet flame_up = new SpriteSheet("/sprites/Player/Flame/flame_up.png", 6);
+
 	public SpriteSheet(String path, int spriteNumber) {
 		this.path = path;
 		this.spriteNumber = spriteNumber;

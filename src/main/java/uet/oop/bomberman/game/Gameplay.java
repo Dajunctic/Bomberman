@@ -11,8 +11,8 @@ import java.util.List;
 /** object handler */
 public class Gameplay {
 
-    public int width;
-    public int height;
+    public static int width;
+    public static int height;
     protected BufferedReader sourceMap;
     protected List<Entity> entities = new ArrayList<>();
 
@@ -107,6 +107,7 @@ public class Gameplay {
         for(int i = 0; i < entities.size(); i++) {
             entities.get(i).update();
             if (!entities.get(i).isExisted()) {
+                entities.get(i).deadAct(this);
                 entities.remove(i);
                 i --;
             }
@@ -128,5 +129,9 @@ public class Gameplay {
         player.render(gc, this);
         //entities
         entities.forEach(g -> g.render(gc, this));
+    }
+
+    public void generate(Entity obj) {
+        entities.add(obj);
     }
 }

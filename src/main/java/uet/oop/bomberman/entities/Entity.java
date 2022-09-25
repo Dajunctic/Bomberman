@@ -6,6 +6,8 @@ import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Sprite;
 
+import static uet.oop.bomberman.game.Gameplay.tile_map;
+
 public abstract class Entity {
     /** Tọa độ của thực thể. */
     protected double x;
@@ -57,6 +59,19 @@ public abstract class Entity {
         gc.drawImage(this.getImg(),renderX - gameplay.translate_x,renderY - gameplay.translate_y);
     }
 
+    public boolean checkCollision(double ref_x, double ref_y) {
+            int tilex = (int) Math.floor(ref_x/Sprite.SCALED_SIZE);
+            int tiley = (int) Math.floor(ref_y/Sprite.SCALED_SIZE);
+
+            if(ref_x < 0 || ref_x > (Gameplay.width - 1) * Sprite.SCALED_SIZE
+                    ||  ref_y < 0 || ref_y > (Gameplay.height - 1) * Sprite.SCALED_SIZE)
+                return false;
+
+            if(tile_map[tilex][tiley] != '0'
+                    || tile_map[tilex + 1][tiley + 1] != '0'  ) return false;
+
+            return true;
+    }
     public abstract void update();
 
     public void setExisted(boolean existed) {
@@ -79,11 +94,11 @@ public abstract class Entity {
      * Vì mỗi thằng con sẽ có getImg khác nhau.
      */
     public double getCenterX() {
-        return (x + this.getImg().getWidth()) / 2;
+        return x + Sprite.SCALED_SIZE / 2;
     }
 
     public double getCenterY() {
-        return (y + this.getImg().getHeight()) / 2;
+        return y + Sprite.SCALED_SIZE / 2;
     }
 
     public double getWidth() {
@@ -103,6 +118,9 @@ public abstract class Entity {
         this.y = y;
     }
 
+    public void deadAct(Gameplay gameplay) {
+        return ;
+    }
     public void setMode(int mode) {
         this.mode = mode;
     }

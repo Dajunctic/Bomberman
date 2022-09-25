@@ -46,10 +46,12 @@ public class Bomber extends Entity {
     private int currentIdleDirection;
 
     /** power properties */
-    public int capacity = 2;
+    public int capacity = 15;
     public int power = 2;
     public double timer = 2.5;
     private List<Bomb> bomb = new ArrayList<>() ;
+    private List<Flame> flame = new ArrayList<>();
+
     /**
      * Đường dẫn đến folder của Model thôi không cần ảnh.
      * Có đường dẫn bởi vì nhỡ sau này phát triển nhiều nhân vật có thể lựa chọn để chơi.
@@ -150,11 +152,12 @@ public class Bomber extends Entity {
                 speed_y = SPEED_Y;
             }});
 
+        //toggle bomb
         scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if( bomb.size() < capacity)
-                    bomb.add(new Bomb(x, y, timer));
+                    bomb.add(new Bomb(getCenterX(), getCenterY(), timer));
                 System.out.println(bomb.size());
             }
         });
@@ -163,11 +166,7 @@ public class Bomber extends Entity {
     //handle attributes
     @Override
     public void update() {
-        //bomb updates
-        for(int i = 0; i < bomb.size(); i++) {
-            bomb.get(i).update();
-            if(!bomb.get(i).isExisted()) bomb.remove(i);
-        }
+
     }
 
     public void update(Gameplay gameplay) {
@@ -176,13 +175,7 @@ public class Bomber extends Entity {
         double ref_y = y + speed_y * dir_y;
 
         // collision handling
-        if(tile_map[Math.max(0,Math.min(gameplay.height - 1,
-                    (int) Math.floor((ref_y+(double)20*48/17)/Sprite.SCALED_SIZE)))]
-                    [Math.max(0, Math.min(gameplay.width -1,
-                    (int) Math.floor((ref_x + 24)/Sprite.SCALED_SIZE ))) ] == '0'
-                &&  ref_x > 0 && ref_x < (gameplay.width - 1) * Sprite.SCALED_SIZE
-                &&  ref_y > 0 && ref_y < (gameplay.height - 1) * Sprite.SCALED_SIZE) {
-
+        if(checkCollision(ref_x,ref_y)) {
             x = ref_x;
             y = ref_y;
             gameplay.translate_x = Math.max(0, Math.min( x - (double) WIDTH * Sprite.SCALED_SIZE / 2,
@@ -196,6 +189,17 @@ public class Bomber extends Entity {
 
         movingLeftEffect.setPosition(x - 124, y + 18);
         movingRightEffect.setPosition(x + 18, y + 18);
+
+        //bomb updates
+        for(int i = 0; i < bomb.size(); i++) {
+            bomb.get(i).update();
+            if(bomb.get(i).bomb.isDead())
+                bomb.get(i).deadAct(gameplay);
+            if(!bomb.get(i).isExisted()){
+
+                bomb.remove(i);
+            }
+        }
 
         // attributes handling
         update();
@@ -225,6 +229,10 @@ public class Bomber extends Entity {
     @Override
     public Image getImg() {
         return statusAnims[currentStatus].getFxImage();
+    }
+
+    public void fire(Flame obj) {
+        flame.add(obj);
     }
 
 }

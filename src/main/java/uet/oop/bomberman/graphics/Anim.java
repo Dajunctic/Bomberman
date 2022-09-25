@@ -12,7 +12,7 @@ public class Anim {
     protected int currentFrame;
     SpriteSheet sheet;
     Sprite[] components;
-
+    protected double angle;
     /**
      * Thời gian khung hình chạy trong 60FPS
      * VD:
@@ -41,6 +41,17 @@ public class Anim {
         this.load();
     }
 
+    public Anim(SpriteSheet sheet, int frameTime, double angle) {
+        this.currentFrame = 0;
+        this.numberFrames = sheet.getSpriteNumber();
+        this.sheet = sheet;
+        this.frameTime = frameTime;
+        this.countTime = 0;
+        this.components = new Sprite[numberFrames];
+        this.startLoopFrame = 0;
+        this.angle = angle;
+        this.load();
+    }
     private void load() {
         for (int i = 0; i < numberFrames; i++) {
             int w = sheet.getW() / sheet.getSpriteNumber();
