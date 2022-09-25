@@ -1,10 +1,7 @@
 package uet.oop.bomberman.game;
 
 import javafx.scene.canvas.GraphicsContext;
-import uet.oop.bomberman.entities.Bomber;
-import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.Floor;
-import uet.oop.bomberman.entities.Wall;
+import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.*;
@@ -27,6 +24,7 @@ public class Gameplay {
     public static double translate_y = 0;
 
     public Gameplay() {
+
     }
 
     /** Load map from file */
@@ -64,6 +62,9 @@ public class Gameplay {
                 sourceMap.close();
         }
         createMap();
+
+        Bomb test = new Bomb(10 * 48, 10 * 48);
+        entities.add(test);
     }
 
     /** init background */
@@ -106,6 +107,7 @@ public class Gameplay {
                 i --;
             }
         }
+
     }
     /** render objects */
     public void render(GraphicsContext gc) {

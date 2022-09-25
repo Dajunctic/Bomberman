@@ -8,8 +8,8 @@ public class Anim {
     /**
      * Số lượng khung hình và khung hình hiện tại hiển thị.
      * */
-    private final int numberFrames;
-    private int currentFrame;
+    protected final int numberFrames;
+    protected int currentFrame;
     SpriteSheet sheet;
     Sprite[] components;
 
@@ -20,20 +20,21 @@ public class Anim {
      * time = 2 thì tức là 1 giây sẽ chạy được 30 khung hình.
      * time = n thì tức là 1 giây chạy được 60 / n khung hình.
      * */
-    private final int time;
-    private int countTime;
+    protected final int frameTime;
+    protected int countTime;
 
-    private int startLoopFrame;
+    protected int startLoopFrame;
+
 
     /**
      * Tạo Animation từ SpriteSheet
-     * VD: Anim a = new Anim(new SpriteSheet(path, number_sprites), time)
+     * VD: Anim a = new Anim(new SpriteSheet(path, number_sprites), frameTime)
      * */
-    public Anim(SpriteSheet sheet, int time) {
+    public Anim(SpriteSheet sheet, int frameTime) {
         this.currentFrame = 0;
         this.numberFrames = sheet.getSpriteNumber();
         this.sheet = sheet;
-        this.time = time;
+        this.frameTime = frameTime;
         this.countTime = 0;
         this.components = new Sprite[numberFrames];
         this.startLoopFrame = 0;
@@ -66,13 +67,13 @@ public class Anim {
     /** Đại khái là cứ time * 1/60s thì mới chạy 1 khung hình */
     public void update() {
         // Ảnh động tĩnh
-        if (this.time == 0) {
+        if (this.frameTime == 0) {
             return;
         }
 
         this.countTime ++;
 
-        if (this.countTime % this.time == 0) {
+        if (this.countTime % this.frameTime == 0) {
             this.currentFrame ++;
             this.currentFrame %= this.numberFrames;
 

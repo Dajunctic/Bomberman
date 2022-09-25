@@ -10,6 +10,7 @@ public abstract class Entity {
     protected double y;
     protected boolean existed;
     protected Image img;
+
     /** Dành cho thực thể chuyển động theo tọa độ Pixel như Bomber, Enemy */
     public Entity(double xPixel, double yPixel) {
         this.x = xPixel;
@@ -26,7 +27,7 @@ public abstract class Entity {
     }
 
     public void render(GraphicsContext gc) {
-        gc.drawImage(img, x, y);
+        gc.drawImage(this.getImg(), x, y);
     }
     public abstract void update();
 

@@ -23,6 +23,9 @@ public class SpriteSheet {
 	public int[] pixels;
 	public BufferedImage image;
 
+	/** Animation Game */
+	public static SpriteSheet bomb = new SpriteSheet("/sprites/Player/Bomb/bomb.png", 3);
+	public static SpriteSheet explosion = new SpriteSheet("/sprites/Player/Bomb/explosion.png", 6);
 
 	public SpriteSheet(String path, int spriteNumber) {
 		this.path = path;
