@@ -2,9 +2,14 @@ package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.others.Physics;
+
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 import static uet.oop.bomberman.game.Gameplay.tile_map;
 
@@ -60,17 +65,38 @@ public abstract class Entity {
     }
 
     public boolean checkCollision(double ref_x, double ref_y) {
-            int tilex = (int) Math.floor(ref_x/Sprite.SCALED_SIZE);
-            int tiley = (int) Math.floor(ref_y/Sprite.SCALED_SIZE);
+        Rectangle rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
 
-            if(ref_x < 0 || ref_x > (Gameplay.width - 1) * Sprite.SCALED_SIZE
-                    ||  ref_y < 0 || ref_y > (Gameplay.height - 1) * Sprite.SCALED_SIZE)
-                return false;
+        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
+        // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
+        int tileStartX = (int) Math.floor(rect.getX() / Sprite.SCALED_SIZE);
+        int tileStartY = (int) Math.floor(rect.getY() / Sprite.SCALED_SIZE);
 
-            if(tile_map[tilex][tiley] != '0'
-                    || tile_map[tilex + 1][tiley + 1] != '0'  ) return false;
+        int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
+        int tileEndY = (int) Math.ceil((rect.getY() + rect.getHeight()) / Sprite.SCALED_SIZE);
+        tileEndX = Math.min(tileEndX, Gameplay.width - 1);
+        tileEndY = Math.min(tileEndY, Gameplay.height - 1);
 
-            return true;
+        for (int i = tileStartX; i <= tileEndX; i++) {
+            for (int j = tileStartY; j <= tileEndY; j++) {
+
+                int tileX = i * Sprite.SCALED_SIZE;
+                int tileY = j * Sprite.SCALED_SIZE;
+
+                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
+
+                for (char x: Gameplay.impassableTiles) {
+                    if (Gameplay.tile_map[j][i] == x) {
+                        if (Physics.collisionRectToRect(rect, tileRect)) {
+                            return true;
+                        }
+                    }
+                }
+
+            }
+        }
+
+        return false;
     }
     public abstract void update();
 

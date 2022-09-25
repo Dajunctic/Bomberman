@@ -3,8 +3,10 @@ package uet.oop.bomberman.entities;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Anim;
+import uet.oop.bomberman.graphics.Basic;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import javafx.scene.input.KeyEvent;
@@ -82,7 +84,7 @@ public class Bomber extends Entity {
         for (int i = 0; i < statusAnims.length; i++) {
             String source = path + "/player_" + statusString[i] + ".png";
             statusAnims[i] = new Anim(new SpriteSheet(source, statusNumberFrame[i]), statusTime[i]);
-            statusAnims[i].setScaleFactor(3);
+            statusAnims[i].setScaleFactor(2);
 
             if (Bomber.DOWN <= i && i <= Bomber.RIGHT) {
                 statusAnims[i].setStartLoopFrame(0);
@@ -171,24 +173,33 @@ public class Bomber extends Entity {
 
     public void update(Gameplay gameplay) {
         interaction();
+
+        // Không để nhân vật chạy ra khỏi map
+        if (dir_x == -1) speed_x = Math.min(speed_x, x);
+        if (dir_x == 1) speed_x = Math.min(speed_x, Gameplay.width * Sprite.SCALED_SIZE  - x - this.getWidth());
+        if (dir_y == -1) speed_y = Math.min(speed_y, y);
+        if (dir_y == 1) speed_y = Math.min(speed_y, Gameplay.height * Sprite.SCALED_SIZE  - y - this.getHeight());
+
         double ref_x = x + speed_x * dir_x;
         double ref_y = y + speed_y * dir_y;
 
-        // collision handling
-        if(checkCollision(ref_x,ref_y)) {
+        // Xử lí va chạm
+        if(!checkCollision(ref_x,ref_y)) {
             x = ref_x;
             y = ref_y;
             gameplay.translate_x = Math.max(0, Math.min( x - (double) WIDTH * Sprite.SCALED_SIZE / 2,
-                                                    (gameplay.width - WIDTH) * Sprite.SCALED_SIZE ));
+                                                    (Gameplay.width - WIDTH) * Sprite.SCALED_SIZE ));
 
             gameplay.translate_y = Math.max(0, Math.min( y - (double) HEIGHT * Sprite.SCALED_SIZE / 2,
-                                                    (gameplay.height - HEIGHT) * Sprite.SCALED_SIZE ));
+                                                    (Gameplay.height - HEIGHT) * Sprite.SCALED_SIZE ));
         }
+
+
         statusAnims[currentStatus].update();
 
-
-        movingLeftEffect.setPosition(x - 124, y + 18);
-        movingRightEffect.setPosition(x + 18, y + 18);
+        // Cài vị trí của Moving Effect.
+        movingLeftEffect.setPosition(x - 100, y + 10);
+        movingRightEffect.setPosition(x + 18, y + 10);
 
         //bomb updates
         for(int i = 0; i < bomb.size(); i++) {
@@ -196,7 +207,6 @@ public class Bomber extends Entity {
             if(bomb.get(i).bomb.isDead())
                 bomb.get(i).deadAct(gameplay);
             if(!bomb.get(i).isExisted()){
-
                 bomb.remove(i);
             }
         }
@@ -219,6 +229,10 @@ public class Bomber extends Entity {
                 movingRightEffect.render(gc, gameplay);
             }
         }
+
+        // Hiện thị border nhân vật
+        Rectangle rect = new Rectangle(x, y, this.getHeight(), this.getHeight());
+        Basic.drawRectangle(gc, rect);
 
         // Hiển thị nhân vật
         gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);

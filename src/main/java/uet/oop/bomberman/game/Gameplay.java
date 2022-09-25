@@ -22,6 +22,9 @@ public class Gameplay {
 
     public static char[][] tile_map;
 
+    // Tiles mà nhân vật không thể đi qua
+    public static char[] impassableTiles = {'2'};
+
     public  double translate_x = 0;
     public  double translate_y = 0;
 
@@ -73,21 +76,21 @@ public class Gameplay {
     private void createMap() {
         background = new Entity[height][width];
         for(int i = 0; i < height; i++) {
-            for(int j = 0; j < width; j++) {
+            for (int j = 0; j < width; j++) {
                 switch (map[i].charAt(j)) {
                     case '0': {
                         background[i][j] = new Floor(j, i, Sprite.floor.getFxImage());
                         break;
                     }
                     case '1': {
-                        background[i][j] = new Floor(j, i, Sprite.floor.getFxImage());
+                        background[i][j] = new Floor(j, i, Sprite.grass.getFxImage());
                     }
                     case '2': {
                         background[i][j] = new Wall(j, i, Sprite.wall.getFxImage());
                     }
 
                 }
-            //    System.out.print(i + " " + j + " " + background[i][j].getClass() + " ");
+                //    System.out.print(i + " " + j + " " + background[i][j].getClass() + " ");
                 tile_map[i][j] = map[i].charAt(j);
             }
 
