@@ -11,17 +11,19 @@ import java.util.List;
 /** object handler */
 public class Gameplay {
 
-    public static int width;
-    public static int height;
+    public int width;
+    public int height;
     protected BufferedReader sourceMap;
     protected List<Entity> entities = new ArrayList<>();
+
+    protected Bomber player;
     Entity[][] background;
     public static String[] map;
 
     public static char[][] tile_map;
 
-    public static double translate_x = 0;
-    public static double translate_y = 0;
+    public  double translate_x = 0;
+    public  double translate_y = 0;
 
     public Gameplay() {
 
@@ -45,14 +47,13 @@ public class Gameplay {
             //init
             for(int i = 0;i < height; i++ )
                 map[i] = new String(sourceMap.readLine());
-            System.out.println(map[height - 1]);
             String ref = new String(sourceMap.readLine());
 
                 String[] info = ref.split(" ");
                 switch (info[0]) {
                     case "player":{
                         System.out.println("Bomber in:"  + info[1] + " " + info[2]);
-                        entities.add(new Bomber(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE,Integer.parseInt(info[2]) * Sprite.SCALED_SIZE,"/sprites/Player/Model"));
+                       player = new Bomber(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE,Integer.parseInt(info[2]) * Sprite.SCALED_SIZE,"/sprites/Player/Model");
                         break;
                     }
                 }
@@ -101,6 +102,8 @@ public class Gameplay {
 
     /** update */
     public void update(){
+        player.update(this);
+
         for(int i = 0; i < entities.size(); i++) {
             entities.get(i).update();
             if (!entities.get(i).isExisted()) {
@@ -115,14 +118,15 @@ public class Gameplay {
         //background rendering
         int low_x =(int) Math.floor(translate_x/Sprite.SCALED_SIZE);
         int low_y = (int) Math.floor(translate_y/Sprite.SCALED_SIZE);
-        for(int i = low_y; i <= Math.min(BombermanGame.HEIGHT - 1,low_y + BombermanGame.HEIGHT); i ++) {
-            for (int j = low_x; j <= Math.min(BombermanGame.WIDTH - 1,low_x + BombermanGame.WIDTH); j++){
-                if(background[i][j] != null)
-                    background[i][j].render(gc);
+        for(int i = low_y; i <= Math.min(height - 1,low_y + BombermanGame.HEIGHT); i ++) {
+            for (int j = low_x; j <= Math.min(width - 1,low_x + BombermanGame.WIDTH); j++){
+                    background[i][j].render(gc, this);
             }
         }
 
+        //player
+        player.render(gc, this);
         //entities
-        entities.forEach(g -> g.render(gc));
+        entities.forEach(g -> g.render(gc, this));
     }
 }

@@ -12,7 +12,7 @@ import javafx.scene.input.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uet.oop.bomberman.game.BombermanGame.scene;
+import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.tile_map;
 
 public class Bomber extends Entity {
@@ -159,23 +159,10 @@ public class Bomber extends Entity {
             }
         });
     }
+
+    //handle attributes
     @Override
     public void update() {
-        interaction();
-        double ref_x = x + speed_x * dir_x;
-        double ref_y = y + speed_y * dir_y;
-
-        // collision handling
-        if(tile_map[Math.max(0,Math.min(Gameplay.height - 1,(int) Math.floor((ref_y+(double)20*48/17)/Sprite.SCALED_SIZE)))][Math.max(0, Math.min(Gameplay.width -1,(int) Math.floor((ref_x + 24)/Sprite.SCALED_SIZE ))) ] == '0') {
-            x = ref_x;
-            y = ref_y;
-        }
-        statusAnims[currentStatus].update();
-
-
-        movingLeftEffect.setPosition(x - 124, y + 18);
-        movingRightEffect.setPosition(x + 18, y + 18);
-
         //bomb updates
         for(int i = 0; i < bomb.size(); i++) {
             bomb.get(i).update();
@@ -183,24 +170,57 @@ public class Bomber extends Entity {
         }
     }
 
+    public void update(Gameplay gameplay) {
+        interaction();
+        double ref_x = x + speed_x * dir_x;
+        double ref_y = y + speed_y * dir_y;
+
+        // collision handling
+        if(tile_map[Math.max(0,Math.min(gameplay.height - 1,
+                    (int) Math.floor((ref_y+(double)20*48/17)/Sprite.SCALED_SIZE)))]
+                    [Math.max(0, Math.min(gameplay.width -1,
+                    (int) Math.floor((ref_x + 24)/Sprite.SCALED_SIZE ))) ] == '0'
+                &&  ref_x > 0 && ref_x < (gameplay.width - 1) * Sprite.SCALED_SIZE
+                &&  ref_y > 0 && ref_y < (gameplay.height - 1) * Sprite.SCALED_SIZE) {
+
+            x = ref_x;
+            y = ref_y;
+            gameplay.translate_x = Math.max(0, Math.min( x - (double) WIDTH * Sprite.SCALED_SIZE / 2,
+                                                    (gameplay.width - WIDTH) * Sprite.SCALED_SIZE ));
+
+            gameplay.translate_y = Math.max(0, Math.min( y - (double) HEIGHT * Sprite.SCALED_SIZE / 2,
+                                                    (gameplay.height - HEIGHT) * Sprite.SCALED_SIZE ));
+        }
+        statusAnims[currentStatus].update();
+
+
+        movingLeftEffect.setPosition(x - 124, y + 18);
+        movingRightEffect.setPosition(x + 18, y + 18);
+
+        // attributes handling
+        update();
+    }
+
     /** Hàm render animation nên overload hàm render của Entity. */
     @Override
-    public void render(GraphicsContext gc) {
+    public void render(GraphicsContext gc,Gameplay gameplay) {
         //render bomb
-        bomb.forEach(g -> g.render(gc));
+        bomb.forEach(g -> g.render(gc, gameplay));
 
         // Hiện thị các effect của nhân vật
         if (movingEffect) {
             if (currentIdleDirection == Bomber.RIGHT) {
-                movingLeftEffect.render(gc);
+                movingLeftEffect.render(gc, gameplay);
             } else {
-                movingRightEffect.render(gc);
+                movingRightEffect.render(gc, gameplay);
             }
         }
 
         // Hiển thị nhân vật
-        gc.drawImage(this.getImg(), x, y);
+        gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
     }
+
+
 
     @Override
     public Image getImg() {

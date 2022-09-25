@@ -2,6 +2,8 @@ package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.game.BombermanGame;
+import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class Entity {
@@ -31,20 +33,28 @@ public abstract class Entity {
         this.existed = true;
     }
 
-    public void render(GraphicsContext gc) {
+    public boolean onScreen(Gameplay gameplay) {
+        return  !(x < gameplay.translate_x - Sprite.SCALED_SIZE)
+                && !(x > gameplay.translate_x + BombermanGame.WIDTH * Sprite.SCALED_SIZE)
+                && !(y < gameplay.translate_y - Sprite.SCALED_SIZE)
+                && !(y > gameplay.translate_y + BombermanGame.HEIGHT * Sprite.SCALED_SIZE);
+    }
+    public void render(GraphicsContext gc, Gameplay gameplay) {
+        // Whether object is on screen
+        if(!onScreen(gameplay)) return ;
+
         if (mode == Entity.CENTER_MODE) {
-            renderCenter(gc);
+            renderCenter(gc, gameplay);
         } else {
-            gc.drawImage(this.getImg(), x, y);
+            gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
         }
     }
 
     /** Hàm này coi x, y là tọa độ trung tâm **/
-    private void renderCenter(GraphicsContext gc) {
+    private void renderCenter(GraphicsContext gc, Gameplay gameplay) {
         double renderX = x - this.getWidth() / 2;
         double renderY = y - this.getHeight() / 2;
-
-        gc.drawImage(this.getImg(),renderX,renderY);
+        gc.drawImage(this.getImg(),renderX - gameplay.translate_x,renderY - gameplay.translate_y);
     }
 
     public abstract void update();
