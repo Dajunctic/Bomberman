@@ -38,9 +38,6 @@ public class Bomb extends Entity{
         }
     }
 
-    public void render(GraphicsContext gc) {
-        gc.drawImage(this.getImg(),x,y);
-    }
     @Override
     public boolean isExisted() {
         return !explosion.isDead();

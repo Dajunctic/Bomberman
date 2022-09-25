@@ -11,6 +11,11 @@ public abstract class Entity {
     protected boolean existed;
     protected Image img;
 
+    /** Các mode in tọa render hình ảnh */
+    public static int NORMAL_MODE = 0;
+    public static int CENTER_MODE = 1;
+    protected int mode = NORMAL_MODE;
+
     /** Dành cho thực thể chuyển động theo tọa độ Pixel như Bomber, Enemy */
     public Entity(double xPixel, double yPixel) {
         this.x = xPixel;
@@ -27,8 +32,21 @@ public abstract class Entity {
     }
 
     public void render(GraphicsContext gc) {
-        gc.drawImage(this.getImg(), x, y);
+        if (mode == Entity.CENTER_MODE) {
+            renderCenter(gc);
+        } else {
+            gc.drawImage(this.getImg(), x, y);
+        }
     }
+
+    /** Hàm này coi x, y là tọa độ trung tâm **/
+    private void renderCenter(GraphicsContext gc) {
+        double renderX = x - this.getWidth() / 2;
+        double renderY = y - this.getHeight() / 2;
+
+        gc.drawImage(this.getImg(),renderX,renderY);
+    }
+
     public abstract void update();
 
     public void setExisted(boolean existed) {
@@ -75,4 +93,7 @@ public abstract class Entity {
         this.y = y;
     }
 
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
 }

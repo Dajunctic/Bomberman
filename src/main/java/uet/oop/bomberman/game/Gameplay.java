@@ -64,6 +64,7 @@ public class Gameplay {
         createMap();
 
         Bomb test = new Bomb(10 * 48, 10 * 48);
+        test.setMode(Entity.CENTER_MODE);
         entities.add(test);
     }
 
