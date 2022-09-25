@@ -85,7 +85,7 @@ public class Gameplay {
                     }
 
                 }
-                System.out.print(i + " " + j + " " + background[i][j].getClass() + " ");
+            //    System.out.print(i + " " + j + " " + background[i][j].getClass() + " ");
                 tile_map[i][j] = map[i].charAt(j);
             }
 

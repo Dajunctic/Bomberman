@@ -9,6 +9,9 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import javafx.scene.input.KeyEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static uet.oop.bomberman.game.BombermanGame.scene;
 import static uet.oop.bomberman.game.Gameplay.tile_map;
 
@@ -42,6 +45,11 @@ public class Bomber extends Entity {
     private double dir_y = 0;
     private int currentIdleDirection;
 
+    /** power properties */
+    public int capacity = 2;
+    public int power = 2;
+    public double timer = 2.5;
+    private List<Bomb> bomb = new ArrayList<>() ;
     /**
      * Đường dẫn đến folder của Model thôi không cần ảnh.
      * Có đường dẫn bởi vì nhỡ sau này phát triển nhiều nhân vật có thể lựa chọn để chơi.
@@ -83,7 +91,7 @@ public class Bomber extends Entity {
         statusAnims[Bomber.IDLE].staticUpdate();
     }
 
-    private void move() {
+    private void interaction() {
         // read input form keyboard
         // pressed
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -142,10 +150,18 @@ public class Bomber extends Entity {
                 speed_y = SPEED_Y;
             }});
 
+        scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if( bomb.size() < capacity)
+                    bomb.add(new Bomb(x, y, timer));
+                System.out.println(bomb.size());
+            }
+        });
     }
     @Override
     public void update() {
-        move();
+        interaction();
         double ref_x = x + speed_x * dir_x;
         double ref_y = y + speed_y * dir_y;
 
@@ -159,11 +175,20 @@ public class Bomber extends Entity {
 
         movingLeftEffect.setPosition(x - 124, y + 18);
         movingRightEffect.setPosition(x + 18, y + 18);
+
+        //bomb updates
+        for(int i = 0; i < bomb.size(); i++) {
+            bomb.get(i).update();
+            if(!bomb.get(i).isExisted()) bomb.remove(i);
+        }
     }
 
     /** Hàm render animation nên overload hàm render của Entity. */
     @Override
     public void render(GraphicsContext gc) {
+        //render bomb
+        bomb.forEach(g -> g.render(gc));
+
         // Hiện thị các effect của nhân vật
         if (movingEffect) {
             if (currentIdleDirection == Bomber.RIGHT) {
