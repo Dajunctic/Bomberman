@@ -8,6 +8,7 @@ import uet.oop.bomberman.others.Physics;
 
 import static uet.oop.bomberman.game.Gameplay.*;
 
+/** Everything that moves */
 public class Mobile extends Entity{
     protected double speed;
     protected double dir_x = 0;
