@@ -1,7 +1,10 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.graphics.Basic;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
@@ -10,10 +13,9 @@ import static uet.oop.bomberman.game.BombermanGame.HEIGHT;
 import static uet.oop.bomberman.game.BombermanGame.WIDTH;
 import static uet.oop.bomberman.game.Gameplay.tile_map;
 
-public class Flame extends Entity{
+public class Flame extends Mobile{
     DeadAnim flame;
 
-    protected double speed;
     protected double duration;
     protected double dir_x;
     protected double dir_y;
@@ -33,37 +35,26 @@ public class Flame extends Entity{
 
         // Animation
             if(dir_x > 0.5) {
-                flame = new DeadAnim(SpriteSheet.flame_right, 5, 0.5);
+                flame = new DeadAnim(SpriteSheet.flame_right, 5, 2.0);
             }
             else if(dir_x < 0.4 && dir_x > -0.4) {
-                if(dir_y > 0) flame = new DeadAnim(SpriteSheet.flame_down,5,0.5);
-                    else flame = new DeadAnim(SpriteSheet.flame_up, 5, 0.5);
+                if(dir_y > 0) flame = new DeadAnim(SpriteSheet.flame_down,5,2.0);
+                    else flame = new DeadAnim(SpriteSheet.flame_up, 5, 2.0);
             }
             else {
-                flame = new DeadAnim(SpriteSheet.flame_left, 5, 0.5);
+                flame = new DeadAnim(SpriteSheet.flame_left, 5, 2.0);
             }
 
     }
     @Override
     public void update() {
-        double ref_x = x + speed * dir_x;
-        double ref_y = y + speed * dir_y;
-
-        // collision handling
-        if(tile_map[Math.max(0,Math.min(Gameplay.height - 1,
-                (int) Math.floor((ref_y+(double)20*48/17)/ Sprite.SCALED_SIZE)))]
-                [Math.max(0, Math.min(Gameplay.width -1,
-                (int) Math.floor((ref_x + 24)/Sprite.SCALED_SIZE ))) ] == '0'
-                &&  tile_map[Math.max(0,Math.min(Gameplay.height - 1,
-                        (int) Math.floor(ref_y/Sprite.SCALED_SIZE)))]
-                             [Math.max(0, Math.min(Gameplay.width -1,
-                        (int) Math.floor(ref_x/Sprite.SCALED_SIZE )))] == '0'
-                &&  ref_x > 0 && ref_x < (Gameplay.width - 1) * Sprite.SCALED_SIZE
-                &&  ref_y > 0 && ref_y < (Gameplay.height - 1) * Sprite.SCALED_SIZE) {
+        //moving
+        double ref_x = x  +  speed * dir_x;
+        double ref_y = y  +  speed * dir_y;
+        if(!checkCollision(ref_x,ref_y,5)) {
             x = ref_x;
             y = ref_y;
         }
-
         //animation and status update
         flame.update();
     }
@@ -76,5 +67,12 @@ public class Flame extends Entity{
     @Override
     public boolean isExisted() {
         return !flame.isDead();
+    }
+
+    @Override
+    public void render(GraphicsContext gc,Gameplay gameplay) {
+//        Rectangle rect = new Rectangle(x - gameplay.translate_x, y - gameplay.translate_y, this.getHeight(), this.getHeight());
+//        Basic.drawRectangle(gc, rect);
+        super.render(gc, gameplay);
     }
 }

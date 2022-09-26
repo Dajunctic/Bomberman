@@ -22,8 +22,6 @@ public class Gameplay {
 
     public static char[][] tile_map;
 
-    // Tiles mà nhân vật không thể đi qua
-    public static char[] impassableTiles = {'2'};
 
     public  double translate_x = 0;
     public  double translate_y = 0;

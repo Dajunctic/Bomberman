@@ -10,6 +10,7 @@ import uet.oop.bomberman.graphics.Basic;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import javafx.scene.input.KeyEvent;
+import uet.oop.bomberman.others.Physics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.tile_map;
 
-public class Bomber extends Entity {
+public class Bomber extends Mobile {
     /** Các trạng thái của nhân vật */
     public static final int IDLE = 0;
     public static final int DOWN = 1;
@@ -37,8 +38,7 @@ public class Bomber extends Entity {
 
     /** speed projector, properties*/
 
-    final private double SPEED_X = 4;
-    final private double SPEED_Y = 4;
+    final private double SPEED = 4;
     private double speed_x;
     private double speed_y;
     final private double acceleration = 0.2; // gia tốc
@@ -65,8 +65,8 @@ public class Bomber extends Entity {
         super( x, y);
         this.path = path;
 
-        speed_x = SPEED_X;
-        speed_y = SPEED_Y;
+        speed_x = SPEED;
+        speed_y = SPEED;
         load();
     }
 
@@ -95,6 +95,7 @@ public class Bomber extends Entity {
         statusAnims[Bomber.IDLE].staticUpdate();
     }
 
+    /** input reader */
     private void interaction() {
         // read input form keyboard
         // pressed
@@ -110,6 +111,7 @@ public class Bomber extends Entity {
                         currentStatus = Bomber.UP;
                         dir_x = 0;
                         dir_y = -1;
+
                     }
                     case DOWN -> {
                         currentStatus = Bomber.DOWN;
@@ -150,8 +152,8 @@ public class Bomber extends Entity {
                 movingEffect = false;
                 dir_x = 0;
                 dir_y = 0;
-                speed_x = SPEED_X;
-                speed_y = SPEED_Y;
+                speed_x = SPEED;
+                speed_y = SPEED;
             }});
 
         //toggle bomb
@@ -165,53 +167,30 @@ public class Bomber extends Entity {
         });
     }
 
-    //handle attributes
+    //inheritances
     @Override
     public void update() {
 
     }
 
+    /** updates */
     public void update(Gameplay gameplay) {
+        //interacting
         interaction();
 
-        // Không để nhân vật chạy ra khỏi map
-        if (dir_x == -1) speed_x = Math.min(speed_x, x);
-        if (dir_x == 1) speed_x = Math.min(speed_x, Gameplay.width * Sprite.SCALED_SIZE  - x - this.getWidth());
-        if (dir_y == -1) speed_y = Math.min(speed_y, y);
-        if (dir_y == 1) speed_y = Math.min(speed_y, Gameplay.height * Sprite.SCALED_SIZE  - y - this.getHeight());
+        //movement
+        move(gameplay);
 
-        double ref_x = x + speed_x * dir_x;
-        double ref_y = y + speed_y * dir_y;
-
-        // Xử lí va chạm
-        if(!checkCollision(ref_x,ref_y)) {
-            x = ref_x;
-            y = ref_y;
-            gameplay.translate_x = Math.max(0, Math.min( x - (double) WIDTH * Sprite.SCALED_SIZE / 2,
-                                                    (Gameplay.width - WIDTH) * Sprite.SCALED_SIZE ));
-
-            gameplay.translate_y = Math.max(0, Math.min( y - (double) HEIGHT * Sprite.SCALED_SIZE / 2,
-                                                    (Gameplay.height - HEIGHT) * Sprite.SCALED_SIZE ));
-        }
-
-
+        //animations
         statusAnims[currentStatus].update();
-
         // Cài vị trí của Moving Effect.
         movingLeftEffect.setPosition(x - 100, y + 10);
         movingRightEffect.setPosition(x + 18, y + 10);
 
-        //bomb updates
-        for(int i = 0; i < bomb.size(); i++) {
-            bomb.get(i).update();
-            if(bomb.get(i).bomb.isDead())
-                bomb.get(i).deadAct(gameplay);
-            if(!bomb.get(i).isExisted()){
-                bomb.remove(i);
-            }
-        }
-
         // attributes handling
+        attribute_update(gameplay);
+
+        //interior changes
         update();
     }
 
@@ -239,14 +218,35 @@ public class Bomber extends Entity {
     }
 
 
-
     @Override
     public Image getImg() {
         return statusAnims[currentStatus].getFxImage();
     }
 
-    public void fire(Flame obj) {
-        flame.add(obj);
+    public void move(Gameplay gameplay) {
+        double ref_x = x  +  speed_x * dir_x;
+        double ref_y = y  +  speed_y * dir_y;
+        if(!checkCollision(ref_x,ref_y,0)) {
+            x = ref_x;
+            y = ref_y;
+            gameplay.translate_x = Math.max(0, Math.min( x - (double) WIDTH * Sprite.SCALED_SIZE / 2,
+                    (Gameplay.width - WIDTH) * Sprite.SCALED_SIZE ));
+
+            gameplay.translate_y = Math.max(0, Math.min( y - (double) HEIGHT * Sprite.SCALED_SIZE / 2,
+                    (Gameplay.height - HEIGHT) * Sprite.SCALED_SIZE ));
+        }
     }
 
+    //attributes handler
+    public void attribute_update(Gameplay gameplay) {
+        //bomb updates
+        for(int i = 0; i < bomb.size(); i++) {
+            bomb.get(i).update();
+            if(bomb.get(i).bomb.isDead())
+                bomb.get(i).deadAct(gameplay);
+            if(!bomb.get(i).isExisted()){
+                bomb.remove(i);
+            }
+        }
+    }
 }

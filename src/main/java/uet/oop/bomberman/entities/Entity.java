@@ -63,41 +63,6 @@ public abstract class Entity {
         double renderY = y - this.getHeight() / 2;
         gc.drawImage(this.getImg(),renderX - gameplay.translate_x,renderY - gameplay.translate_y);
     }
-
-    public boolean checkCollision(double ref_x, double ref_y) {
-        Rectangle rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
-
-        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
-        // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
-        int tileStartX = (int) Math.floor(rect.getX() / Sprite.SCALED_SIZE);
-        int tileStartY = (int) Math.floor(rect.getY() / Sprite.SCALED_SIZE);
-
-        int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
-        int tileEndY = (int) Math.ceil((rect.getY() + rect.getHeight()) / Sprite.SCALED_SIZE);
-        tileEndX = Math.min(tileEndX, Gameplay.width - 1);
-        tileEndY = Math.min(tileEndY, Gameplay.height - 1);
-
-        for (int i = tileStartX; i <= tileEndX; i++) {
-            for (int j = tileStartY; j <= tileEndY; j++) {
-
-                int tileX = i * Sprite.SCALED_SIZE;
-                int tileY = j * Sprite.SCALED_SIZE;
-
-                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
-
-                for (char x: Gameplay.impassableTiles) {
-                    if (Gameplay.tile_map[j][i] == x) {
-                        if (Physics.collisionRectToRect(rect, tileRect)) {
-                            return true;
-                        }
-                    }
-                }
-
-            }
-        }
-
-        return false;
-    }
     public abstract void update();
 
     public void setExisted(boolean existed) {

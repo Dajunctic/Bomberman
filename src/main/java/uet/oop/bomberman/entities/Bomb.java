@@ -14,6 +14,10 @@ public class Bomb extends Entity{
     public DeadAnim bomb = new DeadAnim(SpriteSheet.bomb, 15, 2.5);
     boolean exploded = false;
 
+    //tí sửa sau :))) 
+    public void relocate() {
+
+    }
     public Bomb(double xPixel, double yPixel) {
         super(xPixel, yPixel);
         mode = CENTER_MODE;
