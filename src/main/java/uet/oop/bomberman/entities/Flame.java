@@ -11,7 +11,7 @@ import uet.oop.bomberman.graphics.SpriteSheet;
 
 import static uet.oop.bomberman.game.BombermanGame.HEIGHT;
 import static uet.oop.bomberman.game.BombermanGame.WIDTH;
-import static uet.oop.bomberman.game.Gameplay.tile_map;
+import static uet.oop.bomberman.game.Gameplay.*;
 
 public class Flame extends Mobile{
     DeadAnim flame;
@@ -35,22 +35,22 @@ public class Flame extends Mobile{
 
         // Animation
             if(dir_x > 0.5) {
-                flame = new DeadAnim(SpriteSheet.flame_right, 5, 2.0);
+                flame = new DeadAnim(SpriteSheet.flame_right, 5, 0.5);
             }
             else if(dir_x < 0.4 && dir_x > -0.4) {
-                if(dir_y > 0) flame = new DeadAnim(SpriteSheet.flame_down,5,2.0);
-                    else flame = new DeadAnim(SpriteSheet.flame_up, 5, 2.0);
+                if(dir_y > 0) flame = new DeadAnim(SpriteSheet.flame_down,5,0.5);
+                    else flame = new DeadAnim(SpriteSheet.flame_up, 5, 0.5);
             }
             else {
-                flame = new DeadAnim(SpriteSheet.flame_left, 5, 2.0);
+                flame = new DeadAnim(SpriteSheet.flame_left, 5, 0.5);
             }
 
     }
     @Override
     public void update() {
         //moving
-        double ref_x = x  +  speed * dir_x;
-        double ref_y = y  +  speed * dir_y;
+        double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed * dir_x));
+        double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * dir_y));
         if(!checkCollision(ref_x,ref_y,5)) {
             x = ref_x;
             y = ref_y;

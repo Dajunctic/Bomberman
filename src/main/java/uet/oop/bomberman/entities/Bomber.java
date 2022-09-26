@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static uet.oop.bomberman.game.BombermanGame.*;
-import static uet.oop.bomberman.game.Gameplay.tile_map;
+import static uet.oop.bomberman.game.Gameplay.*;
 
 public class Bomber extends Mobile {
     /** Các trạng thái của nhân vật */
@@ -209,9 +209,9 @@ public class Bomber extends Mobile {
             }
         }
 
-        // Hiện thị border nhân vật
-        Rectangle rect = new Rectangle(x, y, this.getHeight(), this.getHeight());
-        Basic.drawRectangle(gc, rect);
+//        // Hiện thị border nhân vật
+//        Rectangle rect = new Rectangle(x, y, this.getHeight(), this.getHeight());
+//        Basic.drawRectangle(gc, rect);
 
         // Hiển thị nhân vật
         gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
@@ -224,8 +224,8 @@ public class Bomber extends Mobile {
     }
 
     public void move(Gameplay gameplay) {
-        double ref_x = x  +  speed_x * dir_x;
-        double ref_y = y  +  speed_y * dir_y;
+        double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed_x * dir_x));
+        double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed_y * dir_y));
         if(!checkCollision(ref_x,ref_y,0)) {
             x = ref_x;
             y = ref_y;
