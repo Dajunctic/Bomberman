@@ -1,6 +1,7 @@
 package uet.oop.bomberman.game;
 
 import javafx.scene.canvas.GraphicsContext;
+import uet.oop.bomberman.Generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
 
@@ -14,8 +15,9 @@ public class Gameplay {
     public static int width;
     public static int height;
     protected BufferedReader sourceMap;
-    protected List<Entity> entities = new ArrayList<>();
-
+    public static List<Entity> entities = new ArrayList<>();
+    //terminate
+    public static List<Point> killTask = new ArrayList<>();
     protected Bomber player;
     Entity[][] background;
     public static String[] map;
@@ -81,10 +83,13 @@ public class Gameplay {
                         break;
                     }
                     case '1': {
-                        background[i][j] = new Floor(j, i, Sprite.grass.getFxImage());
+                        background[i][j] = new Brick(j, i, Sprite.floor.getFxImage());
+                        System.out.println("Brick at: " + i + " " + j);
+                        break;
                     }
                     case '2': {
                         background[i][j] = new Wall(j, i, Sprite.wall.getFxImage());
+                        break;
                     }
 
                 }
@@ -113,10 +118,11 @@ public class Gameplay {
                 i --;
             }
         }
-
+        kill();
     }
     /** render objects */
     public void render(GraphicsContext gc) {
+
         //background rendering
         int low_x =(int) Math.floor(translate_x/Sprite.SCALED_SIZE);
         int low_y = (int) Math.floor(translate_y/Sprite.SCALED_SIZE);
@@ -125,18 +131,29 @@ public class Gameplay {
                     background[i][j].render(gc, this);
             }
         }
+        //entities
+        entities.forEach(g -> g.render(gc, this));
 
         //player
         player.render(gc, this);
-        //entities
-        entities.forEach(g -> g.render(gc, this));
     }
 
+
     //destroy tiles
-    public void terminate(int x,int y) {
-        background[y][x].kill();
+    public void kill() {
+        while(!killTask.isEmpty())
+        {
+            Point ref = killTask.get(0);
+            background[ref.getY()][ref.getX()].kill();
+            killTask.remove(0);
+        }
+
     }
+
+
     public void generate(Entity obj) {
         entities.add(obj);
     }
+
+    //background fire image
 }

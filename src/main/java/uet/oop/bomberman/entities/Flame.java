@@ -2,7 +2,9 @@ package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelBuffer;
 import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.Generals.Point;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
@@ -13,8 +15,8 @@ import static uet.oop.bomberman.game.Gameplay.*;
 
 public class Flame extends Mobile{
     DeadAnim flame;
-
-    protected double duration;
+    double length;
+    protected double duration = 0.5;
     protected double dir_x;
     protected double dir_y;
 
@@ -27,7 +29,8 @@ public class Flame extends Mobile{
         super(_x,_y);
         mode = CENTER_MODE;
         //set speed
-        speed = length / 30;
+        speed = length / 10;
+        this.length = length;
         dir_x =  dirX;
         dir_y =  dirY;
 
@@ -50,11 +53,14 @@ public class Flame extends Mobile{
         double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed * dir_x));
         double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * dir_y));
         if(!checkCollision(ref_x,ref_y,15)) {
+            length -= speed;
+            if(length <= 0) speed = 0;
             x = ref_x;
             y = ref_y;
         }
         //animation and status update
         flame.update();
+
     }
 
     @Override
@@ -78,6 +84,7 @@ public class Flame extends Mobile{
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
         // có đấy bạn ạ,
         // Ai bảo, mỗi thằng ở update có check riêng cũng được
+        // Thêm vào có chết ai đâu
         if(ref_x < 0 || ref_y < 0
                 || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
                 || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return true;
@@ -112,6 +119,16 @@ public class Flame extends Mobile{
                 }
                 else if(Gameplay.tile_map[j][i] == '1') {
                     //Do something
+                    if (Physics.collisionRectToRect(rect, tileRect)) {
+                        killTask.add(new Point(i,j));
+                        return true;
+                    }
+                }
+                else if(Gameplay.tile_map[j][i] == '0') {
+                    if (Physics.collisionRectToRect(rect, tileRect)) {
+                        entities.add(new Fire(i,j,duration));
+                        return true;
+                    }
                 }
             }
         }

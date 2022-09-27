@@ -9,7 +9,7 @@ import uet.oop.bomberman.graphics.SpriteSheet;
 public class Bomb extends Entity{
 
     //animation
-    DeadAnim explosion = new DeadAnim(SpriteSheet.explosion, 10, 1);
+    DeadAnim explosion = new DeadAnim(SpriteSheet.explosion, 5, 1);
     public DeadAnim bomb = new DeadAnim(SpriteSheet.bomb, 15, 2.5);
     boolean exploded = false;
 
@@ -25,6 +25,7 @@ public class Bomb extends Entity{
         super(xPixel, yPixel);
         bomb = new DeadAnim(SpriteSheet.bomb, 15, timer);
         mode = CENTER_MODE;
+        explosion.setScaleFactor(2);
     }
     @Override
     public void update() {
@@ -54,10 +55,10 @@ public class Bomb extends Entity{
     public void deadAct(Gameplay gameplay) {
         if(exploded) return;
         exploded = true;
-        gameplay.generate(new Flame(x, y, 2 * Sprite.SCALED_SIZE, 1,0));
-        gameplay.generate(new Flame(x, y, 2 * Sprite.SCALED_SIZE, 0,1));
-        gameplay.generate(new Flame(x, y, 2 * Sprite.SCALED_SIZE, 0,-1));
-        gameplay.generate(new Flame(x, y, 2 * Sprite.SCALED_SIZE, -1,0));
+        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, 1,0));
+        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, 0,1));
+        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, 0,-1));
+        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, -1,0));
 
     }
 

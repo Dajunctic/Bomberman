@@ -109,6 +109,9 @@ public abstract class Entity {
         this.y = y;
     }
 
+    public void setImg(Image img) {
+        this.img = img;
+    }
     public void deadAct(Gameplay gameplay) {
         return ;
     }

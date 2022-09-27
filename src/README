@@ -1,0 +1,8 @@
+Cautions:
+File này để đưa ra các quy ước
+1. Format file map.txt đầu vào gameplay
+Dòng đầu tiên ghi kích cỡ w x h của map
+h dòng tiếp theo là đặc tả map
+Các dòng ở dưới là tọa độ của thực thể theo format
+<tên thực thể> < tọa độ x > < toa độ y >
+Tiếp theo là cấu hình các đồ vật

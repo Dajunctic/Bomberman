@@ -36,10 +36,10 @@ public class BombermanGame extends Application {
         root.getChildren().add(canvas);
 
         // Tao scene
-        this.scene = new Scene(root);
+        scene = new Scene(root);
 
         // Thêm scene vao stage
-        stage.setScene(this.scene);
+        stage.setScene(scene);
 
         stage.show();
         stage.setTitle("Bomberman");
