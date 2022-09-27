@@ -61,8 +61,7 @@ public class Sprite {
 	 * | Effect tiles
 	 * |--------------------------------------------------------------------------
 	 * */
-	public static Sprite movingLeft = new Sprite("/sprites/Player/Effect/moving_left.png", Sprite.NORMAL);
-	public static Sprite movingRight = new Sprite("/sprites/Player/Effect/moving_right.png", Sprite.NORMAL);
+	public static Sprite superSayan = new Sprite("/sprites/Player/Effect/super_sayan.png", Sprite.NORMAL);
 
 	/** Hàm khởi tạo dành cho Sprite tách ra từ SpriteSheet. */
 	public Sprite(SpriteSheet sheet, int cx, int cy, int cropW, int cropH) {

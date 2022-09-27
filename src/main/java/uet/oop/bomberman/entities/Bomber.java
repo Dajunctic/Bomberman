@@ -36,8 +36,7 @@ public class Bomber extends Mobile {
     boolean movingEffect = false;
     double movingEffectSpeed = 8;
 
-    Entity movingLeftEffect = new Floor(0, 0, Sprite.movingLeft.getFxImage());
-    Entity movingRightEffect = new Floor(0, 0, Sprite.movingRight.getFxImage());
+    Entity superSayan = new Floor(0, 0, Sprite.superSayan.getFxImage());
 
     /**
      * speed projector, properties
@@ -46,8 +45,9 @@ public class Bomber extends Mobile {
     final private double SPEED = 3;
     private double speed_x;
     private double speed_y;
-    final private double acceleration = 0.15; // gia tốc
-    final private double brakeAcceleration = -2; // gia tốc phanh
+    // gia tốc
+    double acceleration = 0.15;
+    double brakeAcceleration = -2; // gia tốc phanh
     /**
      * Direction
      */
@@ -66,8 +66,7 @@ public class Bomber extends Mobile {
     public int capacity = 15;
     public int power = 2;
     public double timer = 2.5;
-    private List<Bomb> bombs = new ArrayList<>();
-    private List<Flame> flames = new ArrayList<>();
+    List<Bomb> bombs = new ArrayList<>();
 
     /**
      * Đường dẫn đến folder của Model thôi không cần ảnh.
@@ -209,7 +208,7 @@ public class Bomber extends Mobile {
         }
 
         // Điều kiện để có moving Effect
-        if (speed_x >= movingEffectSpeed) {
+        if (speed_x >= movingEffectSpeed || speed_y >= movingEffectSpeed) {
             movingEffect = true;
         }
     }
@@ -278,8 +277,21 @@ public class Bomber extends Mobile {
         scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if( bombs.size() < capacity)
-                    bombs.add(new Bomb(getCenterX(), getCenterY(), timer));
+                if( bombs.size() < capacity) {
+
+                    int bombX, bombY;
+                    if (currentIdleDirection == Bomber.RIGHT) {
+                        bombX = (int) Math.floor((getX() + getWidth()) / Sprite.SCALED_SIZE) * Sprite.SCALED_SIZE
+                                + SpriteSheet.bomb.getW() / SpriteSheet.bomb.getSpriteNumber() / 2;
+                    } else {
+                        bombX = (int) Math.floor(getX() / Sprite.SCALED_SIZE) * Sprite.SCALED_SIZE
+                                + SpriteSheet.bomb.getW() / SpriteSheet.bomb.getSpriteNumber() / 2;
+                    }
+                    bombY = (int) Math.floor(getY() / Sprite.SCALED_SIZE) * Sprite.SCALED_SIZE
+                            + SpriteSheet.bomb.getH() / 2;
+
+                    bombs.add(new Bomb(bombX , bombY, timer));
+                }
                 System.out.println(bombs.size());
             }
         });
@@ -301,9 +313,9 @@ public class Bomber extends Mobile {
 
         //animations
         statusAnims[currentStatus].update();
-        // Cài vị trí của Moving Effect.
-//        movingLeftEffect.setPosition(x - 100, y + 10);
-//        movingRightEffect.setPosition(x + 18, y + 10);
+
+        // Cài vị trí của Super Sayan.
+        superSayan.setPosition(x - 30, y - 80);
 
         // attributes handling
         attribute_update(gameplay);
@@ -319,13 +331,9 @@ public class Bomber extends Mobile {
         bombs.forEach(g -> g.render(gc, gameplay));
 
         // Hiện thị các effect của nhân vật
-//        if (movingEffect) {
-//            if (currentIdleDirection == Bomber.RIGHT) {
-//                movingLeftEffect.render(gc, gameplay);
-//            } else {
-//                movingRightEffect.render(gc, gameplay);
-//            }
-//        }
+        if (movingEffect) {
+            superSayan.render(gc, gameplay);
+        }
 
         // Hiển thị nhân vật
         gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
