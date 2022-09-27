@@ -46,6 +46,7 @@ public class Sprite {
 	public static Sprite grass = new Sprite("/sprites/Bg/grass.png", Sprite.TILE);
 	public static Sprite portal = new Sprite("/sprites/Interactives/Functional/portal.png", Sprite.TILE);
 
+	public static Sprite lava_floor = new Sprite("/sprites/Bg/lava_floor.png", Sprite.TILE);
 	/**
 	 * |--------------------------------------------------------------------------
 	 * | Effect tiles

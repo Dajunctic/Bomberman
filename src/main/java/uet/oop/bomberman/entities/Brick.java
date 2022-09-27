@@ -10,7 +10,7 @@ import static uet.oop.bomberman.game.Gameplay.tile_map;
 
 public class Brick extends  Entity{
 
-    protected DeadAnim brick = new DeadAnim(SpriteSheet.brick,15,1);
+    protected DeadAnim brick = new DeadAnim(SpriteSheet.brick,4,1);
     protected Image passive;
     protected boolean isDead = false;
     private int tileX, tileY;
@@ -42,15 +42,20 @@ public class Brick extends  Entity{
             gc.drawImage(img, x - gameplay.translate_x, y - gameplay.translate_y);
 
             //death trigger
-            if(!exists() && brick != null){
-                gc.drawImage(brick.getImage(), x - gameplay.translate_x, y - gameplay.translate_y);
-                brick.update();
+            if(brick != null){
+                if(exists()) {
+                    gc.drawImage(brick.getImage(), x - gameplay.translate_x, y - gameplay.translate_y);
+                    brick.update();
+                    }
+                else deadAct();
             }
+
 
         }
 
     }
-    public boolean exists() {
+
+    public boolean  exists() {
         return !brick.isDead();
     }
     @Override
@@ -58,8 +63,9 @@ public class Brick extends  Entity{
         return brick.getImage();
     }
 
-    @Override
-    public void deadAct(Gameplay gameplay) {
+
+    public void deadAct() {
+        if( brick == null) return ;
         brick = null;
         tile_map[tileY][tileX] = '0';
     }

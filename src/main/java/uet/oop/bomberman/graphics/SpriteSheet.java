@@ -36,9 +36,12 @@ public class SpriteSheet {
 	public static SpriteSheet flame_left = new SpriteSheet("/sprites/Player/Flame/flame_left.png", 6);
 	public static SpriteSheet flame_down = new SpriteSheet("/sprites/Player/Flame/flame_down.png", 6);
 	public static SpriteSheet flame_up = new SpriteSheet("/sprites/Player/Flame/flame_up.png", 6);
-
+	//fire
+	public static SpriteSheet fire = new SpriteSheet("/sprites/Obstacles/Fire/fire.png", 8);
+	public static SpriteSheet ignite = new SpriteSheet("/sprites/Obstacles/Fire/ignite.png", 4);
+	public static SpriteSheet fire_fade = new SpriteSheet("/sprites/Obstacles/Fire/fade.png", 4);
 	//brick
-	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/brick.png", 7);
+	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/brick.png", 6);
 
 	public SpriteSheet(String path, int spriteNumber) {
 		this.path = path;

@@ -54,7 +54,6 @@ public class Bomber extends Mobile {
     public int power = 2;
     public double timer = 2.5;
     private List<Bomb> bomb = new ArrayList<>() ;
-    private List<Flame> flame = new ArrayList<>();
 
     /**
      * Đường dẫn đến folder của Model thôi không cần ảnh.
@@ -100,16 +99,26 @@ public class Bomber extends Mobile {
     private void setDir(int status) {
         switch (status) {
             case Bomber.UP -> {
+                dirX = 0;
                 dirY = -1;
             }
             case Bomber.DOWN -> {
                 dirY = 1;
+                dirX = 0;
             }
             case Bomber.LEFT -> {
                 dirX = -1;
+                dirY = 0;
             }
             case Bomber.RIGHT -> {
                 dirX = 1;
+                dirY = 0;
+            }
+            case Bomber.IDLE -> {
+                dirX = 0;
+                dirY = 0;
+                speed_x = SPEED;
+                speed_y = SPEED;
             }
 
         }
