@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.BombermanGame;
@@ -19,7 +20,7 @@ public abstract class Entity {
     protected double y;
     protected boolean existed;
     protected Image img;
-
+    protected Effect effect;
     /** Các mode in tọa render hình ảnh */
     public static int NORMAL_MODE = 0;
     public static int CENTER_MODE = 1;
@@ -47,6 +48,8 @@ public abstract class Entity {
                 && !(y > gameplay.translate_y + BombermanGame.HEIGHT * Sprite.SCALED_SIZE);
     }
     public void render(GraphicsContext gc, Gameplay gameplay) {
+
+        gc.setEffect(effect);
         // Whether object is on screen
         if(!onScreen(gameplay)) return ;
 
@@ -55,6 +58,8 @@ public abstract class Entity {
         } else {
             gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
         }
+
+        gc.setEffect(null);
     }
 
     /** Hàm này coi x, y là tọa độ trung tâm **/

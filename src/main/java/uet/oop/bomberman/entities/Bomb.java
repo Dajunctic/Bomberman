@@ -1,5 +1,8 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
@@ -9,7 +12,7 @@ import uet.oop.bomberman.graphics.SpriteSheet;
 public class Bomb extends Entity{
 
     //animation
-    DeadAnim explosion = new DeadAnim(SpriteSheet.explosion, 5, 1);
+    DeadAnim explosion = new DeadAnim(SpriteSheet.explosion, 15, 1);
     public DeadAnim bomb = new DeadAnim(SpriteSheet.bomb, 15, 2.5);
     boolean exploded = false;
 
@@ -26,6 +29,7 @@ public class Bomb extends Entity{
         bomb = new DeadAnim(SpriteSheet.bomb, 15, timer);
         mode = CENTER_MODE;
         explosion.setScaleFactor(2);
+        effect = new Bloom(0.2);
     }
     @Override
     public void update() {
@@ -37,7 +41,6 @@ public class Bomb extends Entity{
     }
 
 
-    @Override
     public Image getImg() {
         if (bomb.isDead()) {
             return explosion.getImage();
@@ -45,7 +48,6 @@ public class Bomb extends Entity{
             return bomb.getImage();
         }
     }
-
     @Override
     public boolean isExisted() {
         return !explosion.isDead();

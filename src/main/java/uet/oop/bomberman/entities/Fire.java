@@ -1,5 +1,7 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Bloom;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.Generals.Point;
 import uet.oop.bomberman.game.Gameplay;
@@ -30,6 +32,7 @@ public class Fire extends Entity{
         burn = new DeadAnim(SpriteSheet.fire, 2, duration);
         tile_map[(int) yUnit][(int) xUnit] = '!';
         kill();
+        effect = new Bloom(0.1);
     }
 
     @Override
@@ -41,6 +44,7 @@ public class Fire extends Entity{
 
     @Override
     public Image getImg() {
+
         if(!ignite.isDead()) return ignite.getImage();
             else if(!burn.isDead()) return burn.getImage();
                 else return fade.getImage();
