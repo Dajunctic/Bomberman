@@ -2,12 +2,16 @@ package uet.oop.bomberman.entities;
 
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.MotionBlur;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import javafx.scene.input.KeyEvent;
+import uet.oop.bomberman.others.Physics;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,12 +41,11 @@ public class Bomber extends Mobile {
     double movingEffectSpeed = 8;
 
     Entity superSayan = new Floor(0, 0, Sprite.superSayan.getFxImage());
-
+    MotionBlur effect = new MotionBlur();
     /**
      * speed projector, properties
      */
-
-    final private double SPEED = 3;
+    final private double SPEED = 2;
     private double speed_x;
     private double speed_y;
     // gia tốc
@@ -81,6 +84,7 @@ public class Bomber extends Mobile {
 
         speed_x = SPEED;
         speed_y = SPEED;
+        effect.setRadius(0);
         load();
     }
 
@@ -211,6 +215,7 @@ public class Bomber extends Mobile {
         if (speed_x >= movingEffectSpeed || speed_y >= movingEffectSpeed) {
             movingEffect = true;
         }
+        else if(effect.getRadius() != 0) effect.setRadius(0);
     }
 
     /** input reader */
@@ -278,21 +283,9 @@ public class Bomber extends Mobile {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if( bombs.size() < capacity) {
-
-                    int bombX, bombY;
-                    if (currentIdleDirection == Bomber.RIGHT) {
-                        bombX = (int) Math.floor((getX() + getWidth()) / Sprite.SCALED_SIZE) * Sprite.SCALED_SIZE
-                                + SpriteSheet.bomb.getW() / SpriteSheet.bomb.getSpriteNumber() / 2;
-                    } else {
-                        bombX = (int) Math.floor(getX() / Sprite.SCALED_SIZE) * Sprite.SCALED_SIZE
-                                + SpriteSheet.bomb.getW() / SpriteSheet.bomb.getSpriteNumber() / 2;
-                    }
-                    bombY = (int) Math.floor(getY() / Sprite.SCALED_SIZE) * Sprite.SCALED_SIZE
-                            + SpriteSheet.bomb.getH() / 2;
-
-                    bombs.add(new Bomb(bombX , bombY, timer));
+                    placeBomb(x, y, 0);
                 }
-                System.out.println(bombs.size());
+//                System.out.println(bombs.size());
             }
         });
     }
@@ -300,7 +293,9 @@ public class Bomber extends Mobile {
     //inheritances
     @Override
     public void update() {
-
+        effect.setRadius(Math.sqrt(Math.abs(speed_x*speed_x*dirX) + Math.abs(speed_y*speed_y*dirY)) * 2);
+        double angle = Math.toDegrees(Math.atan(speed_x / speed_y)) - 90;
+        effect.setAngle(angle);
     }
 
     /** updates */
@@ -321,7 +316,7 @@ public class Bomber extends Mobile {
         attribute_update(gameplay);
 
         //interior changes
-        update();
+        if(movingEffect) update();
    }
 
     /** Hàm render animation nên overload hàm render của Entity. */
@@ -330,13 +325,18 @@ public class Bomber extends Mobile {
         //render bomb
         bombs.forEach(g -> g.render(gc, gameplay));
 
-        // Hiện thị các effect của nhân vật
-        if (movingEffect) {
-            superSayan.render(gc, gameplay);
-        }
 
+
+        gc.setEffect(effect);
+        // Hiện thị các effect của nhân vật
+//        if (movingEffect) {
+//            superSayan.render(gc, gameplay);
+//        }
         // Hiển thị nhân vật
         gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
+
+
+        gc.setEffect(null);
     }
 
 
@@ -351,7 +351,7 @@ public class Bomber extends Mobile {
         double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed_x * dirX));
         double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed_y * dirY));
 
-        if(!checkCollision(ref_x,ref_y,0)) {
+        if(!checkCollision(ref_x,ref_y,5)) {
             x = ref_x;
             y = ref_y;
             gameplay.translate_x = Math.max(0, Math.min( x - (double) WIDTH * Sprite.SCALED_SIZE / 2,
@@ -374,5 +374,46 @@ public class Bomber extends Mobile {
                 i--;
             }
         }
+    }
+
+    public void placeBomb(double ref_x, double ref_y, int margin) {
+        // có đấy bạn ạ
+        if(ref_x < 0 || ref_y < 0
+                || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
+                || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return;
+
+        Rectangle rect;
+        if(mode == CENTER_MODE)
+            rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
+        else
+            rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
+
+        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
+
+        // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
+        int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE) - 1);
+        int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE) - 1);
+        int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
+        int tileEndY = (int) Math.ceil((rect.getY() + rect.getHeight()) / Sprite.SCALED_SIZE);
+        tileEndX = Math.min(tileEndX, Gameplay.width - 1);
+        tileEndY = Math.min(tileEndY, Gameplay.height - 1);
+        for (int i = tileStartX; i <= tileEndX; i++) {
+            for (int j = tileStartY; j <= tileEndY; j++) {
+
+                int tileX = i * Sprite.SCALED_SIZE;
+                int tileY = j * Sprite.SCALED_SIZE;
+
+                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
+
+                if (Gameplay.tile_map[j][i] == '0') {
+                    if (Physics.collisionRectToRect(rect, tileRect)) {
+                        bombs.add(new Bomb(i, j, timer));
+                        return;
+                    }
+                }
+            }
+        }
+
+        return;
     }
 }

@@ -1,5 +1,7 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.graphics.Sprite;
 

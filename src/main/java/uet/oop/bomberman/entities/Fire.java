@@ -1,6 +1,8 @@
 package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.Bloom;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.Generals.Point;
@@ -13,8 +15,8 @@ import static uet.oop.bomberman.game.Gameplay.tile_map;
 
 public class Fire extends Entity{
 
-    protected DeadAnim ignite = new DeadAnim(SpriteSheet.ignite, 1, 1);
-    protected DeadAnim fade = new DeadAnim(SpriteSheet.fire_fade, 3, 1);
+    protected DeadAnim ignite = new DeadAnim(SpriteSheet.ignite, 5, 1);
+    protected DeadAnim fade = new DeadAnim(SpriteSheet.fire_fade, 5, 1);
     protected DeadAnim burn;
     int tilex,tiley;
     public Fire(double xUnit, double yUnit) {
@@ -29,10 +31,10 @@ public class Fire extends Entity{
         tiley = (int) yUnit;
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
-        burn = new DeadAnim(SpriteSheet.fire, 2, duration);
+        burn = new DeadAnim(SpriteSheet.fire, 8, duration);
         tile_map[(int) yUnit][(int) xUnit] = '!';
         kill();
-        effect = new Bloom(0.1);
+        effect = new Blend(BlendMode.LIGHTEN);
     }
 
     @Override
