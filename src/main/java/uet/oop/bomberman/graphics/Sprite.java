@@ -33,6 +33,7 @@ public class Sprite {
 
 	private String type;
 	SpriteSheet sheet;
+	private Image img;
 
 	/**
 	 * |--------------------------------------------------------------------------
@@ -111,13 +112,16 @@ public class Sprite {
 				if (this.type.equals(Sprite.TILE)) {
 					this.tileSize = w;
 				}
+
 			} catch (IOException e) {
+				System.out.println("Can't load image: " + this.path);
 				e.printStackTrace();
 				System.exit(0);
 			}
 		}
 
 		this.scaleFactor = 1;
+		this.img = this.getFxImage();
 	}
 
 	public int getPixel(int i) {
@@ -127,6 +131,11 @@ public class Sprite {
 	/** Hàm điều chỉnh tỉ lệ kích thước ảnh x2, x3,..., xn */
 	public void setScaleFactor(int factor) {
 		this.scaleFactor = factor;
+		this.img = this.getFxImage();
+	}
+
+	public Image getImg() {
+		return this.img;
 	}
 
 	/**
@@ -138,7 +147,7 @@ public class Sprite {
         PixelWriter pw = wr.getPixelWriter();
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
-                if ( pixels[x + y * w] == TRANSPARENT_COLOR) {
+                if (pixels[x + y * w] == TRANSPARENT_COLOR) {
                     pw.setArgb(x, y, 0);
                 }
                 else {

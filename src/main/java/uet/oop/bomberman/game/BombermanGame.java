@@ -48,7 +48,6 @@ public class BombermanGame extends Application {
             public void handle(long l) {
                 update();
                 render();
-
             }
         };
         timer.start();

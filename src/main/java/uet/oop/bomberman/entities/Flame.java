@@ -4,14 +4,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.graphics.Basic;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import uet.oop.bomberman.others.Physics;
 
-import static uet.oop.bomberman.game.BombermanGame.HEIGHT;
-import static uet.oop.bomberman.game.BombermanGame.WIDTH;
 import static uet.oop.bomberman.game.Gameplay.*;
 
 public class Flame extends Mobile{
@@ -26,13 +23,13 @@ public class Flame extends Mobile{
         mode = CENTER_MODE;
     }
 
-    public Flame(double _x, double _y, double length,double dirx,double diry) {
+    public Flame(double _x, double _y, double length,double dirX,double dirY) {
         super(_x,_y);
         mode = CENTER_MODE;
         //set speed
-        speed = length/30;
-        dir_x =  dirx;
-        dir_y =  diry;
+        speed = length / 30;
+        dir_x =  dirX;
+        dir_y =  dirY;
 
         // Animation
             if(dir_x > 0.5) {
@@ -62,7 +59,7 @@ public class Flame extends Mobile{
 
     @Override
     public Image getImg() {
-        return flame.getFxImage();
+        return flame.getImage();
     }
 
     @Override
@@ -79,14 +76,15 @@ public class Flame extends Mobile{
 
     @Override
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
-        // có đấy bạn ạ
+        // có đấy bạn ạ,
+        // Ai bảo, mỗi thằng ở update có check riêng cũng được
         if(ref_x < 0 || ref_y < 0
                 || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
                 || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return true;
 
         Rectangle rect;
         if(mode == CENTER_MODE)
-            rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
+            rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin * 2, this.getHeight() - margin * 2);
         else
             rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
 
@@ -115,8 +113,6 @@ public class Flame extends Mobile{
                 else if(Gameplay.tile_map[j][i] == '1') {
                     //Do something
                 }
-
-
             }
         }
 

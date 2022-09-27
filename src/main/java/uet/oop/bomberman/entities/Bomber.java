@@ -3,17 +3,16 @@ package uet.oop.bomberman.entities;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Anim;
-import uet.oop.bomberman.graphics.Basic;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import javafx.scene.input.KeyEvent;
-import uet.oop.bomberman.others.Physics;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
@@ -43,9 +42,12 @@ public class Bomber extends Mobile {
     private double speed_y;
     final private double acceleration = 0.2; // gia tốc
     /** Direction */
-    private double dir_x = 0;
-    private double dir_y = 0;
+    private double dirX = 0;
+    private double dirY = 0;
     private int currentIdleDirection;
+
+    Set<Integer> moveSet = new HashSet<Integer>();
+    boolean moving = false;
 
     /** power properties */
     public int capacity = 15;
@@ -95,6 +97,40 @@ public class Bomber extends Mobile {
         statusAnims[Bomber.IDLE].staticUpdate();
     }
 
+    private void setDir(int status) {
+        switch (status) {
+            case Bomber.UP -> {
+                dirY = -1;
+            }
+            case Bomber.DOWN -> {
+                dirY = 1;
+            }
+            case Bomber.LEFT -> {
+                dirX = -1;
+            }
+            case Bomber.RIGHT -> {
+                dirX = 1;
+            }
+
+        }
+    }
+
+    public void moveUpdate() {
+        speed_x += Math.abs(dirX) * acceleration;
+        speed_y += Math.abs(dirY) * acceleration;
+
+        // Đổi hướng trạng thái IDLE từ bước di chuyển trước
+        if (currentStatus >= Bomber.LEFT && currentStatus != currentIdleDirection) {
+            statusAnims[Bomber.IDLE].staticUpdate();
+            currentIdleDirection = currentStatus;
+        }
+
+        // Điều kiện để có moving Effect
+        if (speed_x >= movingEffectSpeed) {
+            movingEffect = true;
+        }
+    }
+
     /** input reader */
     private void interaction() {
         // read input form keyboard
@@ -109,51 +145,61 @@ public class Bomber extends Mobile {
                 switch (keyEvent.getCode()) {
                     case UP -> {
                         currentStatus = Bomber.UP;
-                        dir_x = 0;
-                        dir_y = -1;
-
+                        moving = true;
                     }
                     case DOWN -> {
                         currentStatus = Bomber.DOWN;
-                        dir_x = 0;
-                        dir_y = 1;
+                        moving = true;
                     }
                     case LEFT -> {
                         currentStatus = Bomber.LEFT;
-                        dir_x = -1;
-                        dir_y = 0;
+                        moving = true;
                     }
                     case RIGHT -> {
                         currentStatus = Bomber.RIGHT;
-                        dir_x = 1;
-                        dir_y = 0;
+                        moving = true;
                     }
                 }
-                speed_x += Math.abs(dir_x) * acceleration;
-                speed_y += Math.abs(dir_y) * acceleration;
 
-                // Đổi hướng trạng thái IDLE từ bước di chuyển trước
-                if (currentStatus >= Bomber.LEFT && currentStatus != currentIdleDirection) {
-                    statusAnims[Bomber.IDLE].staticUpdate();
-                    currentIdleDirection = currentStatus;
-                }
-
-                // Điều kiện để có moving Effect
-                if (speed_x >= movingEffectSpeed) {
-                    movingEffect = true;
-                }
+                moveSet.add(currentStatus);
+                setDir(currentStatus);
             }
         });
         // released
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                currentStatus = Bomber.IDLE;
+                switch (keyEvent.getCode()) {
+                    case UP -> {
+                        moveSet.remove(Bomber.UP);
+                    }
+                    case DOWN -> {
+                        moveSet.remove(Bomber.DOWN);
+                    }
+                    case LEFT -> {
+                        moveSet.remove(Bomber.LEFT);
+                    }
+                    case RIGHT -> {
+                        moveSet.remove(Bomber.RIGHT);
+                    }
+                }
+
+                // Chỉnh chuyển động là cái Phím Key Down gần nhất với cái phím vừa Key Up hiện tại
+                for (Integer x: moveSet) {
+                    setDir(x);
+                    currentStatus = x;
+                }
+
                 movingEffect = false;
-                dir_x = 0;
-                dir_y = 0;
-                speed_x = SPEED;
-                speed_y = SPEED;
+
+                if (moveSet.isEmpty()) {
+                    currentStatus = Bomber.IDLE;
+                    dirX = 0;
+                    dirY = 0;
+                    moving = false;
+                    speed_x = SPEED;
+                    speed_y = SPEED;
+                }
             }});
 
         //toggle bomb
@@ -220,12 +266,15 @@ public class Bomber extends Mobile {
 
     @Override
     public Image getImg() {
-        return statusAnims[currentStatus].getFxImage();
+        return statusAnims[currentStatus].getImage();
     }
 
     public void move(Gameplay gameplay) {
-        double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed_x * dir_x));
-        double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed_y * dir_y));
+        if (moving) moveUpdate();
+
+        double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed_x * dirX));
+        double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed_y * dirY));
+
         if(!checkCollision(ref_x,ref_y,0)) {
             x = ref_x;
             y = ref_y;
@@ -246,6 +295,7 @@ public class Bomber extends Mobile {
                 bomb.get(i).deadAct(gameplay);
             if(!bomb.get(i).isExisted()){
                 bomb.remove(i);
+                i--;
             }
         }
     }

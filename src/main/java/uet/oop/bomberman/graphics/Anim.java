@@ -11,7 +11,6 @@ public class Anim {
     protected final int numberFrames;
     protected int currentFrame;
     SpriteSheet sheet;
-    Sprite[] components;
     protected double angle;
     /**
      * Thời gian khung hình chạy trong 60FPS
@@ -36,9 +35,7 @@ public class Anim {
         this.sheet = sheet;
         this.frameTime = frameTime;
         this.countTime = 0;
-        this.components = new Sprite[numberFrames];
         this.startLoopFrame = 0;
-        this.load();
     }
 
     public Anim(SpriteSheet sheet, int frameTime, double angle) {
@@ -47,23 +44,13 @@ public class Anim {
         this.sheet = sheet;
         this.frameTime = frameTime;
         this.countTime = 0;
-        this.components = new Sprite[numberFrames];
         this.startLoopFrame = 0;
         this.angle = angle;
-        this.load();
-    }
-    private void load() {
-        for (int i = 0; i < numberFrames; i++) {
-            int w = sheet.getW() / sheet.getSpriteNumber();
-            int h = sheet.getH();
-
-            components[i] = new Sprite(sheet, i * w, 0, w, h);
-        }
     }
 
     /** Hàm chỉnh tỉ lệ, thực chất là phóng to ảnh x2, x3 vì scale là số nguyên */
     public void setScaleFactor(int scale) {
-        for (Sprite x: components) {
+        for (Sprite x: this.sheet.getComponents()) {
             x.setScaleFactor(scale);
         }
     }
@@ -101,9 +88,9 @@ public class Anim {
     }
 
     /** Trả về kiểu dữ liệu ảnh của khung hình hiện tại. */
-    public Image getFxImage() {
+    public Image getImage() {
 //        return this.components[currentFrame].getSheetFxImage();
-        return this.components[currentFrame].getFxImage();
+        return this.sheet.getComponents()[currentFrame].getImg();
     }
 
 

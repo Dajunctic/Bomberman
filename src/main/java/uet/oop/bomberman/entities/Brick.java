@@ -4,7 +4,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
-import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 
 import static uet.oop.bomberman.game.Gameplay.tile_map;
@@ -14,16 +13,16 @@ public class Brick extends  Entity{
     protected DeadAnim brick = new DeadAnim(SpriteSheet.brick,15,1);
     protected Image passive;
     protected boolean isDead = false;
-    private int tilex,tiley;
+    private int tileX, tileY;
     public Brick(double xPixel, double yPixel) {
         super(xPixel, yPixel);
     }
 
     public Brick(double xUnit, double yUnit, Image img) {
         super(xUnit, yUnit, img);
-        tilex = (int) xUnit;
-        tiley = (int) yUnit;
-        passive = brick.getFxImage();
+        tileX = (int) xUnit;
+        tileY = (int) yUnit;
+        passive = brick.getImage();
 
     }
 
@@ -44,7 +43,7 @@ public class Brick extends  Entity{
 
             //death trigger
             if(!exists() && brick != null){
-                gc.drawImage(brick.getFxImage(), x - gameplay.translate_x, y - gameplay.translate_y);
+                gc.drawImage(brick.getImage(), x - gameplay.translate_x, y - gameplay.translate_y);
                 brick.update();
             }
 
@@ -56,12 +55,12 @@ public class Brick extends  Entity{
     }
     @Override
     public Image getImg() {
-        return brick.getFxImage();
+        return brick.getImage();
     }
 
     @Override
     public void deadAct(Gameplay gameplay) {
         brick = null;
-        tile_map[tiley][tilex] = '0';
+        tile_map[tileY][tileX] = '0';
     }
 }

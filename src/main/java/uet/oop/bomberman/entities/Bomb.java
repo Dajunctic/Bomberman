@@ -1,6 +1,5 @@
 package uet.oop.bomberman.entities;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
@@ -40,9 +39,9 @@ public class Bomb extends Entity{
     @Override
     public Image getImg() {
         if (bomb.isDead()) {
-            return explosion.getFxImage();
+            return explosion.getImage();
         } else {
-            return bomb.getFxImage();
+            return bomb.getImage();
         }
     }
 
@@ -60,5 +59,19 @@ public class Bomb extends Entity{
         gameplay.generate(new Flame(x, y, 2 * Sprite.SCALED_SIZE, 0,-1));
         gameplay.generate(new Flame(x, y, 2 * Sprite.SCALED_SIZE, -1,0));
 
+    }
+
+    @Override
+    public double getWidth() {
+        if (bomb.isDead())
+            return explosion.getImage().getWidth();
+        return bomb.getImage().getWidth();
+    }
+
+    @Override
+    public double getHeight() {
+        if (bomb.isDead())
+            return explosion.getImage().getHeight();
+        return bomb.getImage().getHeight();
     }
 }

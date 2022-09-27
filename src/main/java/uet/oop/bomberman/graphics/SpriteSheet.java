@@ -22,6 +22,7 @@ public class SpriteSheet {
 	private int h;
 	public int[] pixels;
 	public BufferedImage image;
+	public Sprite[] components;
 
 
 	/** Animation Game */
@@ -42,6 +43,7 @@ public class SpriteSheet {
 	public SpriteSheet(String path, int spriteNumber) {
 		this.path = path;
 		this.spriteNumber = spriteNumber;
+		this.components = new Sprite[spriteNumber];
 		this.load();
 	}
 
@@ -72,10 +74,23 @@ public class SpriteSheet {
 			h = image.getHeight();
 			this.pixels = new int[w * h];
 			image.getRGB(0, 0, w, h, this.pixels, 0, w);
+
+			for (int i = 0; i < spriteNumber; i++) {
+				int w = this.getW() / this.getSpriteNumber();
+				int h = this.getH();
+
+				components[i] = new Sprite(this, i * w, 0, w, h);
+			}
+
 		} catch (IOException e) {
+			System.out.println("Can't load SpriteSheet: " + this.path);
 			e.printStackTrace();
 			System.exit(0);
 		}
+	}
+
+	public Sprite[] getComponents() {
+		return components;
 	}
 
 	/** Hàm dùng để debug xem pixel load lên đúng chưa.
