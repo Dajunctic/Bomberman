@@ -35,6 +35,15 @@ public class Sprite {
 	SpriteSheet sheet;
 	private Image img;
 
+
+	public static Sprite grass1 = new Sprite("/sprites/Bg/grass1.png", Sprite.TILE);
+	//	funtion sprite
+	public static Sprite speed = new Sprite("/sprites/Interactives/Buffs/powerup_speed.png", Sprite.TILE);
+	public static Sprite buff_immortal = new Sprite("/sprites/Interactives/Buffs/powerup_bombpass.png", Sprite.TILE);
+	public static Sprite buff_bomber = new Sprite("/sprites/Interactives/Buffs/powerup_bombs.png", Sprite.TILE);
+
+
+
 	/**
 	 * |--------------------------------------------------------------------------
 	 * | Board tiles
