@@ -91,6 +91,18 @@ public class Gameplay {
                         background[i][j] = new Wall(j, i, Sprite.wall.getFxImage());
                         break;
                     }
+                    case '3': {
+                        background[i][j] = new Functional(j, i, Sprite.speed.getFxImage());
+                        break;
+                    }
+                    case '4': {
+                        background[i][j] = new Functional(j, i, Sprite.buff_bomber.getFxImage());
+                        break;
+                    }
+                    case '5': {
+                        background[i][j] = new Functional(j, i, Sprite.buff_immortal.getFxImage());
+                        break;
+                    }
 
                 }
                 //    System.out.print(i + " " + j + " " + background[i][j].getClass() + " ");
