@@ -115,4 +115,8 @@ public abstract class Entity {
     public void setMode(int mode) {
         this.mode = mode;
     }
+
+    public void kill(){
+
+    }
 }

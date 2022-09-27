@@ -132,6 +132,10 @@ public class Gameplay {
         entities.forEach(g -> g.render(gc, this));
     }
 
+    //destroy tiles
+    public void terminate(int x,int y) {
+        background[y][x].kill();
+    }
     public void generate(Entity obj) {
         entities.add(obj);
     }

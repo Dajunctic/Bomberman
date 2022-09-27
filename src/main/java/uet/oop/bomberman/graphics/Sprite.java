@@ -41,7 +41,6 @@ public class Sprite {
 	 * */
 	public static Sprite wall = new Sprite("/sprites/Obstacles/Wall/wall.png", Sprite.TILE);
 	public static Sprite stone = new Sprite("/sprites/Obstacles/Wall/stone.png", Sprite.TILE);
-	public static Sprite brick = new Sprite("/sprites/Obstacles/Brick/brick.png", Sprite.TILE);
 	public static Sprite floor = new Sprite("/sprites/Bg/floor.png", Sprite.TILE);
 	public static Sprite grass = new Sprite("/sprites/Bg/grass.png", Sprite.TILE);
 	public static Sprite portal = new Sprite("/sprites/Interactives/Functional/portal.png", Sprite.TILE);

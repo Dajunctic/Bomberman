@@ -23,7 +23,10 @@ public class SpriteSheet {
 	public int[] pixels;
 	public BufferedImage image;
 
+
 	/** Animation Game */
+
+	//bomb
 	public static SpriteSheet bomb = new SpriteSheet("/sprites/Player/Bomb/bomb.png", 3);
 	public static SpriteSheet explosion = new SpriteSheet("/sprites/Player/Bomb/explosion.png", 6);
 
@@ -32,6 +35,9 @@ public class SpriteSheet {
 	public static SpriteSheet flame_left = new SpriteSheet("/sprites/Player/Flame/flame_left.png", 6);
 	public static SpriteSheet flame_down = new SpriteSheet("/sprites/Player/Flame/flame_down.png", 6);
 	public static SpriteSheet flame_up = new SpriteSheet("/sprites/Player/Flame/flame_up.png", 6);
+
+	//brick
+	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/brick.png", 7);
 
 	public SpriteSheet(String path, int spriteNumber) {
 		this.path = path;
