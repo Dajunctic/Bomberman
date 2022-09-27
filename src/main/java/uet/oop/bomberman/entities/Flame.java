@@ -16,7 +16,7 @@ import static uet.oop.bomberman.game.Gameplay.*;
 public class Flame extends Mobile{
     DeadAnim flame;
     double length;
-    protected double duration = 0.5;
+    protected double duration = 2;
     protected double dir_x;
     protected double dir_y;
 
@@ -130,6 +130,7 @@ public class Flame extends Mobile{
                         return true;
                     }
                 }
+
             }
         }
 
