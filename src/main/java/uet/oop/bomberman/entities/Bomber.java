@@ -310,7 +310,7 @@ public class Bomber extends Mobile {
 
         //interior changes
         update();
-    }
+   }
 
     /** Hàm render animation nên overload hàm render của Entity. */
     @Override
