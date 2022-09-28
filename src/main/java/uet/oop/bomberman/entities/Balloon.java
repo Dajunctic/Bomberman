@@ -20,7 +20,7 @@ public class Balloon extends Enemy{
     @Override
     public void deadAct(Gameplay gameplay){
         killTask.add(recent_tile);
-        entities.add(new Bomb(x / Sprite.SCALED_SIZE,y / Sprite.SCALED_SIZE,0));
+        entities.add(new Bomb( x / Sprite.SCALED_SIZE, y / Sprite.SCALED_SIZE,0));
     }
 
     @Override

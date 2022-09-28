@@ -154,6 +154,9 @@ public class Gameplay {
         for(int i = low_y; i <= Math.min(height - 1,low_y + BombermanGame.HEIGHT); i ++) {
             for (int j = low_x; j <= Math.min(width - 1,low_x + BombermanGame.WIDTH); j++){
                     background[i][j].render(gc, this);
+                    String temp = new String("");
+                    temp += tile_map[i][j];
+                    gc.fillText(temp,j * Sprite.SCALED_SIZE - translate_x, i * Sprite.SCALED_SIZE - translate_y);
             }
         }
         //entities

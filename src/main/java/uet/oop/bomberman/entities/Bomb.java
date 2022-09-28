@@ -16,8 +16,6 @@ public class Bomb extends Entity{
     public DeadAnim bomb = new DeadAnim(SpriteSheet.bomb, 15, 2.5);
     boolean exploded = false;
 
-    public static int length_boom=2;
-
     //tí sửa sau :))) 
     public void relocate() {
 
@@ -63,10 +61,10 @@ public class Bomb extends Entity{
     public void deadAct(Gameplay gameplay) {
         if(exploded) return;
         exploded = true;
-        gameplay.generate(new Flame(x, y, length_boom * Sprite.SCALED_SIZE, 1,0));
-        gameplay.generate(new Flame(x, y, length_boom * Sprite.SCALED_SIZE, 0,1));
-        gameplay.generate(new Flame(x, y, length_boom * Sprite.SCALED_SIZE, 0,-1));
-        gameplay.generate(new Flame(x, y, length_boom * Sprite.SCALED_SIZE, -1,0));
+        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, 1,0));
+        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, 0,1));
+        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, 0,-1));
+        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, -1,0));
 
     }
 

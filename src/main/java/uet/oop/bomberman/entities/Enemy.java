@@ -39,7 +39,7 @@ public class Enemy extends Mobile{
     protected boolean isDead = false;
     public Enemy(double xPixel, double yPixel) {
         super(xPixel, yPixel);
-        recent_tile = new Point((int) xPixel, (int) yPixel);
+        recent_tile = new Point((int) xPixel / Sprite.SCALED_SIZE, (int) yPixel / Sprite.SCALED_SIZE);
     }
 
     public Enemy(double xUnit, double yUnit, Image img) {
@@ -92,7 +92,9 @@ public class Enemy extends Mobile{
             y = ref_y;
 
             //capturing the tile, kills player
-            if(tile_map[(int) Math.floor(getCenterX() / Sprite.SCALED_SIZE)][(int) Math.floor(getCenterY() / Sprite.SCALED_SIZE)] != '*'){
+            if(tile_map[(int) Math.floor(getCenterX() / Sprite.SCALED_SIZE)][(int) Math.floor(getCenterY() / Sprite.SCALED_SIZE)] == '0'&&
+                tile_map[recent_tile.getX()][recent_tile.getY()] == '*'){
+
                 tile_map[(int) Math.floor(x / Sprite.SCALED_SIZE)][(int) Math.floor(y / Sprite.SCALED_SIZE)] = '*';
                 killTask.add(recent_tile);
                 recent_tile.setX((int) Math.floor(x / Sprite.SCALED_SIZE));
