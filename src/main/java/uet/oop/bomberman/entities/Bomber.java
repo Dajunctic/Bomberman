@@ -1,5 +1,8 @@
 package uet.oop.bomberman.entities;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
@@ -19,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static uet.oop.bomberman.entities.Bomb.length_boom;
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 
@@ -46,11 +50,11 @@ public class Bomber extends Mobile {
     /**
      * speed projector, properties
      */
-    final private double SPEED = 2;
+    private double SPEED = 2;
     private double speed_x;
     private double speed_y;
     // gia tốc
-    double acceleration = 0.15;
+    double acceleration = 0.1;
     double brakeAcceleration = -2; // gia tốc phanh
     /**
      * Direction
@@ -453,16 +457,40 @@ public class Bomber extends Mobile {
                         return true;
                     }
                 }
+                //speed
                 if (Gameplay.tile_map[j][i] ==  '3') {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         killTask.add(new Point(i,j));
-                        System.out.println("speed");
+                        this.SPEED=6;
+                        TimerTask timerTask = new TimerTask() {
+                            @Override
+                            public void run() {
+                                SPEED=2;
+                            }
+                        };
+                        long delay = 10000L;
+                        Timer timer = new Timer("Timer");
+                        timer.schedule(timerTask, delay);
+
                         return true;
                     }
                 }
+                //buff boom
                 if (Gameplay.tile_map[j][i] == '4') {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
+                        length_boom=5;
                         killTask.add(new Point(i,j));
+
+                        TimerTask timerTask = new TimerTask() {
+                            @Override
+                            public void run() {
+                                length_boom=2;
+                            }
+                        };
+                        long delay = 10000L;
+                        Timer timer = new Timer("Timer");
+                        timer.schedule(timerTask, delay);
+                        System.out.println("buff boom");
                         return true;
                     }
                 }
