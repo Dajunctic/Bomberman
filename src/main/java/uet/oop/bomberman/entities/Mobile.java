@@ -78,4 +78,6 @@ public class Mobile extends Entity{
             y = ref_y;
         }
     }
+
+
 }

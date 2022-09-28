@@ -43,6 +43,10 @@ public class SpriteSheet {
 	//brick
 	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/brick.png", 6);
 
+	//enemy
+	//balloon
+	public static SpriteSheet balloon = new SpriteSheet("/sprites/Enemy/Balloon/balloon.png", 5);
+	public static SpriteSheet balloon_die = new SpriteSheet("/sprites/Enemy/Balloon/dead.png", 6);
 	public SpriteSheet(String path, int spriteNumber) {
 		this.path = path;
 		this.spriteNumber = spriteNumber;

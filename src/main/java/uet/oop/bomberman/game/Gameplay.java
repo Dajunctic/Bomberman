@@ -7,6 +7,7 @@ import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** object handler */
@@ -19,12 +20,12 @@ public class Gameplay {
     //terminate
     public static List<Point> killTask = new ArrayList<>();
     protected Bomber player;
+    protected List<Enemy> enemies = new ArrayList<>();
     Entity[][] background;
     public static String[] map;
 
     public static char[][] tile_map;
-
-
+    public static boolean[][] checker;
     public  double translate_x = 0;
     public  double translate_y = 0;
 
@@ -47,6 +48,7 @@ public class Gameplay {
             System.out.println(width + " " + height);
             map = new String[height];
             tile_map = new char[height][width];
+            checker = new boolean[height][width];
             //init
             for(int i = 0;i < height; i++ )
                 map[i] = new String(sourceMap.readLine());
@@ -59,6 +61,10 @@ public class Gameplay {
                        player = new Bomber(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE,Integer.parseInt(info[2]) * Sprite.SCALED_SIZE,"/sprites/Player/Model");
                         break;
                     }
+                    case "balloon": {
+                        System.out.println("Enemy in:"  + info[1] + " " + info[2]);
+                        enemies.add( new Balloon(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE, Integer.parseInt(info[2]) * Sprite.SCALED_SIZE));
+                    }
                 }
 
         } finally {
@@ -67,9 +73,7 @@ public class Gameplay {
         }
         createMap();
 
-        Bomb test = new Bomb(10 * 48, 10 * 48);
-        test.setMode(Entity.CENTER_MODE);
-        entities.add(test);
+        enemies.add(new Balloon(100,200));
     }
 
     /** init background */
@@ -130,6 +134,15 @@ public class Gameplay {
                 i --;
             }
         }
+        //enemies
+        for(int i = 0; i < enemies.size(); i++){
+            enemies.get(i).update(player);
+            if(!enemies.get(i).isExisted()) {
+                enemies.get(i).deadAct(this);
+                enemies.remove(i);
+                i--;
+            }
+        }
         kill();
     }
     /** render objects */
@@ -148,6 +161,8 @@ public class Gameplay {
 
         //player
         player.render(gc, this);
+        enemies.forEach(g -> g.render(gc, this));
+
     }
 
 
@@ -155,7 +170,13 @@ public class Gameplay {
     public void kill() {
         while(!killTask.isEmpty())
         {
+
             Point ref = killTask.get(0);
+            //handle
+            if(tile_map[ref.getX()][ref.getY()] == '*') {
+                tile_map[ref.getX()][ref.getY()] = '0';
+                return;
+            }
             background[ref.getY()][ref.getX()].kill();
             killTask.remove(0);
         }

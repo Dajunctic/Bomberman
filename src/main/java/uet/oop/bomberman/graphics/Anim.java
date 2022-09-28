@@ -48,6 +48,10 @@ public class Anim {
         this.angle = angle;
     }
 
+    // v: lấy thời gian
+    public int getTime() {
+        return countTime;
+    }
     /** Hàm chỉnh tỉ lệ, thực chất là phóng to ảnh x2, x3 vì scale là số nguyên */
     public void setScaleFactor(int scale) {
         for (Sprite x: this.sheet.getComponents()) {
@@ -92,7 +96,6 @@ public class Anim {
 //        return this.components[currentFrame].getSheetFxImage();
         return this.sheet.getComponents()[currentFrame].getImg();
     }
-
 
     private void setCurrentFrame() {
         this.currentFrame = 0;

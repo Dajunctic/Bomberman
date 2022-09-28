@@ -45,6 +45,12 @@ public class DeadAnim extends Anim{
         }
     }
 
+    public void reset() {
+         currentLoop = 0;
+         currentFrame = 0;
+         countTime = 0;
+         dead = false;
+    }
     public boolean isDead() {
         return dead;
     }
