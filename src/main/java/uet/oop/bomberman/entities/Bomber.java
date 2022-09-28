@@ -1,5 +1,8 @@
 package uet.oop.bomberman.entities;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
@@ -19,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static uet.oop.bomberman.entities.Bomb.length_boom;
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 
@@ -46,11 +50,11 @@ public class Bomber extends Mobile {
     /**
      * speed projector, properties
      */
-    final private double SPEED = 2;
+    private double SPEED = 2;
     private double speed_x;
     private double speed_y;
     // gia tốc
-    double acceleration = 0.15;
+    double acceleration = 0.1;
     double brakeAcceleration = -2; // gia tốc phanh
     /**
      * Direction
@@ -418,6 +422,89 @@ public class Bomber extends Mobile {
 
         return;
     }
+    @Override
+    public boolean checkCollision(double ref_x, double ref_y, int margin) {
+        // có đấy bạn ạ
+        if(ref_x < 0 || ref_y < 0
+                || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
+                || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return true;
 
+        Rectangle rect;
+        if(mode == CENTER_MODE)
+            rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
+        else
+            rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
 
+        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
+
+        // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
+        int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE));
+        int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE));
+        int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
+        int tileEndY = (int) Math.ceil((rect.getY() + rect.getHeight()) / Sprite.SCALED_SIZE);
+        tileEndX = Math.min(tileEndX, Gameplay.width - 1);
+        tileEndY = Math.min(tileEndY, Gameplay.height - 1);
+        for (int i = tileStartX; i <= tileEndX; i++) {
+            for (int j = tileStartY; j <= tileEndY; j++) {
+
+                int tileX = i * Sprite.SCALED_SIZE;
+                int tileY = j * Sprite.SCALED_SIZE;
+
+                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
+
+                if (Gameplay.tile_map[j][i] > '0'&&Gameplay.tile_map[j][i] < '3') {
+                    if (Physics.collisionRectToRect(rect, tileRect)) {
+                        return true;
+                    }
+                }
+                //speed
+                if (Gameplay.tile_map[j][i] ==  '3') {
+                    if (Physics.collisionRectToRect(rect, tileRect)) {
+                        killTask.add(new Point(i,j));
+                        this.SPEED=6;
+                        TimerTask timerTask = new TimerTask() {
+                            @Override
+                            public void run() {
+                                SPEED=2;
+                            }
+                        };
+                        long delay = 10000L;
+                        Timer timer = new Timer("Timer");
+                        timer.schedule(timerTask, delay);
+
+                        return true;
+                    }
+                }
+                //buff boom
+                if (Gameplay.tile_map[j][i] == '4') {
+                    if (Physics.collisionRectToRect(rect, tileRect)) {
+                        length_boom=5;
+                        killTask.add(new Point(i,j));
+
+                        TimerTask timerTask = new TimerTask() {
+                            @Override
+                            public void run() {
+                                length_boom=2;
+                            }
+                        };
+                        long delay = 10000L;
+                        Timer timer = new Timer("Timer");
+                        timer.schedule(timerTask, delay);
+                        System.out.println("buff boom");
+                        return true;
+                    }
+                }
+                if (Gameplay.tile_map[j][i] == '5') {
+                    if (Physics.collisionRectToRect(rect, tileRect)) {
+
+                        killTask.add(new Point(i,j));
+                        return true;
+                    }
+                }
+
+            }
+        }
+
+        return false;
+    }
 }
