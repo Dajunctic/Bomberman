@@ -6,6 +6,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Lưu trữ thông tin các pixel của 1 sprite (hình ảnh game).
@@ -16,7 +18,6 @@ public class Sprite {
 	public static final String TILE = "Tile";
 	public static final String NORMAL = "Normal";
 	public static final String ANIM = "Animation";
-
 	/** Cài đặt mặc định kích cỡ ảnh (Dành cho Tile) */
 	public static final int SCALED_SIZE = 48;
     private static final int TRANSPARENT_COLOR = 0xffff00ff;
@@ -35,27 +36,22 @@ public class Sprite {
 	SpriteSheet sheet;
 	private Image img;
 
-
-	public static Sprite grass1 = new Sprite("/sprites/Bg/grass1.png", Sprite.TILE);
-	//	funtion sprite
-	public static Sprite speed = new Sprite("/sprites/Interactives/Buffs/powerup_speed.png", Sprite.TILE);
-	public static Sprite buff_immortal = new Sprite("/sprites/Interactives/Buffs/powerup_bombpass.png", Sprite.TILE);
-	public static Sprite buff_bomber = new Sprite("/sprites/Interactives/Buffs/powerup_bombs.png", Sprite.TILE);
-
-
+	//Tiles path
+	private static String floor_path = "/sprites/Bg/Floor/";
+	private static String wall_path = "/sprites/Obstacles/Wall/";
+	private static String destroyed_path = "/sprites/Bg/Destroyed_floor/";
 
 	/**
 	 * |--------------------------------------------------------------------------
 	 * | Board tiles
 	 * |--------------------------------------------------------------------------
 	 * */
-	public static Sprite wall = new Sprite("/sprites/Obstacles/Wall/wall.png", Sprite.TILE);
-	public static Sprite stone = new Sprite("/sprites/Obstacles/Wall/stone.png", Sprite.TILE);
-	public static Sprite floor = new Sprite("/sprites/Bg/floor.png", Sprite.TILE);
-	public static Sprite grass = new Sprite("/sprites/Bg/grass.png", Sprite.TILE);
 	public static Sprite portal = new Sprite("/sprites/Interactives/Functional/portal.png", Sprite.TILE);
 
-	public static Sprite lava_floor = new Sprite("/sprites/Bg/lava_floor.png", Sprite.TILE);
+	//list of properties
+	public static List<Sprite> floors = new ArrayList<>();
+	public static List<Sprite> walls = new ArrayList<>();
+	public static List<Sprite> destroyed = new ArrayList<>();
 	/**
 	 * |--------------------------------------------------------------------------
 	 * | Effect tiles
@@ -224,5 +220,27 @@ public class Sprite {
 		}
 
 		return resample(input, this.scaleFactor);
+	}
+
+	/** load tiles */
+	public static void load_tiles(int floor_styles, int wall_styles) {
+		for(int i = 0;i < floor_styles;i ++) {
+			char index = (char) (i + '0');
+			String path = floor_path + index + ".png";
+			floors.add(new Sprite(path, Sprite.TILE));
+		}
+
+		for(int i = 0;i < wall_styles;i ++) {
+			char index = (char) (i + '0');
+			String path = wall_path + index + ".png";
+			walls.add(new Sprite(path, Sprite.TILE));
+		}
+
+		for(int i = 0; i < floor_styles; i++) {
+			char index = (char) (i + '0');
+			String path = destroyed_path + index + ".png";
+			destroyed.add(new Sprite(path, Sprite.TILE));
+		}
+		System.out.println(String.format("Load success, %d floor styles, %d destroyed tiles and %d wall styles", floors.size(), destroyed.size(),walls.size()));
 	}
 }

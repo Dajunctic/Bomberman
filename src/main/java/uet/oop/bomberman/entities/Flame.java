@@ -33,7 +33,6 @@ public class Flame extends Mobile{
         this.length = length;
         dir_x =  dirX;
         dir_y =  dirY;
-
         // Animation
             if(dir_x > 0.5) {
                 flame = new DeadAnim(SpriteSheet.flame_right, 5, 0.5);
@@ -112,22 +111,21 @@ public class Flame extends Mobile{
 
                 Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                if (Gameplay.tile_map[j][i] == '2') {
+                if (Gameplay.tile_map[j][i] == 2) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         return true;
                     }
                 }
-                else if(Gameplay.tile_map[j][i] == '1') {
+                else if(Gameplay.tile_map[j][i] == 1) {
                     //Do something
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         killTask.add(new Point(i,j));
                         return true;
                     }
                 }
-                else if(Gameplay.tile_map[j][i] == '0') {
+                else if(Gameplay.tile_map[j][i] == 0) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
-                        entities.add(new Fire(i,j,duration));
-                        return true;
+                            entities.add(new Fire(i,j,Math.max(0.5, duration)));
                     }
                 }
 

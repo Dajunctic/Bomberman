@@ -5,6 +5,7 @@ import uet.oop.bomberman.Generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
 
+import javax.swing.plaf.synth.SynthRadioButtonMenuItemUI;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,11 +25,13 @@ public class Gameplay {
     Entity[][] background;
     public static String[] map;
 
-    public static char[][] tile_map;
+    public static int[][] tile_map;
     public static boolean[][] checker;
     public  double translate_x = 0;
     public  double translate_y = 0;
 
+    //differentiates tiles
+    public static int divisors = 10;
     public Gameplay() {
 
     }
@@ -47,72 +50,69 @@ public class Gameplay {
             height = Integer.parseInt(op[1]);
             System.out.println(width + " " + height);
             map = new String[height];
-            tile_map = new char[height][width];
+            tile_map = new int[height][width];
             checker = new boolean[height][width];
-            //init
-            for(int i = 0;i < height; i++ )
-                map[i] = new String(sourceMap.readLine());
-            String ref = new String(sourceMap.readLine());
 
+            for(int i = 0;i < height;i ++){
+                map[i] = sourceMap.readLine();
+            }
+            //read entities positions
+            String ref = sourceMap.readLine();
+            while(ref != null){
                 String[] info = ref.split(" ");
                 switch (info[0]) {
-                    case "player":{
-                        System.out.println("Bomber in:"  + info[1] + " " + info[2]);
-                       player = new Bomber(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE,Integer.parseInt(info[2]) * Sprite.SCALED_SIZE,"/sprites/Player/Model");
+                    case "player" -> {
+                        System.out.println("Bomber in:" + info[1] + " " + info[2]);
+                        player = new Bomber(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE, Integer.parseInt(info[2]) * Sprite.SCALED_SIZE, "/sprites/Player/Model");
                         break;
                     }
-                    case "balloon": {
-                        System.out.println("Enemy in:"  + info[1] + " " + info[2]);
-                        enemies.add( new Balloon(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE, Integer.parseInt(info[2]) * Sprite.SCALED_SIZE));
+                    case "balloon" -> {
+                        System.out.println("Enemy in:" + info[1] + " " + info[2]);
+                        enemies.add(new Balloon(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE, Integer.parseInt(info[2]) * Sprite.SCALED_SIZE));
                     }
                 }
+                ref = sourceMap.readLine();
+            }
+
 
         } finally {
             if(sourceMap != null)
                 sourceMap.close();
         }
+
+        //init map
         createMap();
 
         enemies.add(new Balloon(100,200));
     }
 
     /** init background */
-    private void createMap() {
+    private void createMap() throws IOException {
         background = new Entity[height][width];
         for(int i = 0; i < height; i++) {
+            String[] components = map[i].split(" ");
             for (int j = 0; j < width; j++) {
-                switch (map[i].charAt(j)) {
-                    case '0': {
-                        background[i][j] = new Floor(j, i, Sprite.floor.getFxImage());
+                int ref = Integer.parseInt(components[j]);
+                switch (ref / divisors) {
+                    case 0: {
+                        background[i][j] = new Floor(j, i, Sprite.floors.get(ref % divisors).getFxImage(), ref % divisors);
+
                         break;
                     }
-                    case '1': {
-                        background[i][j] = new Brick(j, i, Sprite.floor.getFxImage());
-                        System.out.println("Brick at: " + i + " " + j);
+                    case 1: {
+                        background[i][j] = new Brick(j, i, Sprite.destroyed.get(ref % divisors).getFxImage(), ref % divisors);
                         break;
                     }
-                    case '2': {
-                        background[i][j] = new Wall(j, i, Sprite.wall.getFxImage());
-                        break;
-                    }
-                    case '3': {
-                        background[i][j] = new Functional(j, i, Sprite.speed.getFxImage());
-                        break;
-                    }
-                    case '4': {
-                        background[i][j] = new Functional(j, i, Sprite.buff_bomber.getFxImage());
-                        break;
-                    }
-                    case '5': {
-                        background[i][j] = new Functional(j, i, Sprite.buff_immortal.getFxImage());
+                    case 2: {
+                        background[i][j] = new Wall(j, i, Sprite.walls.get(ref % divisors).getFxImage(), ref % divisors);
                         break;
                     }
 
                 }
-                //    System.out.print(i + " " + j + " " + background[i][j].getClass() + " ");
-                tile_map[i][j] = map[i].charAt(j);
-            }
+                tile_map[i][j] = ref / divisors;
+                System.out.println(i + " " + j + " " + background[i][j].getClass() + " " + ref + " tiles type " + tile_map[i][j]);
 
+            }
         }
     }
 
@@ -156,7 +156,7 @@ public class Gameplay {
                     background[i][j].render(gc, this);
                     String temp = new String("");
                     temp += tile_map[i][j];
-                    gc.fillText(temp,j * Sprite.SCALED_SIZE - translate_x, i * Sprite.SCALED_SIZE - translate_y);
+                    gc.fillText(temp,j * Sprite.SCALED_SIZE - translate_x + 10 , i * Sprite.SCALED_SIZE - translate_y + 10);
             }
         }
         //entities
@@ -176,8 +176,8 @@ public class Gameplay {
 
             Point ref = killTask.get(0);
             //handle
-            if(tile_map[ref.getX()][ref.getY()] == '*') {
-                tile_map[ref.getX()][ref.getY()] = '0';
+            if(tile_map[ref.getX()][ref.getY()] < 0) {
+                tile_map[ref.getX()][ref.getY()] = 0;
                 return;
             }
             background[ref.getY()][ref.getX()].kill();

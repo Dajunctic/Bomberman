@@ -10,20 +10,29 @@ import static uet.oop.bomberman.game.Gameplay.tile_map;
 
 public class Brick extends  Entity{
 
-    protected DeadAnim brick = new DeadAnim(SpriteSheet.brick,4,1);
+    protected DeadAnim brick;
     protected Image passive;
+    protected int theme;
     protected boolean isDead = false;
     private int tileX, tileY;
     public Brick(double xPixel, double yPixel) {
         super(xPixel, yPixel);
     }
 
+    //blind caller
     public Brick(double xUnit, double yUnit, Image img) {
         super(xUnit, yUnit, img);
         tileX = (int) xUnit;
         tileY = (int) yUnit;
-        passive = brick.getImage();
+    }
 
+    public Brick(double xUnit, double yUnit, Image img, int theme) {
+        super(xUnit, yUnit, img);
+        tileX = (int) xUnit;
+        tileY = (int) yUnit;
+        this.theme = theme;
+        brick = new DeadAnim(SpriteSheet.bricks.get(theme), 10, 1);
+        passive = brick.getImage();
     }
 
     public void kill() {
@@ -67,6 +76,6 @@ public class Brick extends  Entity{
     public void deadAct() {
         if( brick == null) return ;
         brick = null;
-        tile_map[tileY][tileX] = '0';
+        tile_map[tileY][tileX] = 0;
     }
 }

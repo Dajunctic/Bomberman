@@ -9,15 +9,20 @@ import uet.oop.bomberman.graphics.Sprite;
  * VD: Floor, Effect
  */
 public class Floor extends Entity {
+    int theme;
     public Floor(double x, double y, Image img) {
         super(x, y, img);
+    }
+    public Floor(double x, double y, Image img, int theme) {
+        super(x,y,img);
+        this.theme = theme;
     }
     private boolean burned = false;
     @Override
     public void kill() {
         if(burned) return;
         burned = true;
-        img = Sprite.lava_floor.getFxImage();
+        img = Sprite.destroyed.get(theme).getFxImage();
     }
     @Override
     public void update() {

@@ -92,10 +92,10 @@ public class Enemy extends Mobile{
             y = ref_y;
 
             //capturing the tile, kills player
-            if(tile_map[(int) Math.floor(getCenterX() / Sprite.SCALED_SIZE)][(int) Math.floor(getCenterY() / Sprite.SCALED_SIZE)] == '0'&&
-                tile_map[recent_tile.getX()][recent_tile.getY()] == '*'){
+            if(tile_map[(int) Math.floor(getCenterX() / Sprite.SCALED_SIZE)][(int) Math.floor(getCenterY() / Sprite.SCALED_SIZE)] == 0 &&
+                tile_map[recent_tile.getX()][recent_tile.getY()] < 0){
 
-                tile_map[(int) Math.floor(x / Sprite.SCALED_SIZE)][(int) Math.floor(y / Sprite.SCALED_SIZE)] = '*';
+                tile_map[(int) Math.floor(x / Sprite.SCALED_SIZE)][(int) Math.floor(y / Sprite.SCALED_SIZE)] = -1;
                 killTask.add(recent_tile);
                 recent_tile.setX((int) Math.floor(x / Sprite.SCALED_SIZE));
                 recent_tile.setY((int) Math.floor(y / Sprite.SCALED_SIZE));
@@ -138,12 +138,12 @@ public class Enemy extends Mobile{
 
                 javafx.scene.shape.Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                if (tile_map[j][i] > '0') {
+                if (tile_map[j][i] > 0) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         return true;
                     }
                 }
-                else if (tile_map[j][i] == '!') {
+                else if (tile_map[j][i]  < 0) {
                     isDead = true;
                         return false;
                 }

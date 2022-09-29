@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tất cả sprite (hình ảnh game) được lưu trữ vào một ảnh duy nhất
@@ -41,8 +43,8 @@ public class SpriteSheet {
 	public static SpriteSheet ignite = new SpriteSheet("/sprites/Obstacles/Fire/ignite.png", 4);
 	public static SpriteSheet fire_fade = new SpriteSheet("/sprites/Obstacles/Fire/fade.png", 4);
 	//brick
-	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/brick.png", 6);
-
+	public static List<SpriteSheet> bricks = new ArrayList<>();
+	public static String brick_path = "/sprites/Obstacles/Brick/";
 	//enemy
 	//balloon
 	public static SpriteSheet balloon = new SpriteSheet("/sprites/Enemy/Balloon/balloon.png", 5);
@@ -115,5 +117,12 @@ public class SpriteSheet {
 		return new ImageView(wr).getImage();
 	}
 
-
+	public static void load_tiles(int brick_tiles) {
+		for(int i = 0; i < brick_tiles; i++) {
+			char index = (char) (i + '0');
+			String path = brick_path + index + ".png";
+			bricks.add( new SpriteSheet(path, 7));
+			System.out.println(String.format("Load success, %d brick styles", bricks.size()));
+		}
+	}
 }

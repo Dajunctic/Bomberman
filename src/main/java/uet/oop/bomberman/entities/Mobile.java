@@ -58,7 +58,7 @@ public class Mobile extends Entity{
 
                 Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                if (Gameplay.tile_map[j][i] > '0') {
+                if (Gameplay.tile_map[j][i] > 0) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         return true;
                     }

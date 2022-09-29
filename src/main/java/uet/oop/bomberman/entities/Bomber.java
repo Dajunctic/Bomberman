@@ -404,7 +404,7 @@ public class Bomber extends Mobile {
 
                 Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                if (Gameplay.tile_map[j][i] == '0') {
+                if (Gameplay.tile_map[j][i] == 0) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         bombs.add(new Bomb(i, j, timer));
                         return;

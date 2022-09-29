@@ -33,7 +33,7 @@ public class Fire extends Entity{
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
         burn = new DeadAnim(SpriteSheet.fire, 8, duration);
-        tile_map[(int) yUnit][(int) xUnit] = '!';
+        tile_map[(int) y / Sprite.SCALED_SIZE][(int) x / Sprite.SCALED_SIZE] = -2;
         kill();
         effect = new Glow(0.1);
     }
@@ -59,7 +59,7 @@ public class Fire extends Entity{
     }
     @Override
     public void deadAct(Gameplay gameplay) {
-        tile_map[tiley][tilex] = '0';
+        tile_map[tiley][tilex] = 0;
     }
 
     @Override
