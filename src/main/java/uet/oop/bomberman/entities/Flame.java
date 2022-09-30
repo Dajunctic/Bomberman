@@ -117,15 +117,15 @@ public class Flame extends Mobile{
                     }
                 }
                 else if(Gameplay.tile_map[j][i] == 1) {
-                    //Do something
-                    if (Physics.collisionRectToRect(rect, tileRect)) {
-                        killTask.add(new Point(i,j));
-                        return true;
-                    }
+//                    //Do something
+//                    if (Physics.collisionRectToRect(rect, tileRect)) {
+//                        killTask.add(new Point(i,j));
+//                        return true;
+//                    }
                 }
                 else if(Gameplay.tile_map[j][i] == 0) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
-                            entities.add(new Fire(i,j,Math.max(0.5, duration)));
+                        killTask.add(new Point(i,j));
                     }
                 }
 

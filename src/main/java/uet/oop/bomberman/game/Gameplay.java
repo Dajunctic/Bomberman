@@ -22,7 +22,7 @@ public class Gameplay {
     public static List<Point> killTask = new ArrayList<>();
     protected Bomber player;
     protected List<Enemy> enemies = new ArrayList<>();
-    Entity[][] background;
+    protected Entity[][] background;
     public static String[] map;
 
     public static int[][] tile_map;
@@ -176,11 +176,12 @@ public class Gameplay {
 
             Point ref = killTask.get(0);
             //handle
-            if(tile_map[ref.getX()][ref.getY()] < 0) {
-                tile_map[ref.getX()][ref.getY()] = 0;
+            if(tile_map[ref.getY()][ref.getX()] == 0) {
+                background[ref.getY()][ref.getX()] = new Brick(ref.getX(), ref.getY(), Sprite.destroyed.get(0).getFxImage(), 0);
+                tile_map[ref.getY()][ref.getX()] = 1;
                 return;
             }
-            background[ref.getY()][ref.getX()].kill();
+//            background[ref.getY()][ref.getX()].kill();
             killTask.remove(0);
         }
 
