@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.game.Gameplay;
@@ -20,11 +21,15 @@ public abstract class Entity {
     protected double y;
     protected boolean existed;
     protected Image img;
+    //them image view de xu ly chuot
+    public ImageView imageView;
+
     protected Effect effect;
     /** Các mode in tọa render hình ảnh */
     public static int NORMAL_MODE = 0;
     public static int CENTER_MODE = 1;
     protected int mode = NORMAL_MODE;
+
 
     /** Dành cho thực thể chuyển động theo tọa độ Pixel như Bomber, Enemy */
     public Entity(double xPixel, double yPixel) {
@@ -38,6 +43,7 @@ public abstract class Entity {
         this.x = xUnit * Sprite.SCALED_SIZE;
         this.y = yUnit * Sprite.SCALED_SIZE;
         this.img = img;
+        imageView=new ImageView(img);
         this.existed = true;
     }
 
@@ -60,6 +66,9 @@ public abstract class Entity {
         }
 
         gc.setEffect(null);
+    }
+    public void render(GraphicsContext gc,double x,double y){
+        gc.drawImage(this.getImg(),x,y,this.getWidth(),this.getHeight());
     }
 
     /** Hàm này coi x, y là tọa độ trung tâm **/
@@ -109,6 +118,7 @@ public abstract class Entity {
         return img;
     }
 
+
     void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
@@ -127,4 +137,10 @@ public abstract class Entity {
     public void kill(){
 
     }
+
+    //public ImageView getImageView(){
+    //        return imageView;
+    //}
+
+
 }

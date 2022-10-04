@@ -1,5 +1,6 @@
 package uet.oop.bomberman.graphics;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.*;
 
 import javax.imageio.ImageIO;
@@ -58,6 +59,33 @@ public class Sprite {
 	 * |--------------------------------------------------------------------------
 	 * */
 	public static Sprite superSayan = new Sprite("/sprites/Player/Effect/super_sayan.png", Sprite.NORMAL);
+
+
+	// KHOI TAO SPRITE MENU
+	public static Sprite menu = new Sprite("/sprites/menu/menubackground.png",Sprite.NORMAL);
+	// khoi tao cac nut cho menu co mau
+	public static Sprite play_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Play col_Button.png",Sprite.NORMAL);
+	public static Sprite setting_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Settings  col_Button.png",Sprite.NORMAL);
+	public static Sprite back_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Back  col_Button.png",Sprite.NORMAL);
+	public static Sprite quit_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Quit  col_Button.png",Sprite.NORMAL);
+	public static Sprite continue_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Continue  col_Button.png",Sprite.NORMAL);
+
+	//khoi tao cho cac nut menu khong co mau
+	public static Sprite play_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Play Button.png",Sprite.NORMAL);
+	public static Sprite back_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Back Button.png",Sprite.NORMAL);
+	public static Sprite quit_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Quit Button.png",Sprite.NORMAL);
+	public static Sprite continue_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Continue Button.png",Sprite.NORMAL);
+	public static Sprite setting_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Settings Button.png",Sprite.NORMAL);
+
+	//khoi tao cac sprite button trong game play
+	public static Sprite pause_button_black=new Sprite("/sprites/menu/Square Buttons/Square Buttons/Pause Square Button.png",Sprite.NORMAL);
+	public static Sprite play_button_black=new Sprite("/sprites/menu/Square Buttons/Square Buttons/Play Square Button.png",Sprite.NORMAL);
+	public static Sprite music_button_black=new Sprite("/sprites/menu/Square Buttons/Square Buttons/Music Square Button.png",Sprite.NORMAL);
+
+	public static Sprite pause_button_red=new Sprite("/sprites/menu/Square Buttons/Colored Square Buttons/Pause col_Square Button.png",Sprite.NORMAL);
+	public static Sprite play_button_red=new Sprite("/sprites/menu/Square Buttons/Colored Square Buttons/Play col_Square Button.png",Sprite.NORMAL);
+	public static Sprite music_button_red=new Sprite("/sprites/menu/Square Buttons/Colored Square Buttons/Music col_Square Button.png",Sprite.NORMAL);
+
 
 	/** Hàm khởi tạo dành cho Sprite tách ra từ SpriteSheet. */
 	public Sprite(SpriteSheet sheet, int cx, int cy, int cropW, int cropH) {

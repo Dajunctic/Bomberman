@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import uet.oop.bomberman.Generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.others.Menu;
 
 import javax.swing.plaf.synth.SynthRadioButtonMenuItemUI;
 import java.io.*;
@@ -11,8 +12,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
+
 /** object handler */
 public class Gameplay {
+
+    //khoi tao menu
+    public static Menu menuBackground= new Menu();
 
     public static int width;
     public static int height;
@@ -32,8 +38,10 @@ public class Gameplay {
 
     //differentiates tiles
     public static int divisors = 10;
-    public Gameplay() {
 
+    public static String state=String.valueOf(Menu.Menu_Switch.MENU);
+
+    public Gameplay() {
     }
 
     /** Load map from file */
@@ -124,26 +132,34 @@ public class Gameplay {
 
     /** update */
     public void update(){
-        player.update(this);
 
-        for(int i = 0; i < entities.size(); i++) {
-            entities.get(i).update();
-            if (!entities.get(i).isExisted()) {
-                entities.get(i).deadAct(this);
-                entities.remove(i);
-                i --;
+        switch (state) {
+            case"PLAY": {player.update(this);
+
+                        for(int i = 0; i < entities.size(); i++) {
+                            entities.get(i).update();
+                            if (!entities.get(i).isExisted()) {
+                                entities.get(i).deadAct(this);
+                                entities.remove(i);
+                                i --;
+                            }
+                        }
+                        //enemies
+                        for(int i = 0; i < enemies.size(); i++){
+                            enemies.get(i).update(player);
+                            if(!enemies.get(i).isExisted()) {
+                                enemies.get(i).deadAct(this);
+                                enemies.remove(i);
+                                i--;
+                            }
+                        }
+                        kill();
+
+                        menuBackground.renderPlay(BombermanGame.gc);
             }
+            default: menuBackground.update(this);
+
         }
-        //enemies
-        for(int i = 0; i < enemies.size(); i++){
-            enemies.get(i).update(player);
-            if(!enemies.get(i).isExisted()) {
-                enemies.get(i).deadAct(this);
-                enemies.remove(i);
-                i--;
-            }
-        }
-        kill();
     }
     /** render objects */
     public void render(GraphicsContext gc) {
