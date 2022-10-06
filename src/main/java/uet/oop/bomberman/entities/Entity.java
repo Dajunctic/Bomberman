@@ -41,12 +41,15 @@ public abstract class Entity {
         this.existed = true;
     }
 
+    /** Kiểm tra thực thể có nằm trong khoảng hiện trên màn hình không */
     public boolean onScreen(Gameplay gameplay) {
-        return  !(x < gameplay.translate_x - Sprite.SCALED_SIZE)
+        return  !(x < gameplay.translate_x - this.getWidth())
                 && !(x > gameplay.translate_x + BombermanGame.WIDTH * Sprite.SCALED_SIZE)
-                && !(y < gameplay.translate_y - Sprite.SCALED_SIZE)
+                && !(y < gameplay.translate_y - this.getHeight())
                 && !(y > gameplay.translate_y + BombermanGame.HEIGHT * Sprite.SCALED_SIZE);
     }
+
+    /** Hiển thị màn hình dựa theo map của gameplay */
     public void render(GraphicsContext gc, Gameplay gameplay) {
 
         gc.setEffect(effect);
@@ -60,6 +63,11 @@ public abstract class Entity {
         }
 
         gc.setEffect(null);
+    }
+
+    /** Hiển thị trên màn hình cố định **/
+    public void render(GraphicsContext gc) {
+        gc.drawImage(this.getImg(), x, y);
     }
 
     /** Hàm này coi x, y là tọa độ trung tâm **/

@@ -1,4 +1,4 @@
-package uet.oop.bomberman.Generals;
+package uet.oop.bomberman.generals;
 
 public class Vertex {
     private double x,y;

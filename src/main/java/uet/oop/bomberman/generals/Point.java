@@ -1,4 +1,4 @@
-package uet.oop.bomberman.Generals;
+package uet.oop.bomberman.generals;
 
 public class Point {
     protected int x,y;

@@ -2,9 +2,8 @@ package uet.oop.bomberman.entities;
 
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.VertexFormat;
-import uet.oop.bomberman.Generals.Point;
-import uet.oop.bomberman.Generals.Vertex;
+import uet.oop.bomberman.generals.Point;
+import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.DeadAnim;

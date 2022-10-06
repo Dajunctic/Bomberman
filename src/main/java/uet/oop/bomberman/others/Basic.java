@@ -1,4 +1,4 @@
-package uet.oop.bomberman.graphics;
+package uet.oop.bomberman.others;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -14,4 +14,23 @@ abstract public class Basic {
         gc.setFill(Color.GREEN);
         gc.setStroke(Color.BLUE);
     }
+
+    public static boolean contain(char[] arr, char x) {
+        for (char c : arr) {
+            if (x == c) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean contain(int[] arr, int x) {
+        for (int j : arr) {
+            if (x == j) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

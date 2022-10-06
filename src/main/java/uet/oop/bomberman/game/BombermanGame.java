@@ -14,7 +14,7 @@ import java.io.IOException;
 public class BombermanGame extends Application {
 
     /** 960 x 720 */
-    public static final int WIDTH = 20;
+    public static final int WIDTH = 24;
     public static final int HEIGHT = 14;
 
     private GraphicsContext gc;
@@ -52,7 +52,7 @@ public class BombermanGame extends Application {
         };
         timer.start();
         System.out.println(timer);
-        level.importing("src/main/resources/maps/sandbox_map.txt");
+        level.importing("src/main/resources/stages/Stage1.txt");
     }
 
     /** updating */

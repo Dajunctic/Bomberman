@@ -1,13 +1,15 @@
 package uet.oop.bomberman.game;
 
 import javafx.scene.canvas.GraphicsContext;
-import uet.oop.bomberman.Generals.Point;
+import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.maps.GameMap;
+import uet.oop.bomberman.maps.Stage1;
+import uet.oop.bomberman.maps.Minimap;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /** object handler */
@@ -28,6 +30,12 @@ public class Gameplay {
     public static boolean[][] checker;
     public  double translate_x = 0;
     public  double translate_y = 0;
+
+    /** Minimap cho màn chơi */
+    public Minimap minimap;
+    public GameMap gameMap;
+
+    public Stage1 stage1;
 
     public Gameplay() {
 
@@ -54,18 +62,18 @@ public class Gameplay {
                 map[i] = new String(sourceMap.readLine());
             String ref = new String(sourceMap.readLine());
 
-                String[] info = ref.split(" ");
-                switch (info[0]) {
-                    case "player":{
-                        System.out.println("Bomber in:"  + info[1] + " " + info[2]);
-                       player = new Bomber(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE,Integer.parseInt(info[2]) * Sprite.SCALED_SIZE,"/sprites/Player/Model");
-                        break;
-                    }
-                    case "balloon": {
-                        System.out.println("Enemy in:"  + info[1] + " " + info[2]);
-                        enemies.add( new Balloon(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE, Integer.parseInt(info[2]) * Sprite.SCALED_SIZE));
-                    }
+            String[] info = ref.split(" ");
+            switch (info[0]) {
+                case "player" -> {
+                    System.out.println("Bomber in:" + info[1] + " " + info[2]);
+                    player = new Bomber(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE, Integer.parseInt(info[2]) * Sprite.SCALED_SIZE, "/sprites/Player/Model");
+                    break;
                 }
+                case "balloon" -> {
+                    System.out.println("Enemy in:" + info[1] + " " + info[2]);
+                    enemies.add(new Balloon(Integer.parseInt(info[1]) * Sprite.SCALED_SIZE, Integer.parseInt(info[2]) * Sprite.SCALED_SIZE));
+                }
+            }
 
         } finally {
             if(sourceMap != null)
@@ -73,58 +81,35 @@ public class Gameplay {
         }
         createMap();
 
-        enemies.add(new Balloon(100,200));
+//        enemies.add(new Balloon(100,200));
     }
 
-    /** init background */
+    /** Tạo map hoàn chỉnh */
     private void createMap() {
         background = new Entity[height][width];
         for(int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                switch (map[i].charAt(j)) {
-                    case '0': {
-                        background[i][j] = new Floor(j, i, Sprite.floor.getFxImage());
-                        break;
-                    }
-                    case '1': {
-                        background[i][j] = new Brick(j, i, Sprite.floor.getFxImage());
-                        System.out.println("Brick at: " + i + " " + j);
-                        break;
-                    }
-                    case '2': {
-                        background[i][j] = new Wall(j, i, Sprite.wall.getFxImage());
-                        break;
-                    }
-                    case '3': {
-                        background[i][j] = new Functional(j, i, Sprite.speed.getFxImage());
-                        break;
-                    }
-                    case '4': {
-                        background[i][j] = new Functional(j, i, Sprite.buff_bomber.getFxImage());
-                        break;
-                    }
-                    case '5': {
-                        background[i][j] = new Functional(j, i, Sprite.buff_immortal.getFxImage());
-                        break;
-                    }
+                background[i][j] = GameMap.getTile(map[i].charAt(j), i, j);
 
-                }
-                //    System.out.print(i + " " + j + " " + background[i][j].getClass() + " ");
                 tile_map[i][j] = map[i].charAt(j);
             }
 
         }
+        minimap = new Minimap(900, 20);
+        gameMap = new GameMap();
+        stage1 = new Stage1();
     }
 
     //debug
     public static void main(String[] args) throws IOException {
         Gameplay test = new Gameplay();
-        test.importing("src/main/resources/maps/sandbox_map.txt");
+        test.importing("src/main/resources/stages/Stage1.txt");
     }
 
     /** update */
     public void update(){
         player.update(this);
+        minimap.update(player);
 
         for(int i = 0; i < entities.size(); i++) {
             entities.get(i).update();
@@ -156,7 +141,7 @@ public class Gameplay {
                     background[i][j].render(gc, this);
                     String temp = new String("");
                     temp += tile_map[i][j];
-                    gc.fillText(temp,j * Sprite.SCALED_SIZE - translate_x, i * Sprite.SCALED_SIZE - translate_y);
+//                    gc.fillText(temp,j * Sprite.SCALED_SIZE - translate_x, i * Sprite.SCALED_SIZE - translate_y);
             }
         }
         //entities
@@ -166,6 +151,8 @@ public class Gameplay {
         player.render(gc, this);
         enemies.forEach(g -> g.render(gc, this));
 
+        minimap.render(gc);
+        stage1.render(gc, this);
     }
 
 

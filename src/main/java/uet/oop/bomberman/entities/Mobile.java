@@ -4,6 +4,8 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.maps.GameMap;
+import uet.oop.bomberman.others.Basic;
 import uet.oop.bomberman.others.Physics;
 
 import static uet.oop.bomberman.game.Gameplay.*;
@@ -58,7 +60,8 @@ public class Mobile extends Entity{
 
                 Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                if (Gameplay.tile_map[j][i] > '0') {
+                // Kiểm tra tile ij có phải kiểu WALL không
+                if (GameMap.get(tile_map[j][i]) == GameMap.WALL) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         return true;
                     }

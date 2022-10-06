@@ -2,13 +2,13 @@ package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelBuffer;
 import javafx.scene.shape.Rectangle;
-import uet.oop.bomberman.Generals.Point;
+import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Physics;
 
 import static uet.oop.bomberman.game.Gameplay.*;
@@ -112,19 +112,20 @@ public class Flame extends Mobile{
 
                 Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                if (Gameplay.tile_map[j][i] == '2') {
+                // Kiểm tra tilemap[j][i] là loại gì O(1)
+                if (GameMap.get(tile_map[j][i]) == GameMap.WALL)  {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         return true;
                     }
                 }
-                else if(Gameplay.tile_map[j][i] == '1') {
+                else if(GameMap.get(tile_map[j][i]) == GameMap.BRICK) {
                     //Do something
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         killTask.add(new Point(i,j));
                         return true;
                     }
                 }
-                else if(Gameplay.tile_map[j][i] == '0') {
+                else if(GameMap.get(tile_map[j][i]) == GameMap.WALL) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         entities.add(new Fire(i,j,duration));
                         return true;

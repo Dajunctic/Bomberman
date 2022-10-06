@@ -35,23 +35,31 @@ public class Sprite {
 	SpriteSheet sheet;
 	private Image img;
 
-
 	public static Sprite grass1 = new Sprite("/sprites/Bg/grass1.png", Sprite.TILE);
-	//	funtion sprite
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Buff tiles
+	 * |--------------------------------------------------------------------------
+	 * */
 	public static Sprite speed = new Sprite("/sprites/Interactives/Buffs/powerup_speed.png", Sprite.TILE);
 	public static Sprite buff_immortal = new Sprite("/sprites/Interactives/Buffs/powerup_bombpass.png", Sprite.TILE);
 	public static Sprite buff_bomber = new Sprite("/sprites/Interactives/Buffs/powerup_bombs.png", Sprite.TILE);
-
-
 
 	/**
 	 * |--------------------------------------------------------------------------
 	 * | Board tiles
 	 * |--------------------------------------------------------------------------
 	 * */
-	public static Sprite wall = new Sprite("/sprites/Obstacles/Wall/wall.png", Sprite.TILE);
+	public static Sprite wall = new Sprite("/tilemaps/main/main_wall.png", Sprite.TILE);
+	public static Sprite wall2 = new Sprite("/tilemaps/main/main_wall2.png", Sprite.TILE);
 	public static Sprite stone = new Sprite("/sprites/Obstacles/Wall/stone.png", Sprite.TILE);
-	public static Sprite floor = new Sprite("/sprites/Bg/floor.png", Sprite.TILE);
+	public static Sprite black = new Sprite("/sprites/Bg/black.png", Sprite.TILE);
+	public static Sprite floor = new Sprite("/tilemaps/main/main_floor.png", Sprite.TILE);
+	public static Sprite floor2 = new Sprite("/tilemaps/main/main_floor2.png", Sprite.TILE);
+	public static Sprite floor3 = new Sprite("/tilemaps/main/main_floor3.png", Sprite.TILE);
+	public static Sprite floor4 = new Sprite("/tilemaps/main/main_floor4.png", Sprite.TILE);
+	public static Sprite space = new Sprite("/tilemaps/main/space.png", Sprite.TILE);
+
 	public static Sprite grass = new Sprite("/sprites/Bg/grass.png", Sprite.TILE);
 	public static Sprite portal = new Sprite("/sprites/Interactives/Functional/portal.png", Sprite.TILE);
 
@@ -62,6 +70,81 @@ public class Sprite {
 	 * |--------------------------------------------------------------------------
 	 * */
 	public static Sprite superSayan = new Sprite("/sprites/Player/Effect/super_sayan.png", Sprite.NORMAL);
+
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Winter Scenery tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+
+	public static Sprite iceStone = new Sprite("/tilemaps/winter/ice_stone.png", Sprite.TILE);
+	public static Sprite iceWall = new Sprite("/tilemaps/winter/ice_wall.png", Sprite.TILE);
+	public static Sprite iceWall2 = new Sprite("/tilemaps/winter/ice_wall2.png", Sprite.TILE);
+	public static Sprite iceWall3 = new Sprite("/tilemaps/winter/ice_wall3.png", Sprite.TILE);
+	public static Sprite iceTop = new Sprite("/tilemaps/winter/ice_top.png", Sprite.TILE);
+	public static Sprite iceBottom = new Sprite("/tilemaps/winter/ice_bottom.png", Sprite.TILE);
+	public static Sprite bigFrozen = new Sprite("/tilemaps/winter/big_frozen.png", Sprite.TILE);
+	public static Sprite frozen = new Sprite("/tilemaps/winter/frozen.png", Sprite.TILE);
+	public static Sprite water = new Sprite("/tilemaps/winter/water.png", Sprite.TILE);
+	public static Sprite iceFloor = new Sprite("/tilemaps/winter/ice_floor.png", Sprite.TILE);
+	public static Sprite iceFloor2 = new Sprite("/tilemaps/winter/ice_floor2.png", Sprite.TILE);
+	public static Sprite iceFloor3 = new Sprite("/tilemaps/winter/ice_floor3.png", Sprite.TILE);
+	public static Sprite iceFloor4 = new Sprite("/tilemaps/winter/ice_floor4.png", Sprite.TILE);
+
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Tomb Scenery tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+	public static Sprite tombWall = new Sprite("/tilemaps/tomb/wall.png", Sprite.TILE);
+	public static Sprite tombWall2 = new Sprite("/tilemaps/tomb/wall2.png", Sprite.TILE);
+	public static Sprite tombFloor = new Sprite("/tilemaps/tomb/floor.png", Sprite.TILE);
+	public static Sprite tombFloor2 = new Sprite("/tilemaps/tomb/floor2.png", Sprite.TILE);
+	public static Sprite tombFloor3 = new Sprite("/tilemaps/tomb/floor3.png", Sprite.TILE);
+	public static Sprite tombFloor4 = new Sprite("/tilemaps/tomb/floor4.png", Sprite.TILE);
+
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Spring Scenery tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+	public static Sprite springWall = new Sprite("/tilemaps/spring/spring_wall.png", Sprite.TILE);
+	public static Sprite springWall2 = new Sprite("/tilemaps/spring/spring_wall2.png", Sprite.TILE);
+	public static Sprite springBrick = new Sprite("/tilemaps/spring/spring_brick.png", Sprite.TILE);
+	public static Sprite springFloor = new Sprite("/tilemaps/spring/spring_floor.png", Sprite.TILE);
+	public static Sprite springFloor2 = new Sprite("/tilemaps/spring/spring_floor2.png", Sprite.TILE);
+	public static Sprite springFloor3 = new Sprite("/tilemaps/spring/spring_floor3.png", Sprite.TILE);
+	public static Sprite springFloor4 = new Sprite("/tilemaps/spring/spring_floor4.png", Sprite.TILE);
+	public static Sprite springFloor5 = new Sprite("/tilemaps/spring/spring_floor5.png", Sprite.TILE);
+	public static Sprite springStone = new Sprite("/tilemaps/spring/spring_stone.png", Sprite.TILE);
+
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Spring Scenery tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+
+	public static Sprite land = new Sprite("/tilemaps/land/land.png", Sprite.TILE);
+	public static Sprite landBot = new Sprite("/tilemaps/land/land_bot.png", Sprite.TILE);
+	public static Sprite landTop = new Sprite("/tilemaps/land/land_top.png", Sprite.TILE);
+	public static Sprite landLeft = new Sprite("/tilemaps/land/land_left.png", Sprite.TILE);
+	public static Sprite landRight= new Sprite("/tilemaps/land/land_right.png", Sprite.TILE);
+	public static Sprite landBotRight= new Sprite("/tilemaps/land/land_bot_right.png", Sprite.TILE);
+	public static Sprite landTopRight= new Sprite("/tilemaps/land/land_top_right.png", Sprite.TILE);
+	public static Sprite seaWater = new Sprite("/tilemaps/land/land_water.png", Sprite.TILE);
+
+
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Castle Scenery tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+	public static Sprite castleWall = new Sprite("/tilemaps/castle/wall.png", Sprite.TILE);
+	public static Sprite castleWall2 = new Sprite("/tilemaps/castle/wall2.png", Sprite.TILE);
+	public static Sprite castleFloor = new Sprite("/tilemaps/castle/floor.png", Sprite.TILE);
+	public static Sprite castleFloor2 = new Sprite("/tilemaps/castle/floor2.png", Sprite.TILE);
+	public static Sprite castleFloor3 = new Sprite("/tilemaps/castle/floor3.png", Sprite.TILE);
+	public static Sprite castleFloor4 = new Sprite("/tilemaps/castle/floor4.png", Sprite.TILE);
 
 	/** Hàm khởi tạo dành cho Sprite tách ra từ SpriteSheet. */
 	public Sprite(SpriteSheet sheet, int cx, int cy, int cropW, int cropH) {
@@ -167,6 +250,10 @@ public class Sprite {
         Image input = new ImageView(wr).getImage();
 
 		if (this.type.equals(Sprite.TILE)) {
+
+			if (w > SCALED_SIZE || h > SCALED_SIZE) {
+				return resample(input, 1);
+			}
 			return resample(input, SCALED_SIZE / this.tileSize);
 		}
 
@@ -198,31 +285,5 @@ public class Sprite {
 		}
 
 		return output;
-	}
-
-	/** Hàm dùng để debug ảnh tạo từ Sprite Sheet */
-	public Image getSheetFxImage() {
-		int w = sheet.getW();
-		int h = sheet.getH();
-
-		WritableImage wr = new WritableImage(w, h);
-		PixelWriter pw = wr.getPixelWriter();
-		for (int x = 0; x < w; x++) {
-			for (int y = 0; y < h; y++) {
-				if ( sheet.getPixel(x + y * w) == TRANSPARENT_COLOR) {
-					pw.setArgb(x, y, 0);
-				}
-				else {
-					pw.setArgb(x, y, sheet.getPixel(x + y * w));
-				}
-			}
-		}
-		Image input = new ImageView(wr).getImage();
-
-		if (this.type.equals(Sprite.TILE)) {
-			return resample(input, SCALED_SIZE / this.tileSize);
-		}
-
-		return resample(input, this.scaleFactor);
 	}
 }

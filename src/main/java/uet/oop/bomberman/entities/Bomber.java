@@ -1,25 +1,20 @@
 package uet.oop.bomberman.entities;
 
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Effect;
 import javafx.scene.effect.MotionBlur;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
-import uet.oop.bomberman.Generals.Point;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import javafx.scene.input.KeyEvent;
+import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Physics;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 
@@ -404,7 +399,9 @@ public class Bomber extends Mobile {
 
                 Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                if (Gameplay.tile_map[j][i] == '0') {
+                // Kiểm tra tile ij là tile FLOOR thì mới đặt được bomb
+
+                if (GameMap.get(tile_map[j][i]) == GameMap.FLOOR) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         bombs.add(new Bomb(i, j, timer));
                         return;

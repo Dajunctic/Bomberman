@@ -12,7 +12,7 @@ import uet.oop.bomberman.graphics.SpriteSheet;
 public class Bomb extends Entity{
 
     //animation
-    DeadAnim explosion = new DeadAnim(SpriteSheet.explosion, 15, 1);
+    DeadAnim explosion = new DeadAnim(SpriteSheet.explosion, 10, 1);
     public DeadAnim bomb = new DeadAnim(SpriteSheet.bomb, 15, 2.5);
     boolean exploded = false;
 
