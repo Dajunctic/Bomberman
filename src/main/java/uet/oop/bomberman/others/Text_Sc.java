@@ -1,30 +1,40 @@
 package uet.oop.bomberman.others;
 
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import uet.oop.bomberman.entities.MenuSprite;
-import uet.oop.bomberman.game.BombermanGame;
-import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.graphics.Sprite;
 
-public class Text_Sc{
-    public static void test(){
-    Text text= new Text();
+public class Text_Sc extends ScrollPane {
+    protected Button text;
 
 
-    //Setting font to the text
-    text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
+    public Text_Sc(int X, int Y, String string_) {
+        text= new Button();
+        text.setLayoutX(X);
+        text.setLayoutY(Y);
+        text.setText(string_);
 
-    //setting the position of the text
-    text.setX(50);
-    text.setY(130);
+        text.getStyleClass().add("button");
+        try {Font font = Font.loadFont(getClass().getResource("/PhoenixGaming-nRJj0.ttf").toURI().toString(), 40);
+            text.setFont(font);
+        }
+        catch(Exception e){
+            System.out.println("JHj");
+        }
 
-    //Setting the text to be added.
-    text.setText("Hi how are you");
 
-    //Creating a Group object
-    BombermanGame.root.getChildren().add(text);}
+
+    }
+
+    public Button getText() {
+        return text;
+    }
+
+    public void setText(Button text) {
+        this.text = text;
+    }
+
+
 }

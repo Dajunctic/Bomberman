@@ -2,6 +2,8 @@ package uet.oop.bomberman.graphics;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -271,4 +273,5 @@ public class Sprite {
 		}
 		System.out.println(String.format("Load success, %d floor styles, %d destroyed tiles and %d wall styles", floors.size(), destroyed.size(),walls.size()));
 	}
+
 }

@@ -227,7 +227,10 @@ public class Bomber extends Mobile {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
+
+                System.out.println("asdasd");
                 this.handleEvent(keyEvent);
+
             }
 
             private void handleEvent(KeyEvent keyEvent) {
@@ -286,6 +289,7 @@ public class Bomber extends Mobile {
             public void handle(KeyEvent keyEvent) {
                 if( bombs.size() < capacity) {
                     placeBomb(x, y, 0);
+
                 }
 //                System.out.println(bombs.size());
             }

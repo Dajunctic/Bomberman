@@ -17,8 +17,7 @@ import java.util.List;
 /** object handler */
 public class Gameplay {
 
-    //khoi tao menu
-    public static Menu menuBackground= new Menu();
+
 
     public static int width;
     public static int height;
@@ -39,7 +38,7 @@ public class Gameplay {
     //differentiates tiles
     public static int divisors = 10;
 
-    public static String state=String.valueOf(Menu.Menu_Switch.MENU);
+
 
     public Gameplay() {
     }
@@ -132,9 +131,7 @@ public class Gameplay {
 
     /** update */
     public void update(){
-
-        switch (state) {
-            case"PLAY": {player.update(this);
+            player.update(this);
 
                         for(int i = 0; i < entities.size(); i++) {
                             entities.get(i).update();
@@ -155,12 +152,12 @@ public class Gameplay {
                         }
                         kill();
 
-                        menuBackground.renderPlay(BombermanGame.gc);
-            }
-            default: menuBackground.update(this);
+
+
+
 
         }
-    }
+
     /** render objects */
     public void render(GraphicsContext gc) {
 
