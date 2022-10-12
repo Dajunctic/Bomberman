@@ -37,7 +37,7 @@ public class SpriteSheet {
 	public static SpriteSheet explosion = new SpriteSheet("/sprites/Player/Bomb/explosion.png", 6);
 
 	/* ************************************ BRICK ******************************** */
-	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/brick.png", 6);
+	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/0.png", 6);
 
 	/**
 	 * |--------------------------------------------------------------------------

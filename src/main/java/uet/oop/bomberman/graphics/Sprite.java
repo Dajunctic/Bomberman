@@ -59,8 +59,6 @@ public class Sprite {
 	public static Sprite brick = new Sprite("/tilemaps/main/main_brick.png", Sprite.TILE);
 	public static Sprite destroyFloor = new Sprite("/tilemaps/main/destroy_floor.png", Sprite.TILE);
 
-	public static Sprite lava_floor = new Sprite("/sprites/Bg/lava_floor.png", Sprite.TILE);
-
 	/**
 	 * |--------------------------------------------------------------------------
 	 * | Winter Scenery tiles
