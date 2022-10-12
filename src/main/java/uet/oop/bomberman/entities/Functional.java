@@ -22,10 +22,4 @@ public class Functional extends Entity{
     public void update() {
     }
 
-    @Override
-    public void kill() {
-        this.img = Sprite.floor.getFxImage();
-        Gameplay.tile_map[tileY][tileX]='0';
-
-    }
 }
