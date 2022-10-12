@@ -1,0 +1,16 @@
+    .button{
+
+    -fx-background-color: #f0f8ff;
+    -fx-text-fill: black;
+
+     -fx-border-radius: 5;
+    -fx-alignment:center;
+
+
+
+
+    }
+    .button:hover{
+    -fx-text-fill:red;
+
+    }
