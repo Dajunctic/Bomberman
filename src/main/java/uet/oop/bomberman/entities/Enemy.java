@@ -8,6 +8,7 @@ import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Physics;
 
 import java.util.Random;
@@ -109,20 +110,17 @@ public class Enemy extends Mobile{
 
     @Override
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
-        // có đấy bạn ạ
+        /* Kiểm tra có ra khỏi map rộng không */
         if(ref_x < 0 || ref_y < 0
                 || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
                 || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return true;
 
-        javafx.scene.shape.Rectangle rect;
+        Rectangle rect;
         if(mode == CENTER_MODE)
             rect = new javafx.scene.shape.Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
         else
             rect = new javafx.scene.shape.Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
 
-        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
-
-        // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
         int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE));
         int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE));
         int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
@@ -137,14 +135,16 @@ public class Enemy extends Mobile{
 
                 javafx.scene.shape.Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                if (tile_map[j][i] > '0') {
+                /* Kiểm tra va chạm với tường */
+                if (GameMap.get(tile_map[j][i]) == GameMap.WALL) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         return true;
                     }
-                }
-                else if (tile_map[j][i] == '!') {
+                } else if (tile_map[j][i] == '!') {
+                    /* Kiểm tra vào ô lửa hay không */
+
                     isDead = true;
-                        return false;
+                    return false;
                 }
 
             }

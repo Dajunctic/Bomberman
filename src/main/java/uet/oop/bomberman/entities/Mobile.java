@@ -32,7 +32,7 @@ public class Mobile extends Entity{
 
     //extension
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
-        // có đấy bạn ạ
+        /* * Kiểm tra border map */
         if(ref_x < 0 || ref_y < 0
                 || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
                 || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return true;
@@ -41,11 +41,10 @@ public class Mobile extends Entity{
         if(mode == CENTER_MODE)
             rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
         else
-            rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
+            rect = this.getRect(ref_x, ref_y, this.getWidth(), this.getHeight());
 
-        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
+        /* * Kiểm tra tất cả các tiles xung quanh thực thể. */
 
-        // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
         int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE));
         int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE));
         int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
@@ -60,8 +59,11 @@ public class Mobile extends Entity{
 
                 Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                // Kiểm tra tile ij có phải kiểu WALL không
-                if (GameMap.get(tile_map[j][i]) == GameMap.WALL) {
+                /* * Kiểm tra tile có phải kiểu WALL hoặc BRICK không! */
+
+                if (Gameplay.get(tile_map[j][i], i, j) == GameMap.WALL
+                        || Gameplay.get(tile_map[j][i], i, j) == GameMap.BRICK) {
+
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         return true;
                     }
@@ -80,6 +82,10 @@ public class Mobile extends Entity{
             x = ref_x;
             y = ref_y;
         }
+    }
+
+    public Rectangle getRect(double x, double y, double w, double h) {
+        return new Rectangle(x, y, w, h);
     }
 
 

@@ -8,8 +8,11 @@ import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.maps.AreaMap;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Physics;
+
+import java.util.HashSet;
 
 import static uet.oop.bomberman.game.Gameplay.*;
 
@@ -19,6 +22,11 @@ public class Flame extends Mobile{
     protected double duration = 2;
     protected double dir_x;
     protected double dir_y;
+
+    /** Khi nào gặp vật cản như brick hoặc wall thì dừng luôn */
+    boolean stop = false;
+
+    HashSet<Integer> floors = new HashSet<>();
 
     public Flame(double xPixel, double yPixel) {
         super(xPixel, yPixel);
@@ -50,13 +58,15 @@ public class Flame extends Mobile{
     @Override
     public void update() {
         //moving
-        double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed * dir_x));
-        double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * dir_y));
-        if(!checkCollision(ref_x,ref_y,15)) {
+        double ref_x = Math.max(0,Math.min(width * Sprite.SCALED_SIZE - this.getWidth(),x  +  speed * dir_x));
+        double ref_y = Math.max(0,Math.min(height * Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * dir_y));
+        if(!checkCollision(ref_x,ref_y,15) && !stop) {
             length -= speed;
             if(length <= 0) speed = 0;
             x = ref_x;
             y = ref_y;
+        } else {
+            stop = true;
         }
         //animation and status update
         flame.update();
@@ -75,16 +85,11 @@ public class Flame extends Mobile{
 
     @Override
     public void render(GraphicsContext gc,Gameplay gameplay) {
-//        Rectangle rect = new Rectangle(x - gameplay.translate_x, y - gameplay.translate_y, this.getHeight(), this.getHeight());
-//        Basic.drawRectangle(gc, rect);
         super.render(gc, gameplay);
     }
 
     @Override
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
-        // có đấy bạn ạ,
-        // Ai bảo, mỗi thằng ở update có check riêng cũng được
-        // Thêm vào có chết ai đâu
         if(ref_x < 0 || ref_y < 0
                 || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
                 || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return true;
@@ -94,8 +99,6 @@ public class Flame extends Mobile{
             rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin * 2, this.getHeight() - margin * 2);
         else
             rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
-
-        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
 
         // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
         int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE));
@@ -113,22 +116,25 @@ public class Flame extends Mobile{
                 Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
                 // Kiểm tra tilemap[j][i] là loại gì O(1)
-                if (GameMap.get(tile_map[j][i]) == GameMap.WALL)  {
+                if (Gameplay.get(tile_map[j][i], i, j) == GameMap.WALL)  {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         return true;
                     }
                 }
-                else if(GameMap.get(tile_map[j][i]) == GameMap.BRICK) {
+                else if(Gameplay.get(tile_map[j][i], i, j) == GameMap.BRICK) {
                     //Do something
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         killTask.add(new Point(i,j));
                         return true;
                     }
                 }
-                else if(GameMap.get(tile_map[j][i]) == GameMap.WALL) {
+                else if(Gameplay.get(tile_map[j][i], i, j) == GameMap.FLOOR) {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
-                        entities.add(new Fire(i,j,duration));
-                        return true;
+
+                        if (!floors.contains(i * 200 + j)) {
+                            floors.add(i * 200 + j);
+                            entities.add(new Fire(i, j, Math.max(0.5, duration)));
+                        }
                     }
                 }
 

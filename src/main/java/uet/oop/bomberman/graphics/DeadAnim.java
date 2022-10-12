@@ -5,26 +5,29 @@ package uet.oop.bomberman.graphics;
 public class DeadAnim extends Anim{
 
     /**
-     * Tạo Animation từ SpriteSheet
-     * VD: Anim a = new Anim(new SpriteSheet(path, number_sprites), frameTime)
+     * Tạo Animation từ SpriteSheet.
+     * VD: Anim a = new Anim(new SpriteSheet(path, number_sprites), frameTime);
      */
 
-    private long numLoop;
-    private int currentLoop = 0;
-    private boolean dead;
+    private long numLoop = 0; // Số vòng lặp của Anim
+    private int currentLoop = 0; // Vòng lặp hiện tại
+    private boolean dead; // Trạng thái của Anim
 
+    /** Hàm khởi tạo dựa theo số vòng lặp cài sẵn. */
     public DeadAnim(SpriteSheet sheet, int frameTime, int numLoop) {
         super(sheet, frameTime);
         this.numLoop = numLoop;
         this.dead = false;
     }
 
+    /** Hàm khởi tạo dựa theo thời gian cài sẵn. */
     public DeadAnim(SpriteSheet sheet, int frameTime, double timer) {
         super(sheet, frameTime);
         this.numLoop = Math.round(timer * 60 / (frameTime * sheet.getSpriteNumber()));
         this.dead = false;
     }
 
+    /** Hàm update của Dead Anim */
     @Override
     public void update() {
         this.countTime ++;
@@ -45,6 +48,7 @@ public class DeadAnim extends Anim{
         }
     }
 
+    /** Reset lại Animation của DeadAnim */
     public void reset() {
          currentLoop = 0;
          currentFrame = 0;

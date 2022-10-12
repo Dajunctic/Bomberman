@@ -52,6 +52,7 @@ public class Anim {
     public int getTime() {
         return countTime;
     }
+
     /** Hàm chỉnh tỉ lệ, thực chất là phóng to ảnh x2, x3 vì scale là số nguyên */
     public void setScaleFactor(int scale) {
         for (Sprite x: this.sheet.getComponents()) {
@@ -93,13 +94,13 @@ public class Anim {
 
     /** Trả về kiểu dữ liệu ảnh của khung hình hiện tại. */
     public Image getImage() {
-//        return this.components[currentFrame].getSheetFxImage();
         return this.sheet.getComponents()[currentFrame].getImg();
     }
 
     private void setCurrentFrame() {
         this.currentFrame = 0;
     }
+
     /** Hàm làm khung hình hiện thị hiện tại quay về ban đầu */
     public void resetCurrentFrame() {
         this.setCurrentFrame();
@@ -108,6 +109,7 @@ public class Anim {
     private void setCountTime() {
         this.countTime = 0;
     }
+
     /** Thời gian tính hiện thị khung hình quay về ban đầu */
     public void resetCountTime() {
         this.setCountTime();

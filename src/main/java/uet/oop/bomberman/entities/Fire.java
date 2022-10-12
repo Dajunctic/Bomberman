@@ -15,7 +15,7 @@ public class Fire extends Entity{
     protected DeadAnim ignite = new DeadAnim(SpriteSheet.ignite, 3, 1);
     protected DeadAnim fade = new DeadAnim(SpriteSheet.fire_fade, 3, 1);
     protected DeadAnim burn;
-    int tilex,tiley;
+    int tileX ,tileY;
     public Fire(double xUnit, double yUnit) {
         super(xUnit, yUnit);
         x *= Sprite.SCALED_SIZE;
@@ -24,21 +24,18 @@ public class Fire extends Entity{
 
     public Fire(double xUnit, double yUnit, double duration){
         super(xUnit, yUnit);
-        tilex = (int) xUnit;
-        tiley = (int) yUnit;
+        tileX = (int) xUnit;
+        tileY = (int) yUnit;
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
         burn = new DeadAnim(SpriteSheet.fire, 8, duration);
-        tile_map[(int) yUnit][(int) xUnit] = '!';
-        kill();
-        effect = new Glow(0.1);
     }
 
     @Override
     public void update() {
-            if(!ignite.isDead()) ignite.update();
-                else if(!burn.isDead()) burn.update();
-                    else fade.update();
+        if(!ignite.isDead()) ignite.update();
+            else if(!burn.isDead()) burn.update();
+                else fade.update();
     }
 
     @Override
@@ -55,11 +52,11 @@ public class Fire extends Entity{
     }
     @Override
     public void deadAct(Gameplay gameplay) {
-        tile_map[tiley][tilex] = '0';
+        Gameplay.kill(tileX, tileY);
     }
 
     @Override
     public void kill() {
-        Gameplay.killTask.add(new Point(tilex,tiley));
+        Gameplay.killTask.add(new Point(tileX,tileY));
     }
 }

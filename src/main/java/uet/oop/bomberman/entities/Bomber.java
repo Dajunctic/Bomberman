@@ -37,7 +37,6 @@ public class Bomber extends Mobile {
     boolean movingEffect = false;
     double movingEffectSpeed = 8;
 
-    Entity superSayan = new Floor(0, 0, Sprite.superSayan.getFxImage());
     MotionBlur effect = new MotionBlur();
     /**
      * speed projector, properties
@@ -280,7 +279,7 @@ public class Bomber extends Mobile {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if( bombs.size() < capacity) {
-                    placeBomb(x, y, 0);
+                    placeBomb();
                 }
 //                System.out.println(bombs.size());
             }
@@ -306,9 +305,6 @@ public class Bomber extends Mobile {
         //animations
         statusAnims[currentStatus].update();
 
-        // Cài vị trí của Super Sayan.
-        superSayan.setPosition(x - 30, y - 80);
-
         // attributes handling
         attribute_update(gameplay);
 
@@ -319,16 +315,14 @@ public class Bomber extends Mobile {
     /** Hàm render animation nên overload hàm render của Entity. */
     @Override
     public void render(GraphicsContext gc,Gameplay gameplay) {
-        //render bomb
+        // Render bombs.
         bombs.forEach(g -> g.render(gc, gameplay));
 
         gc.setEffect(effect);
-        // Hiện thị các effect của nhân vật
-//        if (movingEffect) {
-//            superSayan.render(gc, gameplay);
-//        }
+
         // Hiển thị nhân vật
-        gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
+        gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
+                , y - gameplay.translate_y + gameplay.offsetY);
 
         gc.setEffect(null);
     }
@@ -370,48 +364,29 @@ public class Bomber extends Mobile {
         }
     }
 
-    public void placeBomb(double ref_x, double ref_y, int margin) {
-        // có đấy bạn ạ
-        if(ref_x < 0 || ref_y < 0
-                || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
-                || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return;
+    public void placeBomb() {
 
-        Rectangle rect;
-        if(mode == CENTER_MODE)
-            rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
-        else
-            rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
 
-        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
+        int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
+        int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
 
-        // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
-        int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE) - 1);
-        int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE) - 1);
-        int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
-        int tileEndY = (int) Math.ceil((rect.getY() + rect.getHeight()) / Sprite.SCALED_SIZE);
-        tileEndX = Math.min(tileEndX, Gameplay.width - 1);
-        tileEndY = Math.min(tileEndY, Gameplay.height - 1);
-        for (int i = tileStartX; i <= tileEndX; i++) {
-            for (int j = tileStartY; j <= tileEndY; j++) {
+        bombs.add(new Bomb(i, j, timer));
 
-                int tileX = i * Sprite.SCALED_SIZE;
-                int tileY = j * Sprite.SCALED_SIZE;
-
-                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
-
-                // Kiểm tra tile ij là tile FLOOR thì mới đặt được bomb
-
-                if (GameMap.get(tile_map[j][i]) == GameMap.FLOOR) {
-                    if (Physics.collisionRectToRect(rect, tileRect)) {
-                        bombs.add(new Bomb(i, j, timer));
-                        return;
-                    }
-                }
-
-            }
-        }
-
-        return;
     }
 
+    /** Override RECT COLLISION cho Nhân vật */
+    @Override
+    public Rectangle getRect(double x, double y, double w, double h) {
+        return super.getRect(x + w / 6, y + h / 3, w * 2 / 3, h * 2 / 3);
+    }
+
+    @Override
+    public double getWidth() {
+        return statusAnims[IDLE].getImage().getWidth();
+    }
+
+    @Override
+    public double getHeight() {
+        return statusAnims[IDLE].getImage().getHeight();
+    }
 }

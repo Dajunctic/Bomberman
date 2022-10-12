@@ -25,28 +25,48 @@ public class SpriteSheet {
 	public Sprite[] components;
 
 
-	/** Animation Game */
+	/** ************************* Animation Game  ******************************/
 
-	//bomb
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | ENTITY
+	 * |--------------------------------------------------------------------------
+	 * */
+	/* ************************************ BOMB ******************************** */
 	public static SpriteSheet bomb = new SpriteSheet("/sprites/Player/Bomb/bomb.png", 3);
 	public static SpriteSheet explosion = new SpriteSheet("/sprites/Player/Bomb/explosion.png", 6);
 
-	//flame
+	/* ************************************ BRICK ******************************** */
+	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/brick.png", 6);
+
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | EFFECT
+	 * |--------------------------------------------------------------------------
+	 * */
+
+	/* ************************************ FLAME ******************************** */
 	public static SpriteSheet flame_right = new SpriteSheet("/sprites/Player/Flame/flame_right.png", 6);
 	public static SpriteSheet flame_left = new SpriteSheet("/sprites/Player/Flame/flame_left.png", 6);
 	public static SpriteSheet flame_down = new SpriteSheet("/sprites/Player/Flame/flame_down.png", 6);
 	public static SpriteSheet flame_up = new SpriteSheet("/sprites/Player/Flame/flame_up.png", 6);
-	//fire
+
+
+	/* ************************************ FIRE ******************************** */
 	public static SpriteSheet fire = new SpriteSheet("/sprites/Obstacles/Fire/fire.png", 8);
 	public static SpriteSheet ignite = new SpriteSheet("/sprites/Obstacles/Fire/ignite.png", 4);
 	public static SpriteSheet fire_fade = new SpriteSheet("/sprites/Obstacles/Fire/fade.png", 4);
-	//brick
-	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/brick.png", 6);
 
-	//enemy
-	//balloon
+
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | ENEMY
+	 * |--------------------------------------------------------------------------
+	 * */
+	/* ************************************ BALLOON ******************************** */
 	public static SpriteSheet balloon = new SpriteSheet("/sprites/Enemy/Balloon/balloon.png", 5);
 	public static SpriteSheet balloon_die = new SpriteSheet("/sprites/Enemy/Balloon/dead.png", 6);
+
 	public SpriteSheet(String path, int spriteNumber) {
 		this.path = path;
 		this.spriteNumber = spriteNumber;

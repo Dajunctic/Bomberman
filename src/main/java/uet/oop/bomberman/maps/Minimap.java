@@ -35,11 +35,20 @@ public class Minimap extends Entity {
                     case '2', '!', '#', '@', '(', '&', ';', '=', ':', '$', '%' -> {
                         board[i][j] = new Color(0 ,0 ,0, .5);
                     }
-                    case '0' -> {
+                    case '0', '7', '8', '9' -> {
                         board[i][j] = new Color(70/255.0 ,70/255.0 ,70/255.0, .5);
                     }
                     case 'b', 'm', 'n', 'v' -> {
                         board[i][j] = new Color(141/255.0 ,174/255.0 ,205/255.0, .5);
+                    }
+                    case 'c', 'e', 'i', 'o' ->{
+                        board[i][j] = new Color(0/255.0 ,102/255.0 ,102/255.0, .5);
+                    }
+                    case 'h', 'j', 'k', 'l' ->{
+                        board[i][j] = new Color(230/255.0 ,184/255.0 ,0/255.0, .5);
+                    }
+                    case 'a', 'q', 'w', 's', 'z' ->{
+                        board[i][j] = new Color(0/255.0 ,204/255.0 ,102/255.0, .5);
                     }
                     default -> {
                         board[i][j] = new Color(0, 0, 0, 0);
@@ -51,8 +60,8 @@ public class Minimap extends Entity {
         }
 
         this.img = getMatrixImage(board, defaultScale);
-        currentPlayerY = 0;
-        currentPlayerX = 0;
+        currentPlayerY = 1;
+        currentPlayerX = 1;
     }
 
 
@@ -67,7 +76,23 @@ public class Minimap extends Entity {
 
         board[currentPlayerY][currentPlayerX] = defaultBoard[currentPlayerY][currentPlayerX];
 
-        board[playerY][playerX] = new Color(0, 0, 1, 1);
+        int[] dirX = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
+        int[] dirY = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
+
+        for (int i = 0 ; i < dirX.length; i++) {
+            int incX = dirX[i];
+            int incY = dirY[i];
+
+            board[currentPlayerY + incY][currentPlayerX + incX] = defaultBoard[currentPlayerY + incY][currentPlayerX + incX];
+        }
+
+        for (int i = 0 ; i < dirX.length; i++) {
+            int incX = dirX[i];
+            int incY = dirY[i];
+
+            board[playerY + incY][playerX + incX] = new Color(1, 0, 0, 1);
+        }
+
         this.img = getMatrixImage(board, defaultScale);
 
         currentPlayerX = playerX;

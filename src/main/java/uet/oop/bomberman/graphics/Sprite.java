@@ -35,7 +35,6 @@ public class Sprite {
 	SpriteSheet sheet;
 	private Image img;
 
-	public static Sprite grass1 = new Sprite("/sprites/Bg/grass1.png", Sprite.TILE);
 	/**
 	 * |--------------------------------------------------------------------------
 	 * | Buff tiles
@@ -47,29 +46,20 @@ public class Sprite {
 
 	/**
 	 * |--------------------------------------------------------------------------
-	 * | Board tiles
+	 * | Entity tiles
 	 * |--------------------------------------------------------------------------
 	 * */
 	public static Sprite wall = new Sprite("/tilemaps/main/main_wall.png", Sprite.TILE);
 	public static Sprite wall2 = new Sprite("/tilemaps/main/main_wall2.png", Sprite.TILE);
-	public static Sprite stone = new Sprite("/sprites/Obstacles/Wall/stone.png", Sprite.TILE);
-	public static Sprite black = new Sprite("/sprites/Bg/black.png", Sprite.TILE);
 	public static Sprite floor = new Sprite("/tilemaps/main/main_floor.png", Sprite.TILE);
 	public static Sprite floor2 = new Sprite("/tilemaps/main/main_floor2.png", Sprite.TILE);
 	public static Sprite floor3 = new Sprite("/tilemaps/main/main_floor3.png", Sprite.TILE);
 	public static Sprite floor4 = new Sprite("/tilemaps/main/main_floor4.png", Sprite.TILE);
 	public static Sprite space = new Sprite("/tilemaps/main/space.png", Sprite.TILE);
-
-	public static Sprite grass = new Sprite("/sprites/Bg/grass.png", Sprite.TILE);
-	public static Sprite portal = new Sprite("/sprites/Interactives/Functional/portal.png", Sprite.TILE);
+	public static Sprite brick = new Sprite("/tilemaps/main/main_brick.png", Sprite.TILE);
+	public static Sprite destroyFloor = new Sprite("/tilemaps/main/destroy_floor.png", Sprite.TILE);
 
 	public static Sprite lava_floor = new Sprite("/sprites/Bg/lava_floor.png", Sprite.TILE);
-	/**
-	 * |--------------------------------------------------------------------------
-	 * | Effect tiles
-	 * |--------------------------------------------------------------------------
-	 * */
-	public static Sprite superSayan = new Sprite("/sprites/Player/Effect/super_sayan.png", Sprite.NORMAL);
 
 	/**
 	 * |--------------------------------------------------------------------------
@@ -77,19 +67,16 @@ public class Sprite {
 	 * |--------------------------------------------------------------------------
 	 * */
 
-	public static Sprite iceStone = new Sprite("/tilemaps/winter/ice_stone.png", Sprite.TILE);
-	public static Sprite iceWall = new Sprite("/tilemaps/winter/ice_wall.png", Sprite.TILE);
+	public static Sprite iceWall = new Sprite("/tilemaps/winter/ice_wall.png", Sprite.TILE); // #
 	public static Sprite iceWall2 = new Sprite("/tilemaps/winter/ice_wall2.png", Sprite.TILE);
 	public static Sprite iceWall3 = new Sprite("/tilemaps/winter/ice_wall3.png", Sprite.TILE);
 	public static Sprite iceTop = new Sprite("/tilemaps/winter/ice_top.png", Sprite.TILE);
-	public static Sprite iceBottom = new Sprite("/tilemaps/winter/ice_bottom.png", Sprite.TILE);
-	public static Sprite bigFrozen = new Sprite("/tilemaps/winter/big_frozen.png", Sprite.TILE);
-	public static Sprite frozen = new Sprite("/tilemaps/winter/frozen.png", Sprite.TILE);
-	public static Sprite water = new Sprite("/tilemaps/winter/water.png", Sprite.TILE);
 	public static Sprite iceFloor = new Sprite("/tilemaps/winter/ice_floor.png", Sprite.TILE);
 	public static Sprite iceFloor2 = new Sprite("/tilemaps/winter/ice_floor2.png", Sprite.TILE);
 	public static Sprite iceFloor3 = new Sprite("/tilemaps/winter/ice_floor3.png", Sprite.TILE);
 	public static Sprite iceFloor4 = new Sprite("/tilemaps/winter/ice_floor4.png", Sprite.TILE);
+	public static Sprite iceBrick = new Sprite("/tilemaps/winter/brick.png", Sprite.TILE); // +
+	public static Sprite iceDestroyFloor = new Sprite("/tilemaps/winter/destroy_floor.png", Sprite.TILE);
 
 	/**
 	 * |--------------------------------------------------------------------------
@@ -98,10 +85,13 @@ public class Sprite {
 	 * */
 	public static Sprite tombWall = new Sprite("/tilemaps/tomb/wall.png", Sprite.TILE);
 	public static Sprite tombWall2 = new Sprite("/tilemaps/tomb/wall2.png", Sprite.TILE);
+	public static Sprite tombWall3 = new Sprite("/tilemaps/tomb/wall3.png", Sprite.TILE);
 	public static Sprite tombFloor = new Sprite("/tilemaps/tomb/floor.png", Sprite.TILE);
 	public static Sprite tombFloor2 = new Sprite("/tilemaps/tomb/floor2.png", Sprite.TILE);
 	public static Sprite tombFloor3 = new Sprite("/tilemaps/tomb/floor3.png", Sprite.TILE);
 	public static Sprite tombFloor4 = new Sprite("/tilemaps/tomb/floor4.png", Sprite.TILE);
+	public static Sprite tombBrick = new Sprite("/tilemaps/tomb/brick.png", Sprite.TILE);
+	public static Sprite tombDestroyFloor = new Sprite("/tilemaps/tomb/destroy_floor.png", Sprite.TILE);
 
 	/**
 	 * |--------------------------------------------------------------------------
@@ -110,29 +100,19 @@ public class Sprite {
 	 * */
 	public static Sprite springWall = new Sprite("/tilemaps/spring/spring_wall.png", Sprite.TILE);
 	public static Sprite springWall2 = new Sprite("/tilemaps/spring/spring_wall2.png", Sprite.TILE);
-	public static Sprite springBrick = new Sprite("/tilemaps/spring/spring_brick.png", Sprite.TILE);
 	public static Sprite springFloor = new Sprite("/tilemaps/spring/spring_floor.png", Sprite.TILE);
 	public static Sprite springFloor2 = new Sprite("/tilemaps/spring/spring_floor2.png", Sprite.TILE);
 	public static Sprite springFloor3 = new Sprite("/tilemaps/spring/spring_floor3.png", Sprite.TILE);
 	public static Sprite springFloor4 = new Sprite("/tilemaps/spring/spring_floor4.png", Sprite.TILE);
 	public static Sprite springFloor5 = new Sprite("/tilemaps/spring/spring_floor5.png", Sprite.TILE);
-	public static Sprite springStone = new Sprite("/tilemaps/spring/spring_stone.png", Sprite.TILE);
+	public static Sprite springBrick = new Sprite("/tilemaps/spring/spring_brick.png", Sprite.TILE);
+	public static Sprite springDestroyFloor = new Sprite("/tilemaps/spring/destroy_floor.png", Sprite.TILE);
 
 	/**
 	 * |--------------------------------------------------------------------------
 	 * | Spring Scenery tiles
 	 * |--------------------------------------------------------------------------
 	 * */
-
-	public static Sprite land = new Sprite("/tilemaps/land/land.png", Sprite.TILE);
-	public static Sprite landBot = new Sprite("/tilemaps/land/land_bot.png", Sprite.TILE);
-	public static Sprite landTop = new Sprite("/tilemaps/land/land_top.png", Sprite.TILE);
-	public static Sprite landLeft = new Sprite("/tilemaps/land/land_left.png", Sprite.TILE);
-	public static Sprite landRight= new Sprite("/tilemaps/land/land_right.png", Sprite.TILE);
-	public static Sprite landBotRight= new Sprite("/tilemaps/land/land_bot_right.png", Sprite.TILE);
-	public static Sprite landTopRight= new Sprite("/tilemaps/land/land_top_right.png", Sprite.TILE);
-	public static Sprite seaWater = new Sprite("/tilemaps/land/land_water.png", Sprite.TILE);
-
 
 	/**
 	 * |--------------------------------------------------------------------------
@@ -145,6 +125,8 @@ public class Sprite {
 	public static Sprite castleFloor2 = new Sprite("/tilemaps/castle/floor2.png", Sprite.TILE);
 	public static Sprite castleFloor3 = new Sprite("/tilemaps/castle/floor3.png", Sprite.TILE);
 	public static Sprite castleFloor4 = new Sprite("/tilemaps/castle/floor4.png", Sprite.TILE);
+	public static Sprite castleBrick = new Sprite("/tilemaps/castle/brick.png", Sprite.TILE);
+	public static Sprite castleDestroyFloor = new Sprite("/tilemaps/castle/destroy_floor.png", Sprite.TILE);
 
 	/** Hàm khởi tạo dành cho Sprite tách ra từ SpriteSheet. */
 	public Sprite(SpriteSheet sheet, int cx, int cy, int cropW, int cropH) {

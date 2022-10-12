@@ -54,19 +54,21 @@ public abstract class Entity {
 
         gc.setEffect(effect);
         // Whether object is on screen
-        if(!onScreen(gameplay)) return ;
+        if(!onScreen(gameplay)) return;
 
         if (mode == Entity.CENTER_MODE) {
             renderCenter(gc, gameplay);
         } else {
-            gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
+
+            gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
+                    , y - gameplay.translate_y + gameplay.offsetY);
         }
 
         gc.setEffect(null);
     }
 
     /** Hiển thị trên màn hình cố định **/
-    public void render(GraphicsContext gc) {
+    public void render(GraphicsContext gc, double x, double y) {
         gc.drawImage(this.getImg(), x, y);
     }
 
@@ -74,7 +76,8 @@ public abstract class Entity {
     private void renderCenter(GraphicsContext gc, Gameplay gameplay) {
         double renderX = x - this.getWidth() / 2;
         double renderY = y - this.getHeight() / 2;
-        gc.drawImage(this.getImg(),renderX - gameplay.translate_x,renderY - gameplay.translate_y);
+        gc.drawImage(this.getImg(),renderX - gameplay.translate_x + gameplay.offsetX
+                ,renderY - gameplay.translate_y + gameplay.offsetY);
     }
     public abstract void update();
 
@@ -117,7 +120,7 @@ public abstract class Entity {
         return img;
     }
 
-    void setPosition(double x, double y) {
+    public void setPosition(double x, double y) {
         this.x = x;
         this.y = y;
     }

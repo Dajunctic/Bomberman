@@ -13,10 +13,11 @@ public class GameMap {
 
     public static Map<Character, Integer> map = new HashMap<Character, Integer>();
 
-    public static char[] walls = {'2', '!', '#', '@', '(', '&', ';', '=', ':', '$', '%'};
+    public static char[] walls = {'2', '!', '#', '@', '(', '&', ';', '=', '|', '$', '%', '*'};
     public static char[] floors = {'0', '9', '8', '7', 'v', 'b', 'm', 'n', 'a'
             , 'q', 'w', 's', 'z', 'c', 'e', 'i', 'o', 'h', 'j', 'k', 'l', '.'};
-    public static char[] bricks = {};
+
+    public static char[] bricks = {'+', 'X', '1', '?', 'x'};
 
     public GameMap() {
         this.init();
@@ -59,9 +60,6 @@ public class GameMap {
             case '9' -> {
                 return new Floor(j, i, Sprite.floor4.getFxImage());
             }
-            case '1' -> {
-                return new Brick(j, i, Sprite.floor.getFxImage());
-            }
             case '2' -> {
                 return new Wall(j, i, Sprite.wall.getFxImage());
             }
@@ -71,11 +69,8 @@ public class GameMap {
             case '3' -> {
                 return new Functional(j, i, Sprite.speed.getFxImage());
             }
-            case '4' -> {
-                return new Functional(j, i, Sprite.buff_bomber.getFxImage());
-            }
-            case '5' -> {
-                return new Functional(j, i, Sprite.buff_immortal.getFxImage());
+            case '1' -> {
+                return new Brick(j, i, Sprite.brick.getFxImage());
             }
 
             /* ************ Ice Scene ************ */
@@ -91,12 +86,6 @@ public class GameMap {
             case '^' -> {
                 return new Wall(j, i, Sprite.iceTop.getFxImage());
             }
-            case '*' -> {
-                return new Wall(j, i, Sprite.water.getFxImage());
-            }
-            case '+' -> {
-                return new Floor(j, i, Sprite.iceStone.getFxImage());
-            }
             case 'v' -> {
                 return new Floor(j, i, Sprite.iceFloor.getFxImage());
             }
@@ -109,7 +98,9 @@ public class GameMap {
             case 'n' -> {
                 return new Floor(j, i, Sprite.iceFloor4.getFxImage());
             }
-
+            case '+' -> {
+                return new Brick(j, i, Sprite.iceBrick.getFxImage());
+            }
 
             /* ************ Tomb Scene ************ */
             case '&' -> {
@@ -117,6 +108,9 @@ public class GameMap {
             }
             case ';' -> {
                 return new Wall(j, i, Sprite.tombWall2.getFxImage());
+            }
+            case '*' -> {
+                return new Wall(j, i, Sprite.tombWall3.getFxImage());
             }
             case 'h' -> {
                 return new Floor(j, i, Sprite.tombFloor.getFxImage());
@@ -133,12 +127,15 @@ public class GameMap {
             case '.' -> {
                 return new Floor(j, i, Sprite.space.getFxImage());
             }
+            case '?' -> {
+                return new Brick(j, i, Sprite.tombBrick.getFxImage());
+            }
 
             /* ************ Spring Scene ************ */
             case '=' -> {
                 return new Wall(j, i, Sprite.springWall.getFxImage());
             }
-            case ':' -> {
+            case '|' -> {
                 return new Wall(j, i, Sprite.springWall2.getFxImage());
             }
             case 'a' -> {
@@ -156,26 +153,8 @@ public class GameMap {
             case 'z' -> {
                 return new Floor(j, i, Sprite.springFloor5.getFxImage());
             }
-
-            /* ************ Land Scene ************ */
-
-            case '|' -> {
-                return new Floor(j, i, Sprite.land.getFxImage());
-            }
-            case '[' -> {
-                return new Floor(j, i, Sprite.landLeft.getFxImage());
-            }
-            case ']' -> {
-                return new Floor(j, i, Sprite.landRight.getFxImage());
-            }
-            case '~' -> {
-                return new Floor(j, i, Sprite.landTop.getFxImage());
-            }
-            case 'u' -> {
-                return new Floor(j, i, Sprite.landBot.getFxImage());
-            }
-            case '\'' -> {
-                return new Floor(j, i, Sprite.seaWater.getFxImage());
+            case 'X' -> {
+                return new Brick(j, i, Sprite.springBrick.getFxImage());
             }
 
             /* ************ Castle Scene ************ */
@@ -196,6 +175,9 @@ public class GameMap {
             }
             case 'o' -> {
                 return new Floor(j, i, Sprite.castleFloor4.getFxImage());
+            }
+            case 'x' -> {
+                return new Brick(j, i, Sprite.castleBrick.getFxImage());
             }
         }
 
