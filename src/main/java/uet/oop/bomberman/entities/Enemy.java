@@ -1,5 +1,6 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.generals.Point;
@@ -15,7 +16,7 @@ import java.util.Random;
 
 import static uet.oop.bomberman.game.Gameplay.*;
 
-public class Enemy extends Mobile{
+public abstract class Enemy extends Mobile{
 
     protected Anim enemy;
     protected DeadAnim killed;
@@ -35,6 +36,8 @@ public class Enemy extends Mobile{
     protected int speed = 1;
     protected Vertex direction = new Vertex(1,0);
     protected Point recent_tile;
+
+    protected int reversed = 1;
     //life status
     protected boolean isDead = false;
     public Enemy(double xPixel, double yPixel) {
@@ -47,6 +50,10 @@ public class Enemy extends Mobile{
         recent_tile = new Point((int) xUnit / Sprite.SCALED_SIZE, (int) yUnit / Sprite.SCALED_SIZE);
     }
 
+    //reverse the sprite
+    private void switchSprite() {
+        reversed =  (direction.getX() < 0 ? -1 : 1);
+    }
     /** random setter */
     public void switchDirection() {
         if(dir_x == 1 || dir_x == -1) {
@@ -59,6 +66,7 @@ public class Enemy extends Mobile{
         }
         direction.setX(dir_x);
         direction.setY(dir_y);
+        switchSprite();
     }
 
     /** detect player */
@@ -76,12 +84,13 @@ public class Enemy extends Mobile{
                 status = SERIOUS;
             }
         }
+        switchSprite();
     }
     @Override
     public void move() {
         double ref_x = x +  speed * direction.getX();
         double ref_y = y +  speed * direction.getY();
-        if(!checkCollision(ref_x, ref_y, 0)){
+        if(!checkCollision(ref_x, ref_y, 5)){
             if(focus != null)
                 if(ref_x - focus.getX() <= strict && ref_y - focus.getY() <= strict) {
                     focus = null;
@@ -92,10 +101,12 @@ public class Enemy extends Mobile{
             y = ref_y;
 
             //capturing the tile, kills player
-            if(tile_map[(int) Math.floor(getCenterX() / Sprite.SCALED_SIZE)][(int) Math.floor(getCenterY() / Sprite.SCALED_SIZE)] == '0'&&
+            if(tile_map[(int) Math.floor(getCenterX() / Sprite.SCALED_SIZE)]
+                        [(int) Math.floor(getCenterY() / Sprite.SCALED_SIZE)] == '0'&&
                 tile_map[recent_tile.getX()][recent_tile.getY()] == '*'){
 
-                tile_map[(int) Math.floor(x / Sprite.SCALED_SIZE)][(int) Math.floor(y / Sprite.SCALED_SIZE)] = '*';
+                tile_map[(int) Math.floor(x / Sprite.SCALED_SIZE)]
+                        [(int) Math.floor(y / Sprite.SCALED_SIZE)] = '*';
                 killTask.add(recent_tile);
                 recent_tile.setX((int) Math.floor(x / Sprite.SCALED_SIZE));
                 recent_tile.setY((int) Math.floor(y / Sprite.SCALED_SIZE));
@@ -110,16 +121,18 @@ public class Enemy extends Mobile{
 
     @Override
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
-        /* Kiểm tra có ra khỏi map rộng không */
+        /* * Kiểm tra border map */
         if(ref_x < 0 || ref_y < 0
                 || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
                 || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return true;
 
         Rectangle rect;
         if(mode == CENTER_MODE)
-            rect = new javafx.scene.shape.Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
+            rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
         else
-            rect = new javafx.scene.shape.Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
+            rect = this.getRect(ref_x, ref_y, this.getWidth(), this.getHeight());
+
+        /* * Kiểm tra tất cả các tiles xung quanh thực thể. */
 
         int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE));
         int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE));
@@ -133,23 +146,24 @@ public class Enemy extends Mobile{
                 int tileX = i * Sprite.SCALED_SIZE;
                 int tileY = j * Sprite.SCALED_SIZE;
 
-                javafx.scene.shape.Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
+                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
-                /* Kiểm tra va chạm với tường */
-                if (GameMap.get(tile_map[j][i]) == GameMap.WALL) {
+                /* * Kiểm tra tile có phải kiểu WALL hoặc BRICK không! */
+
+                if (Gameplay.get(tile_map[j][i], i, j) == GameMap.WALL
+                        || Gameplay.get(tile_map[j][i], i, j) == GameMap.BRICK) {
+
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         return true;
                     }
-                } else if (tile_map[j][i] == '!') {
-                    /* Kiểm tra vào ô lửa hay không */
-
+                }
+                if (tile_map[j][i] == '!') {
                     isDead = true;
+
                     return false;
                 }
-
             }
         }
-
 
         return false;
     }
@@ -160,7 +174,20 @@ public class Enemy extends Mobile{
             else return killed.getImage();
     }
 
-    public void update(Bomber player) {
+    public abstract void update(Bomber player);
 
+    @Override
+    public void render(GraphicsContext gc, Gameplay gameplay) {
+
+        gc.setEffect(effect);
+        // Whether object is on screen
+//        if(!onScreen(gameplay)) return;
+        // If it is going backward
+        gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX + (int) ((Sprite.SCALED_SIZE * (1 - reversed)) / 2)
+                , y - gameplay.translate_y + gameplay.offsetY
+                , Sprite.SCALED_SIZE * reversed
+                , Sprite.SCALED_SIZE);
+        gc.setEffect(null);
     }
+
 }

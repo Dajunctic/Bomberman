@@ -7,6 +7,7 @@ import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.maps.GameMap;
 
 import static uet.oop.bomberman.game.Gameplay.tile_map;
 
@@ -29,6 +30,9 @@ public class Fire extends Entity{
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
         burn = new DeadAnim(SpriteSheet.fire, 8, duration);
+
+        //Burning ground
+        Gameplay.set('!', tileX, tileY, false);
     }
 
     @Override
@@ -52,6 +56,7 @@ public class Fire extends Entity{
     }
     @Override
     public void deadAct(Gameplay gameplay) {
+        Gameplay.set('.', tileX, tileY, false);
         Gameplay.kill(tileX, tileY);
     }
 

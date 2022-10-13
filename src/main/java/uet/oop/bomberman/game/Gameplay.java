@@ -134,7 +134,8 @@ public class Gameplay {
 
         createMap();
 
-//        enemies.add(new Balloon(100,200));
+        enemies.add(new Balloon( 8 * 48,48 * 48));
+        System.out.println(enemies);
     }
 
     /** Tạo map hoàn chỉnh */
@@ -194,7 +195,7 @@ public class Gameplay {
         int low_x =(int) Math.floor(translate_x / Sprite.SCALED_SIZE);
         int low_y = (int) Math.floor(translate_y / Sprite.SCALED_SIZE);
 
-
+//        gc.translate(translate_x, translate_y);
         for(int i = low_y; i <= Math.min(height - 1,low_y + BombermanGame.HEIGHT); i ++) {
             for (int j = low_x; j <= Math.min(width - 1,low_x + BombermanGame.WIDTH); j++){
                 background[i][j].render(gc, this);
@@ -212,6 +213,8 @@ public class Gameplay {
 
         /* * Player * */
         player.render(gc, this);
+
+        /* * Enemies * */
         enemies.forEach(g -> g.render(gc, this));
 
         /* * MiniMap * */
