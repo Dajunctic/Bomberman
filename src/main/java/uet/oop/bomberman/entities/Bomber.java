@@ -1,20 +1,25 @@
 package uet.oop.bomberman.entities;
 
-import java.util.*;
-
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Effect;
 import javafx.scene.effect.MotionBlur;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.Generals.Point;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import javafx.scene.input.KeyEvent;
-import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Physics;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 
@@ -37,6 +42,7 @@ public class Bomber extends Mobile {
     boolean movingEffect = false;
     double movingEffectSpeed = 8;
 
+    Entity superSayan = new Floor(0, 0, Sprite.superSayan.getFxImage());
     MotionBlur effect = new MotionBlur();
     /**
      * speed projector, properties
@@ -221,7 +227,10 @@ public class Bomber extends Mobile {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
+
+                System.out.println("asdasd");
                 this.handleEvent(keyEvent);
+
             }
 
             private void handleEvent(KeyEvent keyEvent) {
@@ -279,7 +288,8 @@ public class Bomber extends Mobile {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if( bombs.size() < capacity) {
-                    placeBomb();
+                    placeBomb(x, y, 0);
+
                 }
 //                System.out.println(bombs.size());
             }
@@ -305,6 +315,9 @@ public class Bomber extends Mobile {
         //animations
         statusAnims[currentStatus].update();
 
+        // Cài vị trí của Super Sayan.
+        superSayan.setPosition(x - 30, y - 80);
+
         // attributes handling
         attribute_update(gameplay);
 
@@ -315,14 +328,16 @@ public class Bomber extends Mobile {
     /** Hàm render animation nên overload hàm render của Entity. */
     @Override
     public void render(GraphicsContext gc,Gameplay gameplay) {
-        // Render bombs.
+        //render bomb
         bombs.forEach(g -> g.render(gc, gameplay));
 
         gc.setEffect(effect);
-
+        // Hiện thị các effect của nhân vật
+//        if (movingEffect) {
+//            superSayan.render(gc, gameplay);
+//        }
         // Hiển thị nhân vật
-        gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
-                , y - gameplay.translate_y + gameplay.offsetY);
+        gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
 
         gc.setEffect(null);
     }
@@ -364,29 +379,46 @@ public class Bomber extends Mobile {
         }
     }
 
-    public void placeBomb() {
+    public void placeBomb(double ref_x, double ref_y, int margin) {
+        // có đấy bạn ạ
+        if(ref_x < 0 || ref_y < 0
+                || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
+                || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return;
 
+        Rectangle rect;
+        if(mode == CENTER_MODE)
+            rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
+        else
+            rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
 
-        int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
-        int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
+        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
 
-        bombs.add(new Bomb(i, j, timer));
+        // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
+        int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE) - 1);
+        int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE) - 1);
+        int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
+        int tileEndY = (int) Math.ceil((rect.getY() + rect.getHeight()) / Sprite.SCALED_SIZE);
+        tileEndX = Math.min(tileEndX, Gameplay.width - 1);
+        tileEndY = Math.min(tileEndY, Gameplay.height - 1);
+        for (int i = tileStartX; i <= tileEndX; i++) {
+            for (int j = tileStartY; j <= tileEndY; j++) {
 
+                int tileX = i * Sprite.SCALED_SIZE;
+                int tileY = j * Sprite.SCALED_SIZE;
+
+                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
+
+                if (Gameplay.tile_map[j][i] == 0) {
+                    if (Physics.collisionRectToRect(rect, tileRect)) {
+                        bombs.add(new Bomb(i, j, timer));
+                        return;
+                    }
+                }
+
+            }
+        }
+
+        return;
     }
 
-    /** Override RECT COLLISION cho Nhân vật */
-    @Override
-    public Rectangle getRect(double x, double y, double w, double h) {
-        return super.getRect(x + w / 6, y + h / 3, w * 2 / 3, h * 2 / 3);
-    }
-
-    @Override
-    public double getWidth() {
-        return statusAnims[IDLE].getImage().getWidth();
-    }
-
-    @Override
-    public double getHeight() {
-        return statusAnims[IDLE].getImage().getHeight();
-    }
 }
