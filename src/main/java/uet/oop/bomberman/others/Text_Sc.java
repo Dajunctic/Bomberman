@@ -3,14 +3,12 @@ package uet.oop.bomberman.others;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.Text;
 
 public class Text_Sc extends ScrollPane {
     protected Button text;
 
 
-    public Text_Sc(int X, int Y, String string_) {
+    public Text_Sc(double X, double Y, String string_) {
         text= new Button();
         text.setLayoutX(X);
         text.setLayoutY(Y);

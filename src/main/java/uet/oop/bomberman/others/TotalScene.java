@@ -2,25 +2,35 @@ package uet.oop.bomberman.others;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+
+
+import java.io.File;
+import java.net.URISyntaxException;
 import uet.oop.bomberman.game.BombermanGame;
+import uet.oop.bomberman.music.Music;
+
 //khoi tao cac sence de thuc hien chuyen scene
 public class TotalScene {
+
     private Menu menu ;
     private Pause pause ;
     private Setting setting ;
     private Highscore highscore ;
 
     public TotalScene() {
+
         menu =new Menu();
         pause =new Pause();
         setting =new Setting();
         highscore =new Highscore();
+
+
     }
     //xu ly cac su kien bam chuot
     public void update(Stage stage){
         menu.Play.getText().setOnMouseClicked(event -> {
             stage.setScene(BombermanGame.scene);
-            System.out.println("KK");
+
         });
         menu.Highscore.getText().setOnMouseClicked(event -> {
             stage.setScene(highscore.getScence());
