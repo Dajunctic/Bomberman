@@ -1,25 +1,20 @@
 package uet.oop.bomberman.entities;
 
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Effect;
 import javafx.scene.effect.MotionBlur;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
-import uet.oop.bomberman.Generals.Point;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import javafx.scene.input.KeyEvent;
+import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Physics;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 
@@ -35,14 +30,12 @@ public class Bomber extends Mobile {
     public static final int DEAD = 5;
     private int currentStatus = Bomber.IDLE;
     private Anim[] statusAnims;
-
     /**
      * Các effect Animation của nhân vật
      */
     boolean movingEffect = false;
     double movingEffectSpeed = 8;
 
-    Entity superSayan = new Floor(0, 0, Sprite.superSayan.getFxImage());
     MotionBlur effect = new MotionBlur();
     /**
      * speed projector, properties
@@ -65,10 +58,12 @@ public class Bomber extends Mobile {
     private int firstStatus = 0;
     private int secondStatus = 0;
 
+    //toggle attacking in future
+    private Vertex facing = new Vertex(0,0);
     /**
      * power properties
      */
-    public int capacity = 15;
+    public int capacity = 1;
     public int power = 2;
     public double timer = 2.5;
     List<Bomb> bombs = new ArrayList<>();
@@ -79,7 +74,13 @@ public class Bomber extends Mobile {
      */
     private final String path;
 
-
+    /** abilities */
+    // go icognito
+    private boolean invisible = false;
+    private double alpha = 1;
+    private double fadeInSpeed = 0.05;
+    private int icognito = 5;
+    //Constructor
     public Bomber(double x, double y, String path) {
         super(x, y);
         this.path = path;
@@ -89,6 +90,18 @@ public class Bomber extends Mobile {
         effect.setRadius(0);
         load();
     }
+    /** special skills */
+    //fireround
+    private int fireCapacity = 15;
+    private final double cooldown = 200;
+    private long lastAttack = 0;
+    //TNT
+    private int TNTCapacity = 10;
+    private Nuke nuke = null;
+    //dodges
+    private int dodges = 0;
+    private int dodgeDistance = 2 * Sprite.SCALED_SIZE;
+
 
     /**
      * Hàm load đã hoàn thiện chỉ có chỉnh sửa statusTime sao cho phù hợp.
@@ -179,16 +192,19 @@ public class Bomber extends Mobile {
                 this.secondStatus = secondStatus;
                 setDir(firstStatus, false);
                 setDir(secondStatus, false);
+
+
+
             }
         }
-
-
         if (brake) {
             speed_x += Math.abs(dirX) * brakeAcceleration;
             speed_y += Math.abs(dirY) * brakeAcceleration;
         } else {
             speed_x += Math.abs(dirX) * acceleration;
             speed_y += Math.abs(dirY) * acceleration;
+            //determine facing direction
+            findFace();
         }
 
         if (speed_x < 0  || speed_y < 0) {
@@ -227,10 +243,7 @@ public class Bomber extends Mobile {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-
-                System.out.println("asdasd");
                 this.handleEvent(keyEvent);
-
             }
 
             private void handleEvent(KeyEvent keyEvent) {
@@ -280,6 +293,13 @@ public class Bomber extends Mobile {
                         moveSet.remove(Bomber.RIGHT);
                         resetSpeed();
                     }
+
+                    /** Interaction hotkeys.*/
+                    case Q -> placeBomb();
+                    case W -> shootFireball();
+                    case E -> goInvisible(5);
+                    case R -> placeNuke();
+                    case D -> dodge();
                 }
             }});
 
@@ -287,9 +307,10 @@ public class Bomber extends Mobile {
         scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if( bombs.size() < capacity) {
-                    placeBomb(x, y, 0);
-
+                switch (keyEvent.getCode()) {
+                    case SPACE -> placeBomb();
+                    case Q -> shootFireball();
+                    case W -> goInvisible(5);
                 }
 //                System.out.println(bombs.size());
             }
@@ -311,35 +332,38 @@ public class Bomber extends Mobile {
 
         //movement
         move(gameplay);
-
         //animations
         statusAnims[currentStatus].update();
-
-        // Cài vị trí của Super Sayan.
-        superSayan.setPosition(x - 30, y - 80);
 
         // attributes handling
         attribute_update(gameplay);
 
         //interior changes
         if(movingEffect) update();
+
+        //handling vulnerabilities
+        if(invisible) alpha += fadeInSpeed;
+        if(alpha >= 1) invisible = false;
+
    }
 
     /** Hàm render animation nên overload hàm render của Entity. */
     @Override
     public void render(GraphicsContext gc,Gameplay gameplay) {
-        //render bomb
+        // Render bombs.
         bombs.forEach(g -> g.render(gc, gameplay));
-
         gc.setEffect(effect);
-        // Hiện thị các effect của nhân vật
-//        if (movingEffect) {
-//            superSayan.render(gc, gameplay);
-//        }
+        if(invisible)  gc.setGlobalAlpha(alpha);
+        //apply invisiblity
+        gc.setGlobalAlpha(alpha);
         // Hiển thị nhân vật
-        gc.drawImage(this.getImg(), x - gameplay.translate_x, y - gameplay.translate_y);
+        gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
+                , y - gameplay.translate_y + gameplay.offsetY);
 
+        gc.setGlobalAlpha(1);
         gc.setEffect(null);
+
+        if(nuke != null) nuke.render(gc, gameplay);
     }
 
 
@@ -377,48 +401,135 @@ public class Bomber extends Mobile {
                 i--;
             }
         }
+        if(nuke != null) {
+            nuke.update();
+            if(nuke.nuke.isDead())  nuke.deadAct(gameplay);
+            if(!nuke.isExisted()) nuke = null;
+        }
     }
 
-    public void placeBomb(double ref_x, double ref_y, int margin) {
-        // có đấy bạn ạ
-        if(ref_x < 0 || ref_y < 0
-                || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
-                || ref_y > height * Sprite.SCALED_SIZE - this.getHeight()) return;
-
-        Rectangle rect;
-        if(mode == CENTER_MODE)
-            rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
-        else
-            rect = new Rectangle(ref_x, ref_y, this.getWidth(), this.getHeight());
-
-        // Không cần check ra khỏi map vì trong update BOMBER hoặc ENEMY sẽ giới hạn speed.
-
-        // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
-        int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE) - 1);
-        int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE) - 1);
-        int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
-        int tileEndY = (int) Math.ceil((rect.getY() + rect.getHeight()) / Sprite.SCALED_SIZE);
-        tileEndX = Math.min(tileEndX, Gameplay.width - 1);
-        tileEndY = Math.min(tileEndY, Gameplay.height - 1);
-        for (int i = tileStartX; i <= tileEndX; i++) {
-            for (int j = tileStartY; j <= tileEndY; j++) {
-
-                int tileX = i * Sprite.SCALED_SIZE;
-                int tileY = j * Sprite.SCALED_SIZE;
-
-                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
-
-                if (Gameplay.tile_map[j][i] == 0) {
-                    if (Physics.collisionRectToRect(rect, tileRect)) {
-                        bombs.add(new Bomb(i, j, timer));
-                        return;
-                    }
-                }
-
+    //find facing direction
+    public void findFace() {
+        if(speed_x*dirX >= 0) {
+            if(speed_y*dirY >= 0) {
+                if (speed_x >= speed_y) facing.set(1,0);
+                    else facing.set(0,1);
+            }
+            else {
+                if (speed_x >= speed_y) facing.set(1,0);
+                else facing.set(0,-1);
             }
         }
+        else {
+            if(speed_y*dirY >= 0) {
+                if (speed_x >= speed_y) facing.set(-1,0);
+                else facing.set(0,1);
+            }
+            else {
+                if (speed_x >= speed_y) facing.set(-1, 0);
+                else facing.set(0, -1);
+            }
+        }
+    }
+    public void placeBomb() {
 
-        return;
+        int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
+        int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
+
+        bombs.add(new Bomb(i, j, timer));
+
     }
 
+    /** Override RECT COLLISION cho Nhân vật */
+    @Override
+    public Rectangle getRect(double x, double y, double w, double h) {
+        return super.getRect(x + w / 6, y + h / 3, w * 2 / 3, h * 2 / 3);
+    }
+
+    @Override
+    public double getWidth() {
+        return statusAnims[IDLE].getImage().getWidth();
+    }
+
+    @Override
+    public double getHeight() {
+        return statusAnims[IDLE].getImage().getHeight();
+    }
+
+    /**************************** BUFF AND BUGS ********************************/
+    //invisible
+    public void goInvisible(double time) {
+        if(icognito <= 0) return ;
+        fadeInSpeed = 0.8 / (time * (double) FPS );
+        alpha = 0.2;
+        invisible = true;
+    }
+
+    public boolean vulnerable() {
+        return !invisible;
+    }
+    //bomb upgrade
+    public void radiusUpgrade() {
+        power ++;
+    }
+    public void capacityUpgrade() {
+        capacity ++;
+    }
+
+    //gaining items
+    public void addFireball () {
+        fireCapacity ++;
+    }
+
+    public void addTNT() {
+        TNTCapacity ++;
+    }
+
+    //unique skills
+    //shoot 3 parallel fire
+    public void shootFireball() {
+        if(System.currentTimeMillis() - lastAttack <= cooldown) return ;
+
+        if(invisible) {
+
+            entities.add(new Flame(this.x, this.y, 1, facing.getX(), facing.getY()));
+
+        }
+        else if(fireCapacity > 0) {
+            fireCapacity --;
+            double startX =  Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
+            double startY =  Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
+            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE, facing.getX()
+                                                                                    , facing.getY()
+                                                                                    , 1, 0.5));
+            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE,  (double) 2 / HEIGHT * facing.getY() + facing.getX()
+                                                                                    ,  (double) 2 / HEIGHT * facing.getX() + facing.getY()
+                                                                                    , 1, 0.5));
+            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE, -(double) 2 / HEIGHT * facing.getY() + facing.getX()
+                                                                                    , -(double) 2 / HEIGHT * facing.getX() + facing.getY()
+                                                                                    , 1, 0.5));
+        }
+
+        lastAttack = System.currentTimeMillis();
+    }
+
+    //Nuke placing, need to install impact on tile_map
+    public void placeNuke() {
+        if(TNTCapacity > 0 && nuke == null) {
+        int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
+        int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
+        nuke =new Nuke(i, j, timer);
+        }
+    }
+    //jump 2 tiles, need to reinstall checkCollision for out of Map bug
+    public void dodge() {
+        effect.setRadius(10);
+        double refx = this.x + facing.getX() * dodgeDistance;
+        double refy = this.y + facing.getY() * dodgeDistance;
+        if(!checkCollision(refx, refy, 5)) {
+            placeBomb();
+            this.x = refx;
+            this.y = refy;
+        }
+    }
 }

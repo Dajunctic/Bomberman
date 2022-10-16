@@ -1,16 +1,11 @@
 package uet.oop.bomberman.graphics;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Lưu trữ thông tin các pixel của 1 sprite (hình ảnh game).
@@ -21,6 +16,7 @@ public class Sprite {
 	public static final String TILE = "Tile";
 	public static final String NORMAL = "Normal";
 	public static final String ANIM = "Animation";
+
 	/** Cài đặt mặc định kích cỡ ảnh (Dành cho Tile) */
 	public static final int SCALED_SIZE = 48;
     private static final int TRANSPARENT_COLOR = 0xffff00ff;
@@ -39,55 +35,102 @@ public class Sprite {
 	SpriteSheet sheet;
 	private Image img;
 
-	//Tiles path
-	private static String floor_path = "/sprites/Bg/Floor/";
-	private static String wall_path = "/sprites/Obstacles/Wall/";
-	private static String destroyed_path = "/sprites/Bg/Destroyed_floor/";
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Generic enemy tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+	public static Sprite spot = new Sprite("/sprites/enemy/general/spotted.png", Sprite.NORMAL);
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Buff tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+	public static Sprite speed = new Sprite("/sprites/Interactives/Buffs/powerup_speed.png", Sprite.TILE);
+	public static Sprite buff_immortal = new Sprite("/sprites/Interactives/Buffs/powerup_bombpass.png", Sprite.TILE);
+	public static Sprite buff_bomber = new Sprite("/sprites/Interactives/Buffs/powerup_bombs.png", Sprite.TILE);
 
 	/**
 	 * |--------------------------------------------------------------------------
-	 * | Board tiles
+	 * | Entity tiles
 	 * |--------------------------------------------------------------------------
 	 * */
-	public static Sprite portal = new Sprite("/sprites/Interactives/Functional/portal.png", Sprite.TILE);
+	public static Sprite wall = new Sprite("/tilemaps/main/main_wall.png", Sprite.TILE);
+	public static Sprite wall2 = new Sprite("/tilemaps/main/main_wall2.png", Sprite.TILE);
+	public static Sprite floor = new Sprite("/tilemaps/main/main_floor.png", Sprite.TILE);
+	public static Sprite floor2 = new Sprite("/tilemaps/main/main_floor2.png", Sprite.TILE);
+	public static Sprite floor3 = new Sprite("/tilemaps/main/main_floor3.png", Sprite.TILE);
+	public static Sprite floor4 = new Sprite("/tilemaps/main/main_floor4.png", Sprite.TILE);
+	public static Sprite space = new Sprite("/tilemaps/main/space.png", Sprite.TILE);
+	public static Sprite brick = new Sprite("/tilemaps/main/main_brick.png", Sprite.TILE);
+	public static Sprite destroyFloor = new Sprite("/tilemaps/main/destroy_floor.png", Sprite.TILE);
 
-	//list of properties
-	public static List<Sprite> floors = new ArrayList<>();
-	public static List<Sprite> walls = new ArrayList<>();
-	public static List<Sprite> destroyed = new ArrayList<>();
 	/**
 	 * |--------------------------------------------------------------------------
-	 * | Effect tiles
+	 * | Winter Scenery tiles
 	 * |--------------------------------------------------------------------------
 	 * */
-	public static Sprite superSayan = new Sprite("/sprites/Player/Effect/super_sayan.png", Sprite.NORMAL);
 
+	public static Sprite iceWall = new Sprite("/tilemaps/winter/ice_wall.png", Sprite.TILE); // #
+	public static Sprite iceWall2 = new Sprite("/tilemaps/winter/ice_wall2.png", Sprite.TILE);
+	public static Sprite iceWall3 = new Sprite("/tilemaps/winter/ice_wall3.png", Sprite.TILE);
+	public static Sprite iceTop = new Sprite("/tilemaps/winter/ice_top.png", Sprite.TILE);
+	public static Sprite iceFloor = new Sprite("/tilemaps/winter/ice_floor.png", Sprite.TILE);
+	public static Sprite iceFloor2 = new Sprite("/tilemaps/winter/ice_floor2.png", Sprite.TILE);
+	public static Sprite iceFloor3 = new Sprite("/tilemaps/winter/ice_floor3.png", Sprite.TILE);
+	public static Sprite iceFloor4 = new Sprite("/tilemaps/winter/ice_floor4.png", Sprite.TILE);
+	public static Sprite iceBrick = new Sprite("/tilemaps/winter/brick.png", Sprite.TILE); // +
+	public static Sprite iceDestroyFloor = new Sprite("/tilemaps/winter/destroy_floor.png", Sprite.TILE);
 
-	// KHOI TAO SPRITE MENU
-	public static Sprite menu = new Sprite("/sprites/menu/menubackground.png",Sprite.NORMAL);
-	// khoi tao cac nut cho menu co mau
-	public static Sprite play_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Play col_Button.png",Sprite.NORMAL);
-	public static Sprite setting_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Settings  col_Button.png",Sprite.NORMAL);
-	public static Sprite back_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Back  col_Button.png",Sprite.NORMAL);
-	public static Sprite quit_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Quit  col_Button.png",Sprite.NORMAL);
-	public static Sprite continue_red=new Sprite("/sprites/menu/Large Buttons/Colored Large Buttons/Continue  col_Button.png",Sprite.NORMAL);
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Tomb Scenery tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+	public static Sprite tombWall = new Sprite("/tilemaps/tomb/wall.png", Sprite.TILE);
+	public static Sprite tombWall2 = new Sprite("/tilemaps/tomb/wall2.png", Sprite.TILE);
+	public static Sprite tombWall3 = new Sprite("/tilemaps/tomb/wall3.png", Sprite.TILE);
+	public static Sprite tombFloor = new Sprite("/tilemaps/tomb/floor.png", Sprite.TILE);
+	public static Sprite tombFloor2 = new Sprite("/tilemaps/tomb/floor2.png", Sprite.TILE);
+	public static Sprite tombFloor3 = new Sprite("/tilemaps/tomb/floor3.png", Sprite.TILE);
+	public static Sprite tombFloor4 = new Sprite("/tilemaps/tomb/floor4.png", Sprite.TILE);
+	public static Sprite tombBrick = new Sprite("/tilemaps/tomb/brick.png", Sprite.TILE);
+	public static Sprite tombDestroyFloor = new Sprite("/tilemaps/tomb/destroy_floor.png", Sprite.TILE);
 
-	//khoi tao cho cac nut menu khong co mau
-	public static Sprite play_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Play Button.png",Sprite.NORMAL);
-	public static Sprite back_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Back Button.png",Sprite.NORMAL);
-	public static Sprite quit_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Quit Button.png",Sprite.NORMAL);
-	public static Sprite continue_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Continue Button.png",Sprite.NORMAL);
-	public static Sprite setting_black=new Sprite("/sprites/menu/Large Buttons/Large Buttons/Settings Button.png",Sprite.NORMAL);
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Spring Scenery tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+	public static Sprite springWall = new Sprite("/tilemaps/spring/spring_wall.png", Sprite.TILE);
+	public static Sprite springWall2 = new Sprite("/tilemaps/spring/spring_wall2.png", Sprite.TILE);
+	public static Sprite springFloor = new Sprite("/tilemaps/spring/spring_floor.png", Sprite.TILE);
+	public static Sprite springFloor2 = new Sprite("/tilemaps/spring/spring_floor2.png", Sprite.TILE);
+	public static Sprite springFloor3 = new Sprite("/tilemaps/spring/spring_floor3.png", Sprite.TILE);
+	public static Sprite springFloor4 = new Sprite("/tilemaps/spring/spring_floor4.png", Sprite.TILE);
+	public static Sprite springFloor5 = new Sprite("/tilemaps/spring/spring_floor5.png", Sprite.TILE);
+	public static Sprite springBrick = new Sprite("/tilemaps/spring/spring_brick.png", Sprite.TILE);
+	public static Sprite springDestroyFloor = new Sprite("/tilemaps/spring/destroy_floor.png", Sprite.TILE);
 
-	//khoi tao cac sprite button trong game play
-	public static Sprite pause_button_black=new Sprite("/sprites/menu/Square Buttons/Square Buttons/Pause Square Button.png",Sprite.NORMAL);
-	public static Sprite play_button_black=new Sprite("/sprites/menu/Square Buttons/Square Buttons/Play Square Button.png",Sprite.NORMAL);
-	public static Sprite music_button_black=new Sprite("/sprites/menu/Square Buttons/Square Buttons/Music Square Button.png",Sprite.NORMAL);
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Spring Scenery tiles
+	 * |--------------------------------------------------------------------------
+	 * */
 
-	public static Sprite pause_button_red=new Sprite("/sprites/menu/Square Buttons/Colored Square Buttons/Pause col_Square Button.png",Sprite.NORMAL);
-	public static Sprite play_button_red=new Sprite("/sprites/menu/Square Buttons/Colored Square Buttons/Play col_Square Button.png",Sprite.NORMAL);
-	public static Sprite music_button_red=new Sprite("/sprites/menu/Square Buttons/Colored Square Buttons/Music col_Square Button.png",Sprite.NORMAL);
-
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | Castle Scenery tiles
+	 * |--------------------------------------------------------------------------
+	 * */
+	public static Sprite castleWall = new Sprite("/tilemaps/castle/wall.png", Sprite.TILE);
+	public static Sprite castleWall2 = new Sprite("/tilemaps/castle/wall2.png", Sprite.TILE);
+	public static Sprite castleFloor = new Sprite("/tilemaps/castle/floor.png", Sprite.TILE);
+	public static Sprite castleFloor2 = new Sprite("/tilemaps/castle/floor2.png", Sprite.TILE);
+	public static Sprite castleFloor3 = new Sprite("/tilemaps/castle/floor3.png", Sprite.TILE);
+	public static Sprite castleFloor4 = new Sprite("/tilemaps/castle/floor4.png", Sprite.TILE);
+	public static Sprite castleBrick = new Sprite("/tilemaps/castle/brick.png", Sprite.TILE);
+	public static Sprite castleDestroyFloor = new Sprite("/tilemaps/castle/destroy_floor.png", Sprite.TILE);
 
 	/** Hàm khởi tạo dành cho Sprite tách ra từ SpriteSheet. */
 	public Sprite(SpriteSheet sheet, int cx, int cy, int cropW, int cropH) {
@@ -193,6 +236,10 @@ public class Sprite {
         Image input = new ImageView(wr).getImage();
 
 		if (this.type.equals(Sprite.TILE)) {
+
+			if (w > SCALED_SIZE || h > SCALED_SIZE) {
+				return resample(input, 1);
+			}
 			return resample(input, SCALED_SIZE / this.tileSize);
 		}
 
@@ -225,53 +272,4 @@ public class Sprite {
 
 		return output;
 	}
-
-	/** Hàm dùng để debug ảnh tạo từ Sprite Sheet */
-	public Image getSheetFxImage() {
-		int w = sheet.getW();
-		int h = sheet.getH();
-
-		WritableImage wr = new WritableImage(w, h);
-		PixelWriter pw = wr.getPixelWriter();
-		for (int x = 0; x < w; x++) {
-			for (int y = 0; y < h; y++) {
-				if ( sheet.getPixel(x + y * w) == TRANSPARENT_COLOR) {
-					pw.setArgb(x, y, 0);
-				}
-				else {
-					pw.setArgb(x, y, sheet.getPixel(x + y * w));
-				}
-			}
-		}
-		Image input = new ImageView(wr).getImage();
-
-		if (this.type.equals(Sprite.TILE)) {
-			return resample(input, SCALED_SIZE / this.tileSize);
-		}
-
-		return resample(input, this.scaleFactor);
-	}
-
-	/** load tiles */
-	public static void load_tiles(int floor_styles, int wall_styles) {
-		for(int i = 0;i < floor_styles;i ++) {
-			char index = (char) (i + '0');
-			String path = floor_path + index + ".png";
-			floors.add(new Sprite(path, Sprite.TILE));
-		}
-
-		for(int i = 0;i < wall_styles;i ++) {
-			char index = (char) (i + '0');
-			String path = wall_path + index + ".png";
-			walls.add(new Sprite(path, Sprite.TILE));
-		}
-
-		for(int i = 0; i < floor_styles; i++) {
-			char index = (char) (i + '0');
-			String path = destroyed_path + index + ".png";
-			destroyed.add(new Sprite(path, Sprite.TILE));
-		}
-		System.out.println(String.format("Load success, %d floor styles, %d destroyed tiles and %d wall styles", floors.size(), destroyed.size(),walls.size()));
-	}
-
 }

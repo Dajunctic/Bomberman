@@ -14,6 +14,7 @@ import uet.oop.bomberman.others.Physics;
 
 import java.util.HashSet;
 
+import static uet.oop.bomberman.game.BombermanGame.FPS;
 import static uet.oop.bomberman.game.Gameplay.*;
 
 public class Flame extends Mobile{
@@ -54,6 +55,29 @@ public class Flame extends Mobile{
                 flame = new DeadAnim(SpriteSheet.flame_left, 5, 0.5);
             }
 
+    }
+
+    public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration) {
+        super(_x,_y);
+        mode = CENTER_MODE;
+        //set speed
+        speed = length / (timer * FPS);
+        this.length = length;
+        dir_x =  dirX;
+        dir_y =  dirY;
+
+        // Animation
+        if(dir_x > 0.5) {
+            flame = new DeadAnim(SpriteSheet.flame_right, 5, timer);
+        }
+        else if(dir_x < 0.4 && dir_x > -0.4) {
+            if(dir_y > 0) flame = new DeadAnim(SpriteSheet.flame_down,5, timer);
+            else flame = new DeadAnim(SpriteSheet.flame_up, 5, timer);
+        }
+        else {
+            flame = new DeadAnim(SpriteSheet.flame_left, 5, timer);
+        }
+        this.duration = duration;
     }
     @Override
     public void update() {
