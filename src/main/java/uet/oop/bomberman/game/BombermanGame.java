@@ -17,6 +17,8 @@ public class BombermanGame extends Application {
     public static final int WIDTH = 22;
     public static final int HEIGHT = 12;
 
+    /** Frame control */
+    public static final int FPS = 80;
     private GraphicsContext gc;
     private Canvas canvas;
     public static Scene scene;
@@ -47,13 +49,21 @@ public class BombermanGame extends Application {
         stage.show();
         stage.setTitle("Bomberman Super X");
         AnimationTimer timer = new AnimationTimer() {
+
+            //Control FPS
+            private long  time_gap = 1_000_000_000/FPS;
+            private long  lastUpdate = 0;
             @Override
             public void handle(long l) {
-                update();
-                render();
+                if( l - lastUpdate >= time_gap){
+                    update();
+                    render();
+                    lastUpdate = l;
+                }
             }
         };
         timer.start();
+
         System.out.println(timer);
         game.importing("src/main/resources/maps/map.txt", "src/main/resources/maps/area.txt");
 

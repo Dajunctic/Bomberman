@@ -48,6 +48,28 @@ public class DeadAnim extends Anim{
         }
     }
 
+    //speed up motherfucker
+    public void update(int speed_up) {
+        this.countTime ++;
+
+        if (this.countTime % this.frameTime == 0) {
+            this.currentFrame ++;
+            this.currentFrame %= this.numberFrames;
+
+            if (this.currentFrame == 0) {
+                this.currentFrame = this.startLoopFrame;
+                //speeding up
+                frameTime = Math.max(1, frameTime - speed_up);
+
+                this.currentLoop ++;
+            }
+        }
+
+        if (this.currentLoop == this.numLoop) {
+            dead = true;
+        }
+    }
+
     /** Reset lại Animation của DeadAnim */
     public void reset() {
          currentLoop = 0;

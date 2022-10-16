@@ -19,7 +19,7 @@ public class Anim {
      * time = 2 thì tức là 1 giây sẽ chạy được 30 khung hình.
      * time = n thì tức là 1 giây chạy được 60 / n khung hình.
      * */
-    protected final int frameTime;
+    protected int frameTime;
     protected int countTime;
 
     protected int startLoopFrame;

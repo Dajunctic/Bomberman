@@ -15,6 +15,7 @@ import uet.oop.bomberman.others.Physics;
 import java.util.Random;
 
 import static uet.oop.bomberman.game.Gameplay.*;
+import static uet.oop.bomberman.graphics.Sprite.spot;
 
 public abstract class Enemy extends Mobile{
 
@@ -27,7 +28,7 @@ public abstract class Enemy extends Mobile{
     protected static final int WANDERING = 0;
     protected static final int SERIOUS = 1;
     //detect player
-    private int sight_depth = 3;
+    private int sight_depth = 5;
     protected int frequency = 10;
     protected double sight_angle = Math.PI / 2;
     protected int status = WANDERING;
@@ -74,7 +75,11 @@ public abstract class Enemy extends Mobile{
         return Math.sqrt((player.x - x)*(player.x - x) + (player.y - y)*(player.y - y));
     }
 
+    //also need to be adjusted to fit in new map
+    /** Tracking player*/
     protected void search(Bomber player) {
+
+        if(!player.vulnerable()) return;
         if(distance(player) < sight_depth * Sprite.SCALED_SIZE) {
             Vertex line = new Vertex(player.x - x, player.y - y);
             Vertex dir = new Vertex(dir_x, dir_y);
@@ -86,6 +91,7 @@ public abstract class Enemy extends Mobile{
         }
         switchSprite();
     }
+
     @Override
     public void move() {
         double ref_x = x +  speed * direction.getX();
@@ -119,6 +125,7 @@ public abstract class Enemy extends Mobile{
 
     }
 
+    //need to be reinstalled
     @Override
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
         /* * Kiểm tra border map */
@@ -182,6 +189,11 @@ public abstract class Enemy extends Mobile{
         gc.setEffect(effect);
         // Whether object is on screen
 //        if(!onScreen(gameplay)) return;
+
+        //  If spotted bomber
+        if(status == SERIOUS) gc.drawImage(spot.getFxImage(), x - gameplay.translate_x + gameplay.offsetX
+                                                            , y - gameplay.translate_y + gameplay.offsetY - 18 );
+
         // If it is going backward
         gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX + (int) ((Sprite.SCALED_SIZE * (1 - reversed)) / 2)
                 , y - gameplay.translate_y + gameplay.offsetY

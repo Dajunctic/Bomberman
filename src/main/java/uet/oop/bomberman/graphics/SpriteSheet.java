@@ -24,6 +24,15 @@ public class SpriteSheet {
 	public BufferedImage image;
 	public Sprite[] components;
 
+	/** ************************* Scene Effect  ******************************/
+	/**
+	 * |--------------------------------------------------------------------------
+	 * | ABILITIES
+	 * |--------------------------------------------------------------------------
+	 * */
+	//NUKE!!!!!
+	public static SpriteSheet nuke = new SpriteSheet("/sprites/Player/Abilities/nuke.png", 10);
+	public static SpriteSheet nuke_explosion = new SpriteSheet("/sprites/Player/Abilities/nuke_explosion.png", 13);
 
 	/** ************************* Animation Game  ******************************/
 

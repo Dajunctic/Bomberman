@@ -4,16 +4,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
+import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.AreaMap;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.maps.Minimap;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /** object handler */
@@ -181,7 +180,9 @@ public class Gameplay {
         }
         kill();
     }
-    /** Render objects. */
+    /** Render objects.
+     * Thứ tự render/ layering:
+     * Tiles -> Buffs -> Mobile -> Bomb/Items -> Player -> Nuke -> Fx images */
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
 
         offsetX = Math.max(0, (canvasWidth - BombermanGame.WIDTH * Sprite.SCALED_SIZE) / 2);
@@ -211,14 +212,17 @@ public class Gameplay {
         /* entities */
         entities.forEach(g -> g.render(gc, this));
 
-        /* * Player * */
-        player.render(gc, this);
+
 
         /* * Enemies * */
         enemies.forEach(g -> g.render(gc, this));
 
+        /* * Player * */
+        player.render(gc, this);
+
         /* * MiniMap * */
         minimap.render(gc, minimap.getX() + offsetX, minimap.getY() + offsetY);
+
 
         /* ** Khung màn hình game */
         gc.drawImage(gameFrame, this.offsetX - 225, this.offsetY - 113);
@@ -278,7 +282,7 @@ public class Gameplay {
         background[j][i] = GameMap.getTile(tile_map[j][i], j, i);
     }
 
-    /** Floor bị phá hủy */
+    /** Floor or Wall bị phá hủy */
     public static void kill(int i, int j) {
         background[j][i].kill();
     }
