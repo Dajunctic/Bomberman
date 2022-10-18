@@ -3,6 +3,7 @@ package uet.oop.bomberman.others;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class Text_Sc extends ScrollPane {
     protected Button text;
@@ -17,6 +18,7 @@ public class Text_Sc extends ScrollPane {
         text.getStyleClass().add("button");
         try {Font font = Font.loadFont(getClass().getResource("/PhoenixGaming-nRJj0.ttf").toURI().toString(), 40);
             text.setFont(font);
+
         }
         catch(Exception e){
             System.out.println("JHj");

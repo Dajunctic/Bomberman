@@ -11,12 +11,23 @@
     -fx-text-fill:red;
 
     }
+
+
+
     .slider{
     -fx-pref-width:400px;
     -fx-pref-height:50px;
-}
+    }
     .slider .track{
     -fx-background-color: linear-gradient(to left,cyan, magenta);
     }
     .slider .thumb{
+    }
+    .Text{
+        -fx-pref-width:2px ;
+        -fx-background-color: #f0f8ff;
+        -fx-text-fill: black;
+         -fx-border-radius: 5;
+        -fx-alignment:center;
+
     }

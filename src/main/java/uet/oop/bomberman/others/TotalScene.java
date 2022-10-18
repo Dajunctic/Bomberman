@@ -16,6 +16,7 @@ public class TotalScene {
     private Pause pause ;
     private Setting setting ;
     private Highscore highscore ;
+    private ChoosePlayer choosePlayer;
 
     public TotalScene() {
 
@@ -23,13 +24,13 @@ public class TotalScene {
         pause =new Pause();
         setting =new Setting();
         highscore =new Highscore();
-
+        choosePlayer =new ChoosePlayer();
 
     }
     //xu ly cac su kien bam chuot
-    public void update(Stage stage){
+    public void update(Stage stage) {
         menu.Play.getText().setOnMouseClicked(event -> {
-            stage.setScene(BombermanGame.scene);
+            stage.setScene(choosePlayer.getScence());
 
         });
         menu.Highscore.getText().setOnMouseClicked(event -> {
@@ -51,6 +52,18 @@ public class TotalScene {
         });
         setting.Back.getText().setOnMouseClicked(event -> {
             stage.setScene(menu.getScence());
+
+        });
+        choosePlayer.Back.getText().setOnMouseClicked(event -> {
+            stage.setScene(menu.getScence());
+
+        });
+        choosePlayer.playerBt1.getText().setOnMouseClicked(event -> {
+            stage.setScene(BombermanGame.scene);
+
+        });
+        choosePlayer.playerBt2.getText().setOnMouseClicked(event -> {
+            stage.setScene(BombermanGame.scene);
 
         });
     }

@@ -19,11 +19,7 @@ import java.net.URISyntaxException;
 public class BaseScene {
     private Scene scence;
     private Group root = new Group();
-    private int x1=0;
-    private int w=5;
-    private int x2=w;
-    private GraphicsContext gc;
-    private Canvas cs=new Canvas(BombermanGame.canvas.getWidth(),BombermanGame.canvas.getHeight());
+
     private ImageView background_;
     private Image background;
     private ImageView logo;
@@ -44,8 +40,6 @@ public class BaseScene {
             e.printStackTrace();
         }
         System.out.println("");
-        gc= cs.getGraphicsContext2D();
-        this.root.getChildren().add(cs);
         this.root.getChildren().add(background_);
         this.root.getChildren().add(logo);
 
