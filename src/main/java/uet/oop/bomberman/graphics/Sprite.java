@@ -40,7 +40,8 @@ public class Sprite {
 	 * | Generic enemy tiles
 	 * |--------------------------------------------------------------------------
 	 * */
-	public static Sprite spot = new Sprite("/sprites/enemy/general/spotted.png", Sprite.NORMAL);
+//	public static Sprite spot = new Sprite("/sprites/enemy/general/spotted.png", Sprite.NORMAL);
+
 	/**
 	 * |--------------------------------------------------------------------------
 	 * | Buff tiles

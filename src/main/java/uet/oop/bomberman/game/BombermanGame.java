@@ -8,7 +8,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import uet.oop.bomberman.graphics.Sprite;
-
 import java.io.IOException;
 
 public class BombermanGame extends Application {
@@ -17,8 +16,8 @@ public class BombermanGame extends Application {
     public static final int WIDTH = 22;
     public static final int HEIGHT = 12;
 
-    /** Frame control */
-    public static final int FPS = 80;
+    /** Game Screen Attribute */
+    public static final int FPS = 60;
     private GraphicsContext gc;
     private Canvas canvas;
     public static Scene scene;
@@ -47,14 +46,19 @@ public class BombermanGame extends Application {
         stage.setScene(scene);
 
         stage.show();
+        stage.setResizable(false);
         stage.setTitle("Bomberman Super X");
         AnimationTimer timer = new AnimationTimer() {
 
-            //Control FPS
+            /* * Control FPS */
             private long  time_gap = 1_000_000_000/FPS;
             private long  lastUpdate = 0;
             @Override
             public void handle(long l) {
+
+                update();
+                render();
+
                 if( l - lastUpdate >= time_gap){
                     update();
                     render();
@@ -63,7 +67,6 @@ public class BombermanGame extends Application {
             }
         };
         timer.start();
-
         System.out.println(timer);
         game.importing("src/main/resources/maps/map.txt", "src/main/resources/maps/area.txt");
 

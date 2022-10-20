@@ -24,7 +24,6 @@ public abstract class Entity {
     /** Các mode in tọa render hình ảnh */
     public static int NORMAL_MODE = 0;
     public static int CENTER_MODE = 1;
-    public static int BOTTOM_MODE = 2;
     protected int mode = NORMAL_MODE;
 
     /** Dành cho thực thể chuyển động theo tọa độ Pixel như Bomber, Enemy */
@@ -59,9 +58,8 @@ public abstract class Entity {
 
         if (mode == Entity.CENTER_MODE) {
             renderCenter(gc, gameplay);
-        } else if (mode == Entity.BOTTOM_MODE) {
-            renderBottom(gc, gameplay);
         } else {
+
             gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
                     , y - gameplay.translate_y + gameplay.offsetY);
         }
@@ -75,16 +73,9 @@ public abstract class Entity {
     }
 
     /** Hàm này coi x, y là tọa độ trung tâm **/
-    void renderCenter(GraphicsContext gc, Gameplay gameplay) {
+    private void renderCenter(GraphicsContext gc, Gameplay gameplay) {
         double renderX = x - this.getWidth() / 2;
         double renderY = y - this.getHeight() / 2;
-        gc.drawImage(this.getImg(),renderX - gameplay.translate_x + gameplay.offsetX
-                ,renderY - gameplay.translate_y + gameplay.offsetY);
-    }
-    /** Hàm này coi x là tọa độ trung tâm, y là tọa độ đáy **/
-    void renderBottom(GraphicsContext gc, Gameplay gameplay) {
-        double renderX = x - this.getWidth() / 2;
-        double renderY = y - this.getHeight();
         gc.drawImage(this.getImg(),renderX - gameplay.translate_x + gameplay.offsetX
                 ,renderY - gameplay.translate_y + gameplay.offsetY);
     }

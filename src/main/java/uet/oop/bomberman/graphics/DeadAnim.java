@@ -48,7 +48,7 @@ public class DeadAnim extends Anim{
         }
     }
 
-    //speed up motherfucker
+    /** Update with speed up motherfucker. **/
     public void update(int speed_up) {
         this.countTime ++;
 

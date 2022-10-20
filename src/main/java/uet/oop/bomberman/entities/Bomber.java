@@ -1,19 +1,20 @@
 package uet.oop.bomberman.entities;
 
+import java.lang.annotation.Inherited;
 import java.util.*;
+
 import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.MotionBlur;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Anim;
-import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import javafx.scene.input.KeyEvent;
+import uet.oop.bomberman.maps.GameMap;
+import uet.oop.bomberman.others.Physics;
 
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
@@ -37,9 +38,7 @@ public class Bomber extends Mobile {
     boolean movingEffect = false;
     double movingEffectSpeed = 8;
 
-    MotionBlur motionEffect = new MotionBlur();
-    ColorAdjust dodgeEffect = new ColorAdjust();
-
+    MotionBlur effect = new MotionBlur();
     /**
      * speed projector, properties
      */
@@ -61,12 +60,10 @@ public class Bomber extends Mobile {
     private int firstStatus = 0;
     private int secondStatus = 0;
 
-    //toggle attacking in future
-    private Vertex facing = new Vertex(0,0);
     /**
      * power properties
      */
-    public int capacity = 1;
+    public int capacity = 15;
     public int power = 2;
     public double timer = 2.5;
     List<Bomb> bombs = new ArrayList<>();
@@ -77,40 +74,14 @@ public class Bomber extends Mobile {
      */
     private final String path;
 
-    /** abilities */
-    // go icognito
-    private boolean invisible = false;
-    private double alpha = 1;
-    private double fadeInSpeed = 0.05;
-    private int icognito = 5;
 
-    /** special skills */
-    //fireround
-    private int fireCapacity = 99;
-    private final double cooldown = 200;
-    private long lastAttack = 0;
-    //TNT
-    private int TNTCapacity = 99;
-    Nuke nuke = null;
-    //dodges
-    private int dodges = 0;
-    private int dodgeDistance = 2 * Sprite.SCALED_SIZE;
-    private boolean dodging = false;
-    private double lightShift = 0;
-    private final double shiftSpeed = 0.1;
-    private int lighten = 1;
-    private double oldX = 0;
-    private double oldY = 0;
-
-    private DeadAnim dodgeAnim;
-
-    //Constructor
     public Bomber(double x, double y, String path) {
         super(x, y);
         this.path = path;
+
         speed_x = SPEED;
         speed_y = SPEED;
-        motionEffect.setRadius(0);
+        effect.setRadius(0);
         load();
     }
 
@@ -137,9 +108,6 @@ public class Bomber extends Mobile {
 
         currentIdleDirection = Bomber.RIGHT;
         statusAnims[Bomber.IDLE].staticUpdate();
-
-        //init buff animation
-        dodgeAnim = new DeadAnim(new SpriteSheet("/sprites/Player/Abilities/dodge.png", 9), 5, 1);
     }
 
     private void setDir(int status, boolean single) {
@@ -206,19 +174,16 @@ public class Bomber extends Mobile {
                 this.secondStatus = secondStatus;
                 setDir(firstStatus, false);
                 setDir(secondStatus, false);
-
-
-
             }
         }
+
+
         if (brake) {
             speed_x += Math.abs(dirX) * brakeAcceleration;
             speed_y += Math.abs(dirY) * brakeAcceleration;
         } else {
             speed_x += Math.abs(dirX) * acceleration;
             speed_y += Math.abs(dirY) * acceleration;
-            //determine facing direction
-            findFace();
         }
 
         if (speed_x < 0  || speed_y < 0) {
@@ -247,7 +212,7 @@ public class Bomber extends Mobile {
         if (speed_x >= movingEffectSpeed || speed_y >= movingEffectSpeed) {
             movingEffect = true;
         }
-        else if(motionEffect.getRadius() != 0) motionEffect.setRadius(0);
+        else if(effect.getRadius() != 0) effect.setRadius(0);
     }
 
     /** input reader */
@@ -307,14 +272,6 @@ public class Bomber extends Mobile {
                         moveSet.remove(Bomber.RIGHT);
                         resetSpeed();
                     }
-
-                    case Q -> placeBomb();
-                    case W -> shootFireball();
-                    case E -> goInvisible(5);
-                    case R -> placeNuke();
-                    case D -> {
-                        dodging = true;
-                    }
                 }
             }});
 
@@ -322,10 +279,8 @@ public class Bomber extends Mobile {
         scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()) {
-                    case SPACE -> placeBomb();
-                    case Q -> shootFireball();
-                    case W -> goInvisible(5);
+                if( bombs.size() < capacity) {
+                    placeBomb();
                 }
 //                System.out.println(bombs.size());
             }
@@ -335,82 +290,48 @@ public class Bomber extends Mobile {
     //inheritances
     @Override
     public void update() {
-
-        //update splash
-
+        effect.setRadius(Math.sqrt(Math.abs(speed_x*speed_x*dirX) + Math.abs(speed_y*speed_y*dirY)) * 2);
+        double angle = Math.toDegrees(Math.atan(speed_x / speed_y)) - 90;
+        effect.setAngle(angle);
     }
 
-    //handling special
-    private void visualUpdate() {
-        if(dodging) {
-            if(!(effect instanceof ColorAdjust)) effect = dodgeEffect;
-            dodgeEffect.setBrightness(lightShift);
-            if(lightShift >= 1) {
-                dodge();
-                lighten = -lighten;
-            }
-            if (lightShift < 0) {
-                lighten = 1;
-                lightShift = 0.5;
-                dodging = false;
-            }
-            lightShift += lighten * shiftSpeed;
-        } else if (movingEffect) {
-            if(!(effect instanceof MotionBlur)) effect = motionEffect;
-            motionEffect.setRadius(Math.sqrt(Math.abs(speed_x*speed_x*dirX) + Math.abs(speed_y*speed_y*dirY)) * 2);
-            double angle = Math.toDegrees(Math.atan(speed_x / speed_y)) - 90;
-            motionEffect.setAngle(angle);
-        }
-
-    }
-
-    //Animation updating
-    private void animationUpdate() {
-        //moving
-        statusAnims[currentStatus].update();
-        //buffs
-        dodgeAnim.update();
-    }
     /** updates */
     public void update(Gameplay gameplay) {
+
+        super.update();
+
         //interacting
         interaction();
 
         //movement
         move(gameplay);
+
         //animations
-        animationUpdate();
+        statusAnims[currentStatus].update();
 
         // attributes handling
         attribute_update(gameplay);
 
         //interior changes
-        visualUpdate();
-
-        //handling vulnerabilities
-        if(invisible) alpha += fadeInSpeed;
-        if(alpha >= 1) invisible = false;
+        if(movingEffect) update();
    }
 
     /** Hàm render animation nên overload hàm render của Entity. */
     @Override
     public void render(GraphicsContext gc,Gameplay gameplay) {
-        // Render bombs.
+        /* * Hiển thị bombs **/
         bombs.forEach(g -> g.render(gc, gameplay));
-        gc.setEffect(effect);
-        if(invisible)  gc.setGlobalAlpha(alpha);
-        //apply invisiblity
 
-        // Hiển thị nhân vật
+        gc.setEffect(effect);
+
+        /* * Hiển thị nhân vật */
         gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
                 , y - gameplay.translate_y + gameplay.offsetY);
 
-        gc.setGlobalAlpha(1);
         gc.setEffect(null);
 
-        if(nuke != null) nuke.render(gc, gameplay);
-        if(!dodgeAnim.isDead()) gc.drawImage(dodgeAnim.getImage(), oldX - gameplay.translate_x + gameplay.offsetX
-                , oldY - gameplay.translate_y + gameplay.offsetY);
+        /* * Hiển thị máu */
+        renderHP(gc, gameplay);
     }
 
 
@@ -448,42 +369,15 @@ public class Bomber extends Mobile {
                 i--;
             }
         }
-        if(nuke != null) {
-            nuke.update();
-            if(nuke.nuke.isDead()) nuke.deadAct(gameplay);
-            if(!nuke.isExisted()) nuke = null;
-        }
     }
 
-    //find facing direction
-    public void findFace() {
-        if(speed_x*dirX >= 0) {
-            if(speed_y*dirY >= 0) {
-                if (speed_x >= speed_y) facing.set(1,0);
-                    else facing.set(0,1);
-            }
-            else {
-                if (speed_x >= speed_y) facing.set(1,0);
-                else facing.set(0,-1);
-            }
-        }
-        else {
-            if(speed_y*dirY >= 0) {
-                if (speed_x >= speed_y) facing.set(-1,0);
-                else facing.set(0,1);
-            }
-            else {
-                if (speed_x >= speed_y) facing.set(-1, 0);
-                else facing.set(0, -1);
-            }
-        }
-    }
     public void placeBomb() {
+
 
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
 
-        bombs.add(new Bomb(i, j, timer, true));
+        bombs.add(new Bomb(i, j, timer));
 
     }
 
@@ -501,81 +395,5 @@ public class Bomber extends Mobile {
     @Override
     public double getHeight() {
         return statusAnims[IDLE].getImage().getHeight();
-    }
-
-    /**************************** BUFF AND BUGS ********************************/
-    //invisible
-    public void goInvisible(double time) {
-        if(icognito <= 0) return ;
-        fadeInSpeed = 0.8 / (time * (double) FPS );
-        alpha = 0.2;
-        invisible = true;
-    }
-
-    public boolean vulnerable() {
-        return !invisible;
-    }
-    //bomb upgrade
-    public void radiusUpgrade() {
-        power ++;
-    }
-    public void capacityUpgrade() {
-        capacity ++;
-    }
-
-
-    //unique skills
-    //shoot 3 parallel fire
-    public void shootFireball() {
-        if(System.currentTimeMillis() - lastAttack <= cooldown) return ;
-
-        if(invisible) {
-
-            entities.add(new Flame(this.x, this.y, 1, facing.getX(), facing.getY(), true));
-
-        }
-        else if(fireCapacity > 0) {
-            fireCapacity --;
-            double startX =  Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
-            double startY =  Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
-            //sqawn flames
-            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE, facing.getX()
-                                                                                    , facing.getY()
-                                                                                    , 1, 0.5, true));
-            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE,  (double) 5 / HEIGHT * facing.getY() + facing.getX()
-                                                                                    ,  (double) 5 / HEIGHT * facing.getX() + facing.getY()
-                                                                                    , 1, 0.5, true));
-            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE, -(double) 5 / HEIGHT * facing.getY() + facing.getX()
-                                                                                    , -(double) 5 / HEIGHT * facing.getX() + facing.getY()
-                                                                                    , 1, 0.5, true));
-        }
-
-        lastAttack = System.currentTimeMillis();
-    }
-
-    //Nuke placing, need to install impact on tile_map
-    public void placeNuke() {
-        if(TNTCapacity > 0) {
-        int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
-        int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
-        nuke = new Nuke(i, j, timer);
-        }
-    }
-    
-    //jump 2 tiles, need to reinstall checkCollision for out of Map bug
-    public void dodge() {
-        dodgeAnim.reset();
-        oldX = this.x;
-        oldY = this.y;
-        double refx = this.x + facing.getX() * dodgeDistance;
-        double refy = this.y + facing.getY() * dodgeDistance;
-        if(!checkCollision(refx, refy, 5)) {
-            placeBomb();
-            this.x = refx;
-            this.y = refy;
-        }
-        //reset speed
-        speed_x = 0;
-        speed_y = 0;
     }
 }

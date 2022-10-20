@@ -7,13 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameMap {
-
-    //assign
-    public static final int BURN = -1;
     public static final int WALL = 0;
     public static final int FLOOR = 1;
     public static final int BRICK = 2;
-
 
     public static Map<Character, Integer> map = new HashMap<Character, Integer>();
 
