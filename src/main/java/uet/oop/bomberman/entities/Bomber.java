@@ -92,12 +92,12 @@ public class Bomber extends Mobile {
     }
     /** special skills */
     //fireround
-    private int fireCapacity = 15;
+    private int fireCapacity = 99;
     private final double cooldown = 200;
     private long lastAttack = 0;
     //TNT
-    private int TNTCapacity = 10;
-    private Nuke nuke = null;
+    private int TNTCapacity = 99;
+    private List<Nuke> nuke = new ArrayList<>();
     //dodges
     private int dodges = 0;
     private int dodgeDistance = 2 * Sprite.SCALED_SIZE;
@@ -363,7 +363,7 @@ public class Bomber extends Mobile {
         gc.setGlobalAlpha(1);
         gc.setEffect(null);
 
-        if(nuke != null) nuke.render(gc, gameplay);
+        if(!nuke.isEmpty()) nuke.forEach(g -> g.render(gc, gameplay));
     }
 
 
@@ -401,10 +401,12 @@ public class Bomber extends Mobile {
                 i--;
             }
         }
-        if(nuke != null) {
-            nuke.update();
-            if(nuke.nuke.isDead())  nuke.deadAct(gameplay);
-            if(!nuke.isExisted()) nuke = null;
+        if(!nuke.isEmpty()) {
+            nuke.forEach(g -> {
+                g.update();
+                if(g.nuke.isDead()) g.deadAct(gameplay);
+                if(!g.isExisted()) nuke.remove(g);
+            });
         }
     }
 
@@ -502,11 +504,11 @@ public class Bomber extends Mobile {
             entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE, facing.getX()
                                                                                     , facing.getY()
                                                                                     , 1, 0.5));
-            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE,  (double) 2 / HEIGHT * facing.getY() + facing.getX()
-                                                                                    ,  (double) 2 / HEIGHT * facing.getX() + facing.getY()
+            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE,  (double) 5 / HEIGHT * facing.getY() + facing.getX()
+                                                                                    ,  (double) 5 / HEIGHT * facing.getX() + facing.getY()
                                                                                     , 1, 0.5));
-            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE, -(double) 2 / HEIGHT * facing.getY() + facing.getX()
-                                                                                    , -(double) 2 / HEIGHT * facing.getX() + facing.getY()
+            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE, -(double) 5 / HEIGHT * facing.getY() + facing.getX()
+                                                                                    , -(double) 5 / HEIGHT * facing.getX() + facing.getY()
                                                                                     , 1, 0.5));
         }
 
@@ -515,10 +517,10 @@ public class Bomber extends Mobile {
 
     //Nuke placing, need to install impact on tile_map
     public void placeNuke() {
-        if(TNTCapacity > 0 && nuke == null) {
+        if(TNTCapacity > 0) {
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
-        nuke =new Nuke(i, j, timer);
+        nuke.add(new Nuke(i, j, timer));
         }
     }
     //jump 2 tiles, need to reinstall checkCollision for out of Map bug

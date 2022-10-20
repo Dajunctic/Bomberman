@@ -26,7 +26,7 @@ public class Nuke extends Entity{
         tileX = (int) xUnit;
         tileY = (int) yUnit;
         nuke = new DeadAnim(SpriteSheet.nuke, 6, timer * (timer + 1) / 2);
-        explosion.setScaleFactor(3);
+        explosion.setScaleFactor(2);
         System.out.println("NUKE placed!!!");
     }
 

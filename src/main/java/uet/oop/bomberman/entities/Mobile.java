@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Basic;
@@ -13,9 +14,7 @@ import static uet.oop.bomberman.game.Gameplay.*;
 /** Everything that moves */
 public class Mobile extends Entity{
     protected double speed;
-    protected double dir_x = 0;
-    protected double dir_y = 0;
-
+    protected Vertex direction;
     // inheritance
     public Mobile(double xPixel, double yPixel) {
         super(xPixel, yPixel);
@@ -76,8 +75,8 @@ public class Mobile extends Entity{
     }
 
     public void move() {
-        double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed * dir_x));
-        double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * dir_y));
+        double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed * direction.getX()));
+        double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * direction.getY()));
         if(!checkCollision(ref_x,ref_y,5)) {
             x = ref_x;
             y = ref_y;

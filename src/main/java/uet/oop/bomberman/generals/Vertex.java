@@ -31,7 +31,7 @@ public class Vertex {
         return Math.sqrt(x*x + y*y);
     }
     public double angle(Vertex other) {
-        return Math.acos((x * other.getX() + y * other.getY())/(abs() * other.abs()));
+        return Math.acos((x * other.x + y * other.y)/(abs() * other.abs()));
     }
     public void normalize() {
         double abs = abs();
