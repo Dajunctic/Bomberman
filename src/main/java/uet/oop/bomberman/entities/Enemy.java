@@ -180,9 +180,9 @@ public abstract class Enemy extends Mobile{
                         return true;
                     }
                 }
+                //will need reimplemented
                 if (tile_map[j][i] == '!') {
                     isDead = true;
-
                     return false;
                 }
             }

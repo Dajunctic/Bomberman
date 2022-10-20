@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.generals.Point;
@@ -27,15 +28,16 @@ public class Flame extends Mobile{
 
     /** Khi nào gặp vật cản như brick hoặc wall thì dừng luôn */
     boolean stop = false;
-
+    boolean friendly = false;
     HashSet<Integer> floors = new HashSet<>();
+    ColorAdjust effect;
 
     public Flame(double xPixel, double yPixel) {
         super(xPixel, yPixel);
         mode = CENTER_MODE;
     }
 
-    public Flame(double _x, double _y, double length,double dirX,double dirY) {
+    public Flame(double _x, double _y, double length,double dirX,double dirY, boolean friendly) {
         super(_x,_y);
         mode = CENTER_MODE;
         //set speed
@@ -54,9 +56,12 @@ public class Flame extends Mobile{
                 flame = new DeadAnim(SpriteSheet.flame_left, 5, 0.5);
             }
         direction = new Vertex(dirX, dirY);
+
+            //friendly fire
+        this.friendly = friendly;
     }
 
-    public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration) {
+    public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration, boolean friendly) {
         super(_x,_y);
         mode = CENTER_MODE;
         //set speed
@@ -74,6 +79,8 @@ public class Flame extends Mobile{
 
         this.duration = duration;
         this.direction = new Vertex(dirX, dirY);
+        //friendly fire
+        this.friendly = friendly;
     }
     @Override
     public void update() {
@@ -103,9 +110,24 @@ public class Flame extends Mobile{
         return !flame.isDead();
     }
 
+    //re-apply effects
     @Override
-    public void render(GraphicsContext gc,Gameplay gameplay) {
-        super.render(gc, gameplay);
+    public void render(GraphicsContext gc, Gameplay gameplay) {
+
+        gc.setEffect(effect);
+        // Whether object is on screen
+        if(!onScreen(gameplay)) return;
+
+        if (mode == Entity.CENTER_MODE) {
+            renderCenter(gc, gameplay);
+        } else if (mode == Entity.BOTTOM_MODE) {
+            renderBottom(gc, gameplay);
+        } else {
+            gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
+                    , y - gameplay.translate_y + gameplay.offsetY);
+        }
+
+        gc.setEffect(null);
     }
 
     @Override
@@ -153,7 +175,7 @@ public class Flame extends Mobile{
 
                         if (!floors.contains(i * 200 + j)) {
                             floors.add(i * 200 + j);
-                            entities.add(new Fire(i, j, Math.max(0.5, duration)));
+                            entities.add(new Fire(i, j, Math.max(0.5, duration), friendly));
                         }
                     }
                 }

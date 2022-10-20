@@ -59,6 +59,7 @@ public class Nuke extends Entity{
     public void deadAct(Gameplay gameplay) {
         //destroy all tiles including walls
         //implement method to find areaMap grid for bordering
+        if(exploded) return;
     }
 
     @Override
