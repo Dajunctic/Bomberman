@@ -8,8 +8,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.music.Music;
+import uet.oop.bomberman.others.TotalScene;
+
+
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class BombermanGame extends Application {
 
@@ -20,14 +25,14 @@ public class BombermanGame extends Application {
     /** Frame control */
     public static final int FPS = 80;
     private GraphicsContext gc;
-    private Canvas canvas;
+    public static Canvas canvas = new Canvas(WIDTH * Sprite.SCALED_SIZE, HEIGHT * Sprite.SCALED_SIZE);;
     public static Scene scene;
     private Gameplay game = new Gameplay();
-
+    private Music music = new Music();
+    private TotalScene totalScene = new TotalScene();
     @Override
     public void start(Stage stage) throws IOException {
         /* * Tạo canvas */
-        canvas = new Canvas();
         gc = canvas.getGraphicsContext2D();
 
         StackPane stackPane = new StackPane();
@@ -44,7 +49,7 @@ public class BombermanGame extends Application {
                 stackPane.heightProperty());
 
         /* * Thêm scene vao stage */
-        stage.setScene(scene);
+        stage.setScene(totalScene.getMenu().getScene());
 
         stage.show();
         stage.setTitle("Bomberman Super X");
@@ -56,7 +61,7 @@ public class BombermanGame extends Application {
             @Override
             public void handle(long l) {
                 if( l - lastUpdate >= time_gap){
-                    update();
+                    update(stage);
                     render();
                     lastUpdate = l;
                 }
@@ -71,7 +76,8 @@ public class BombermanGame extends Application {
 
 
     /** Updating */
-    public void update() {
+    public void update(Stage stage) {
+        totalScene.update(stage);
         game.update();
     }
 
