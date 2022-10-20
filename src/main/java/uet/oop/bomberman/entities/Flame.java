@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
@@ -40,21 +41,19 @@ public class Flame extends Mobile{
         //set speed
         speed = length / 10;
         this.length = length;
-        dir_x =  dirX;
-        dir_y =  dirY;
 
         // Animation
-            if(dir_x > 0.5) {
+            if(dirX > 0.5) {
                 flame = new DeadAnim(SpriteSheet.flame_right, 5, 0.5);
             }
-            else if(dir_x < 0.4 && dir_x > -0.4) {
-                if(dir_y > 0) flame = new DeadAnim(SpriteSheet.flame_down,5,0.5);
+            else if(dirX < 0.4 && dirX > -0.4) {
+                if(dirY > 0) flame = new DeadAnim(SpriteSheet.flame_down,5,0.5);
                     else flame = new DeadAnim(SpriteSheet.flame_up, 5, 0.5);
             }
             else {
                 flame = new DeadAnim(SpriteSheet.flame_left, 5, 0.5);
             }
-
+        direction = new Vertex(dirX, dirY);
     }
 
     public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration) {
@@ -63,27 +62,24 @@ public class Flame extends Mobile{
         //set speed
         speed = length / (timer * FPS);
         this.length = length;
-        dir_x =  dirX;
-        dir_y =  dirY;
-
         // Animation
-        if(dir_x > 0.5) {
-            flame = new DeadAnim(SpriteSheet.flame_right, 5, timer);
-        }
-        else if(dir_x < 0.4 && dir_x > -0.4) {
-            if(dir_y > 0) flame = new DeadAnim(SpriteSheet.flame_down,5, timer);
-            else flame = new DeadAnim(SpriteSheet.flame_up, 5, timer);
+        if(Math.abs(dirX) > Math.abs(dirY)) {
+            if(dirX > 0) flame = new DeadAnim(SpriteSheet.flame_right, 5, timer);
+                else flame = new DeadAnim(SpriteSheet.flame_left, 5, timer);
         }
         else {
-            flame = new DeadAnim(SpriteSheet.flame_left, 5, timer);
+            if(dirY > 0) flame = new DeadAnim(SpriteSheet.flame_down,5, timer);
+            else flame = new DeadAnim(SpriteSheet.flame_up, 5, timer);
         }
+
         this.duration = duration;
+        this.direction = new Vertex(dirX, dirY);
     }
     @Override
     public void update() {
         //moving
-        double ref_x = Math.max(0,Math.min(width * Sprite.SCALED_SIZE - this.getWidth(),x  +  speed * dir_x));
-        double ref_y = Math.max(0,Math.min(height * Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * dir_y));
+        double ref_x = Math.max(0,Math.min(width * Sprite.SCALED_SIZE - this.getWidth(),x  +  speed * direction.getX()));
+        double ref_y = Math.max(0,Math.min(height * Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * direction.getY()));
         if(!checkCollision(ref_x,ref_y,15) && !stop) {
             length -= speed;
             if(length <= 0) speed = 0;
