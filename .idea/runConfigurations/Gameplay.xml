@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Gameplay" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="uet.oop.bomberman.game.BombermanGame" />
+    <module name="gamelik" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
