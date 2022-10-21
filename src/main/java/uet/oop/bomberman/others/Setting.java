@@ -4,7 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Slider;
 import uet.oop.bomberman.game.BombermanGame;
-import uet.oop.bomberman.music.Music;
+import uet.oop.bomberman.music.Sound;
 
 public class Setting extends BaseScene{
     Text_Sc Back =new Text_Sc((int) (BombermanGame.canvas.getWidth()/10*7),(int) (BombermanGame.canvas.getHeight()/10*7),"BACK");
@@ -29,7 +29,7 @@ public class Setting extends BaseScene{
             @Override
             public void changed(ObservableValue<? extends Number> observable, //
                                 Number oldValue, Number newValue) {
-                Music.setVolumm_((Double) newValue);
+                Sound.setVolumm_((Double) newValue);
 
             }
         });

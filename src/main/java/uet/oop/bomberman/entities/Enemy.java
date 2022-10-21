@@ -16,6 +16,8 @@ import uet.oop.bomberman.others.Physics;
 import java.util.Random;
 
 import static java.lang.Math.random;
+import static uet.oop.bomberman.game.BombermanGame.FPS;
+import static uet.oop.bomberman.game.BombermanGame.currentFrame;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.graphics.Sprite.spot;
 
@@ -70,6 +72,7 @@ public abstract class Enemy extends Mobile{
             direction.setX(dir[(int) Math.round(Math.random()) + 1]);
         }
         switchSprite();
+
     }
 
     //also need to be adjusted to fit in new map
@@ -103,6 +106,7 @@ public abstract class Enemy extends Mobile{
     }
     @Override
     public void move() {
+        if(currentFrame % (Sprite.SCALED_SIZE / speed) == 0) placeFire();
         double ref_x = x +  speed * direction.getX();
         double ref_y = y +  speed * direction.getY();
         if(!checkCollision(ref_x, ref_y, 5)){
@@ -114,7 +118,6 @@ public abstract class Enemy extends Mobile{
                 }
             x = ref_x;
             y = ref_y;
-
             //capturing the tile, kills player
             if(tile_map[(int) Math.floor(getCenterX() / Sprite.SCALED_SIZE)]
                         [(int) Math.floor(getCenterY() / Sprite.SCALED_SIZE)] == '0'&&
@@ -218,4 +221,12 @@ public abstract class Enemy extends Mobile{
         gc.setEffect(null);
     }
 
+    public void placeFire() {
+
+        int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
+        int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
+
+        entities.add(new Fire(i, j, 2, false));
+
+    }
 }

@@ -42,7 +42,7 @@ public class Fire extends Entity{
             effect.setContrast(1.0);
         }
         //Burning ground
-        Gameplay.set('!', tileX, tileY, false);
+//        Gameplay.set('!', tileX, tileY, false);
     }
 
     @Override

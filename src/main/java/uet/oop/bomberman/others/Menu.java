@@ -3,7 +3,7 @@ package uet.oop.bomberman.others;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import uet.oop.bomberman.game.BombermanGame;
-import uet.oop.bomberman.music.Music;
+import uet.oop.bomberman.music.Sound;
 
 
 public class Menu extends BaseScene{
@@ -29,7 +29,7 @@ public class Menu extends BaseScene{
     @Override
     public Scene getScene() {
         try {
-            Music.mediaStage.play();
+            Sound.mediaStage.play();
         }
         catch (Exception e){
             System.out.println(e.getMessage());

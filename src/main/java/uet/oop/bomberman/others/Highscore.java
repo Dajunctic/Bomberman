@@ -3,7 +3,7 @@ package uet.oop.bomberman.others;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import uet.oop.bomberman.game.BombermanGame;
-import uet.oop.bomberman.music.Music;
+import uet.oop.bomberman.music.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +43,6 @@ public class Highscore extends BaseScene{
                 System.out.println("bug doc font");
             }
         }
-        Music.start.play();
+        Sound.start.play();
     }
 }

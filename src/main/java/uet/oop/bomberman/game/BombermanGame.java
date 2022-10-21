@@ -8,13 +8,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.music.Music;
+import uet.oop.bomberman.music.Sound;
 import uet.oop.bomberman.others.TotalScene;
 
 
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class BombermanGame extends Application {
 
@@ -24,11 +23,12 @@ public class BombermanGame extends Application {
 
     /** Frame control */
     public static final int FPS = 80;
+    public static int currentFrame = 0;
     private GraphicsContext gc;
     public static Canvas canvas = new Canvas(WIDTH * Sprite.SCALED_SIZE, HEIGHT * Sprite.SCALED_SIZE);;
     public static Scene scene;
     private Gameplay game = new Gameplay();
-    private Music music = new Music();
+    private Sound sound = new Sound();
     private TotalScene totalScene = new TotalScene();
     @Override
     public void start(Stage stage) throws IOException {
@@ -56,7 +56,7 @@ public class BombermanGame extends Application {
         AnimationTimer timer = new AnimationTimer() {
 
             //Control FPS
-            private long  time_gap = 1_000_000_000/FPS;
+            public long  time_gap = 1_000_000_000/FPS;
             private long  lastUpdate = 0;
             @Override
             public void handle(long l) {
@@ -64,6 +64,7 @@ public class BombermanGame extends Application {
                     update(stage);
                     render();
                     lastUpdate = l;
+                    currentFrame++;
                 }
             }
         };
