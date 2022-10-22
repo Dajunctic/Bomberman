@@ -106,7 +106,7 @@ public class SkillFrame {
         gc.setFill(Color.ORANGE);
         gc.setTextAlign(TextAlignment.CENTER);
 
-        Color timeLeftColor = new Color(0 / 255.0, 204 / 255.0, 255 / 255.0, 1.0);
+        Color timeLeftColor = new Color(51 / 255.0, 153 / 255.0, 255 / 255.0, 1.0);
 
         /* ********************** Skill Q ******************************* */
         double skillQX = 80 + barX + game.offsetX;

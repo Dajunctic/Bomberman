@@ -24,8 +24,6 @@ public class SpriteSheet {
 	public BufferedImage image;
 	public Sprite[] components;
 
-	/** ************************* Animation Game  ******************************/
-
 	/** ************************* Scene Effect  ******************************/
 	/**
 	 * |--------------------------------------------------------------------------
@@ -33,8 +31,10 @@ public class SpriteSheet {
 	 * |--------------------------------------------------------------------------
 	 * */
 	//NUKE!!!!!
-//	public static SpriteSheet nuke = new SpriteSheet("/sprites/Player/Abilities/nuke.png", 10);
-//	public static SpriteSheet nuke_explosion = new SpriteSheet("/sprites/Player/Abilities/nuke_explosion.png", 13);
+	public static SpriteSheet nuke = new SpriteSheet("/sprites/Player/Abilities/nuke.png", 10);
+	public static SpriteSheet nuke_explosion = new SpriteSheet("/sprites/Player/Abilities/nuke_explosion.png", 13);
+
+	/** ************************* Animation Game  ******************************/
 
 	/**
 	 * |--------------------------------------------------------------------------
@@ -50,7 +50,7 @@ public class SpriteSheet {
 
 	/**
 	 * |--------------------------------------------------------------------------
-	 * | EFFECT
+	 * | FIRE
 	 * |--------------------------------------------------------------------------
 	 * */
 

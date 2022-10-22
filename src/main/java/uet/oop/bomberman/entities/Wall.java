@@ -11,6 +11,7 @@ import uet.oop.bomberman.graphics.Sprite;
  * */
 
 public class Wall extends Entity {
+
     protected boolean isDead = false;
     int theme;
     public Wall(int x, int y, Image img) {
@@ -21,13 +22,12 @@ public class Wall extends Entity {
         super(x, y, img);
         this.theme = theme;
     }
-    @Override
-    public void update() {
-        /* * Nothing happen */
-    }
-
+    //reduced to atom
     public void kill() {
         Gameplay.set('.', (int)this.x/ Sprite.SCALED_SIZE, (int) this.y / Sprite.SCALED_SIZE, true);
     }
-}
 
+    @Override
+    public void update() {
+    }
+}
