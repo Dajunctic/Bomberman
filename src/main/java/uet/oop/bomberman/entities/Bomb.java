@@ -81,6 +81,16 @@ public class Bomb extends Entity{
             }
         }
 
+
+        /* ****** Attack Mobile Entity ********** */
+        for (Mobile mobile : Mobile.mobiles) {
+            Rectangle a = new Rectangle(x - getWidth() / 2, y - getHeight() / 2, getWidth() ,getHeight());
+            Rectangle b = mobile.getRectCollision();
+
+            if (Physics.collisionRectToRect(a, b)) {
+                mobile.subtractHP(Mobile.EXPLOSION_SUBTRACT_HP);
+            }
+        }
     }
 
     @Override

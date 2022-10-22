@@ -4,13 +4,16 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
+import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.AreaMap;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.maps.Minimap;
+import uet.oop.bomberman.others.SkillFrame;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /** object handler */
@@ -18,12 +21,16 @@ public class Gameplay {
 
     public static int width;
     public static int height;
-    protected BufferedReader sourceMap;
+
     public static List<Entity> entities = new ArrayList<>();
-    //terminate
+
+    /** Terminate */
     public static List<Point> killTask = new ArrayList<>();
     protected Bomber player;
     protected List<Enemy> enemies = new ArrayList<>();
+
+    /** Map tổng quan*/
+    protected BufferedReader sourceMap;
     public static Entity[][] background;
     public static String[] map;
 
@@ -43,17 +50,15 @@ public class Gameplay {
     /** Minimap cho màn chơi */
     public Minimap minimap;
     public GameMap gameMap;
-    /** Hàng rào giữa các màn chơi */
-    public static ArrayList<Fence> fences = new ArrayList<>();
-    /** Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
-    public static ArrayList<Point>  fires = new ArrayList<>();
-    /** Các variables cho map khu vực **/
+
+    /** Map khu vực **/
     public static ArrayList<AreaMap> areaMaps = new ArrayList<>();
     public static int currentArea = 0;
 
-    public Gameplay() {
-
-    }
+    /** Các tập hợp entity khác */
+    public static ArrayList<Fence> fences = new ArrayList<>(); /* * Hàng rào giữa các màn chơi */
+    public static ArrayList<Point>  fires = new ArrayList<>(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
+    public static SkillFrame skillFrame = new SkillFrame();
 
     /** Load map from file */
     public void importing (String generalMap, String areaMap) throws IOException {
@@ -134,7 +139,8 @@ public class Gameplay {
 
         createMap();
 
-//        enemies.add(new Balloon(100,200));
+        enemies.add(new Balloon( 8 * 48,48 * 48));
+        System.out.println(enemies);
     }
 
     /** Tạo map hoàn chỉnh */
@@ -148,7 +154,6 @@ public class Gameplay {
             }
 
         }
-
         /* * Minimap */
         minimap = new Minimap(800, 20 );
         gameMap = new GameMap();
@@ -173,13 +178,14 @@ public class Gameplay {
 
         // Mặc định là hàng rào chặn lại các màn
         for (Fence fence: fences) {
-            fence.setStatus(Fence.DOWN);
+            fence.setStatus(Fence.UP);
         }
     }
 
     /** update */
     public void update(){
         player.update(this);
+        skillFrame.update(player);
         minimap.update(player);
 
         /* * Cập nhật map khu vực hiện tại * */
@@ -207,8 +213,7 @@ public class Gameplay {
     }
     /** Render objects.
      * Thứ tự render/ layering:
-     * Tiles -> Buffs -> Mobile -> Bomb/Items -> Player -> Nuke -> Fx images
-     * */
+     * Tiles -> Buffs -> Mobile -> Bomb/Items -> Player -> Nuke -> Fx images */
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
 
         offsetX = Math.max(0, (canvasWidth - BombermanGame.WIDTH * Sprite.SCALED_SIZE) / 2);
@@ -222,7 +227,6 @@ public class Gameplay {
         int low_x =(int) Math.floor(translate_x / Sprite.SCALED_SIZE);
         int low_y = (int) Math.floor(translate_y / Sprite.SCALED_SIZE);
 
-
         for(int i = low_y; i <= Math.min(height - 1,low_y + BombermanGame.HEIGHT); i ++) {
             for (int j = low_x; j <= Math.min(width - 1,low_x + BombermanGame.WIDTH); j++){
                 background[i][j].render(gc, this);
@@ -234,8 +238,8 @@ public class Gameplay {
         for (AreaMap areaMap: areaMaps) {
             areaMap.render(gc, this);
         }
-        /* * Hàng rào * */
 
+        /* * Hàng rào * */
         for (Fence fence: fences) {
             fence.render(gc, this);
         }
@@ -243,15 +247,20 @@ public class Gameplay {
         /* entities */
         entities.forEach(g -> g.render(gc, this));
 
+        /* * Enemies * */
+        enemies.forEach(g -> g.render(gc, this));
+
         /* * Player * */
         player.render(gc, this);
-        enemies.forEach(g -> g.render(gc, this));
 
         /* * MiniMap * */
         minimap.render(gc, minimap.getX() + offsetX, minimap.getY() + offsetY);
 
-        /* ** Khung màn hình game */
-        gc.drawImage(gameFrame, this.offsetX - 225, this.offsetY - 113);
+        /* * Khung Skill * */
+        skillFrame.render(gc, this, player);
+
+        /* * Khung màn hình game */
+        gc.drawImage(gameFrame, this.offsetX - 320, this.offsetY - 255);
 
     }
 
@@ -308,7 +317,7 @@ public class Gameplay {
         background[j][i] = GameMap.getTile(tile_map[j][i], j, i);
     }
 
-    /** Floor bị phá hủy */
+    /** Floor or Wall bị phá hủy */
     public static void kill(int i, int j) {
         background[j][i].kill();
     }

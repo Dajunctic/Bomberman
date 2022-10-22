@@ -5,10 +5,12 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Point;
+import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Basic;
 import uet.oop.bomberman.others.HealthBar;
+import uet.oop.bomberman.others.ManaBar;
 import uet.oop.bomberman.others.Physics;
 
 import java.util.ArrayList;
@@ -19,26 +21,49 @@ import static uet.oop.bomberman.game.Gameplay.*;
 /** Everything that moves */
 public class Mobile extends Entity{
     protected double speed;
-    protected double dir_x = 0;
-    protected double dir_y = 0;
+    protected Vertex direction;
 
-    /** Heath Point * */
-    public static final int DEFAULT_HP = 200;
-    public static final int FIRE_SUBTRACT_HP = 1;
-    public static final int EXPLOSION_SUBTRACT_HP = 100;
+    /** Health Point * */
+    public static final int DEFAULT_HP = 1000;
+    public static final int HP_RECOVER_PER_SECOND = 2;
+    public static final int HP_RECOVER = 200 ; // Skill F
+
+    public static final int FIRE_SUBTRACT_HP = 5;
+    public static final int EXPLOSION_SUBTRACT_HP = 400;
     public int maxHP;
     public int currentHP;
     public HealthBar HPBar;
     public double barX;
     public double barY;
 
+    /** Mana Point * */
+    public static final int DEFAULT_MANA = 400;
+    public static final int MANA_RECOVER_PER_SECOND = 1;
+    public static final int Q_MANA_CONSUMING = 10;
+    public static final int W_MANA_CONSUMING = 50;
+    public static final int E_MANA_CONSUMING = 20;
+    public static final int R_MANA_CONSUMING = 200;
+    public int maxMana;
+    public int currentMana;
+    public ManaBar manaBar;
+
+    long lastTime = 0;
+
+
     public static List<Mobile> mobiles = new ArrayList<>();
 
     // inheritance
     public Mobile(double xPixel, double yPixel) {
         super(xPixel, yPixel);
+
+        /* * HP Constructor */
         HPBar = new HealthBar(xPixel, yPixel - 10, DEFAULT_HP);
         setHP(DEFAULT_HP);
+
+        /* * Mana Constructor */
+        manaBar = new ManaBar(xPixel, yPixel - 10, DEFAULT_MANA);
+        setMana(DEFAULT_MANA);
+
         mobiles.add(this);
     }
 
@@ -48,10 +73,18 @@ public class Mobile extends Entity{
 
     @Override
     public void update() {
-        HPBar.update();
+        /* * Hồi máu và mana mỗi giây */
+        if (System.currentTimeMillis() - lastTime > 1000) {
+            addHP(HP_RECOVER_PER_SECOND);
+            addMana(MANA_RECOVER_PER_SECOND);
 
+            lastTime = System.currentTimeMillis();
+        }
+
+        HPBar.update();
         subtractHP(getInjured());
 
+        manaBar.update();
     }
 
     /** Trả về số máu bị mất */
@@ -127,8 +160,8 @@ public class Mobile extends Entity{
     }
 
     public void move() {
-        double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed * dir_x));
-        double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * dir_y));
+        double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  + speed * direction.getX()));
+        double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * direction.getY()));
         if(!checkCollision(ref_x,ref_y,5)) {
             x = ref_x;
             y = ref_y;
@@ -180,5 +213,60 @@ public class Mobile extends Entity{
         HPBar.setPosition(barX, barY);
 
         HPBar.render(gc, gameplay);
+    }
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public int getCurrentHP() {
+        return currentHP;
+    }
+
+    /** *** Tất cả hàm liên quan tới Mana Point */
+    public void setMana(int mana) {
+        maxMana = mana;
+        currentMana = mana;
+
+        manaBar = new ManaBar(x, y - 10, mana);
+        manaBar.setCurrentImg(maxMana);
+        manaBar.setTempImg(0);
+    }
+
+    void setCurrentMana(int mana) {
+        currentMana = mana;
+        manaBar.setCurrentImg(mana);
+    }
+
+    public void addMana(int inc) {
+        currentMana += Math.min(maxMana - currentMana, inc);
+        manaBar.setCurrentImg(currentMana);
+    }
+
+    public void subtractMana(int dec) {
+        manaBar.setTempImg(currentMana);
+        currentMana -= Math.min(dec, currentMana);
+        manaBar.setCurrentImg(currentMana);
+
+    }
+
+    public void renderMana(GraphicsContext gc, Gameplay gameplay) {
+        double renderX = x - gameplay.translate_x + gameplay.offsetX;
+        double renderY = y - gameplay.translate_y + gameplay.offsetY;
+
+        this.barX = x + (this.getImg().getWidth() - 38) / 2;
+        this.barY = y - 13;
+
+        manaBar.setPosition(barX, barY);
+
+        manaBar.render(gc, gameplay);
+    }
+
+    public int getMaxMana() {
+        return maxMana;
+    }
+
+    public int getCurrentMana() {
+        return currentMana;
     }
 }

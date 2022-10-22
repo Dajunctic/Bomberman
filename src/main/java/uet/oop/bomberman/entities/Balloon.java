@@ -30,6 +30,8 @@ public class Balloon extends Enemy{
 
     @Override
     public void update(Bomber player) {
+        super.update();
+
         if(enemy.getTime() % frequency == 0) {
             search(player);
         }
