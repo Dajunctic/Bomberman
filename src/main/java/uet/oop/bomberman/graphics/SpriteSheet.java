@@ -73,8 +73,8 @@ public class SpriteSheet {
 	 * |--------------------------------------------------------------------------
 	 * */
 	/* ************************************ BALLOON ******************************** */
-	public static SpriteSheet balloon = new SpriteSheet("/sprites/Enemy/Balloon/balloon.png", 12);
-	public static SpriteSheet balloon_die = new SpriteSheet("/sprites/Enemy/Balloon/dead.png", 6);
+	public static SpriteSheet balloon = new SpriteSheet("/sprites/Enemy/Balloon/move.png", 12);
+	public static SpriteSheet balloon_die = new SpriteSheet("/sprites/Enemy/Balloon/dead.png", 12);
 
 	public SpriteSheet(String path, int spriteNumber) {
 		this.path = path;

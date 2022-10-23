@@ -188,9 +188,12 @@ public abstract class Enemy extends Mobile{
             else return killed.getImage();
     }
 
+
     @Override
     public void update() {
+        if(isDead) return;
         super.update();
+        if(currentHP <= 0) isDead = true;
     }
     public abstract void update(Bomber player);
 

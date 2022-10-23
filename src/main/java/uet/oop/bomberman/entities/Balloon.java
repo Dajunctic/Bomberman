@@ -23,7 +23,6 @@ public class Balloon extends Enemy{
     @Override
     public void deadAct(Gameplay gameplay){
         killTask.add(new Point(tileX, tileY));
-        entities.add(new Bomb( x / Sprite.SCALED_SIZE, y / Sprite.SCALED_SIZE,0));
     }
 
     @Override
@@ -40,11 +39,11 @@ public class Balloon extends Enemy{
         if(enemy.getTime() % frequency == 0) {
             search(player);
         }
-        //move
-        move();
-
         //status
-        if(!isDead) enemy.update();
+        if(!isDead){
+            move();
+            enemy.update();
+        }
             else killed.update();
     }
 }

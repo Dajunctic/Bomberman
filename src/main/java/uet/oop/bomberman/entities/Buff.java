@@ -11,7 +11,7 @@ import java.util.List;
 //Buff placing, haven't implemented interface and renderer
 public class Buff extends Entity{
 
-    private double floatingSpeed = 0.5;
+    private double floatingSpeed = 0.2;
     private double floating = 0;
     private double floatingThreshold = 5;
     public static final int INVISIBILITY = 0;

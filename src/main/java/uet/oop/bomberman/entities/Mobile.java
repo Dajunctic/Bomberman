@@ -26,7 +26,7 @@ public class Mobile extends Entity{
 
     /** Health Point * */
     public static final int DEFAULT_HP = 1000;
-    public static final int HP_RECOVER_PER_SECOND = 500;
+    public static final int HP_RECOVER_PER_SECOND = 20;
     public static final int HP_RECOVER = 200 ; // Skill F
 
     public static final int FIRE_SUBTRACT_HP = 5;
