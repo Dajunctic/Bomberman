@@ -27,7 +27,7 @@ public class Bomb extends Entity{
     }
     public Bomb(double xPixel, double yPixel) {
         super(xPixel, yPixel);
-        mode = CENTER_MODE;
+        setMode(CENTER_MODE);
     }
     public Bomb(double xPixel, double yPixel, double timer) {
         super(xPixel, yPixel);
@@ -36,7 +36,7 @@ public class Bomb extends Entity{
         x += (double) Sprite.SCALED_SIZE / 2;
         y += (double) Sprite.SCALED_SIZE / 2;
         bomb = new DeadAnim(SpriteSheet.bomb, 15, timer);
-        mode = CENTER_MODE;
+        setMode(CENTER_MODE);
         explosion.setScaleFactor(2);
     }
 
@@ -47,16 +47,17 @@ public class Bomb extends Entity{
         x += (double) Sprite.SCALED_SIZE / 2;
         y += (double) Sprite.SCALED_SIZE / 2;
         bomb = new DeadAnim(SpriteSheet.bomb, 15, timer);
-        mode = CENTER_MODE;
         explosion.setScaleFactor(2);
         this.radius = radius;
         this.damage = damage;
         this.friendly = friendly;
+        setMode(CENTER_MODE);
     }
     @Override
     public void update() {
         if (bomb.isDead()) {
             explosion.update();
+            setMode(CENTER_MODE);
         } else {
             bomb.update();
         }

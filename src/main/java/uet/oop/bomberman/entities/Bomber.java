@@ -738,4 +738,5 @@ public class Bomber extends Mobile {
         buffs.get(index).applyEffect(this);
         buffs.remove(index);
     }
+
 }

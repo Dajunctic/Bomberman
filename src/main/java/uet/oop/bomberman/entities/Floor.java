@@ -5,6 +5,7 @@ import javafx.scene.effect.Bloom;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.GameMap;
 
@@ -50,6 +51,13 @@ public class Floor extends Entity {
         if (isKilled) {
             gc.drawImage(this.destroyImg, x - gameplay.translate_x + gameplay.offsetX
                     , y - gameplay.translate_y + gameplay.offsetY);
+        }
+    }
+    public void render(GraphicsContext gc, Renderer renderer) {
+        super.render(gc, renderer);
+
+        if (isKilled) {
+            renderer.renderImg(gc, this.destroyImg, x + shiftX, y + shiftY);
         }
     }
 

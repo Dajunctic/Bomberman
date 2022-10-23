@@ -44,7 +44,7 @@ public class Buff extends Entity{
         this.y += sizeY;
         this.img = imgs.get(type).getFxImage();
         this.type = type;
-        mode = CENTER_MODE;
+        setMode(CENTER_MODE);
     }
 
     @Override
@@ -56,7 +56,6 @@ public class Buff extends Entity{
     public void render(GraphicsContext gc, Gameplay gameplay) {
         renderCenter(gc, gameplay);
     }
-    @Override
     public void renderCenter(GraphicsContext gc, Gameplay gameplay) {
         gc.setEffect(effect);
          double renderX = x - sizeX / 2;

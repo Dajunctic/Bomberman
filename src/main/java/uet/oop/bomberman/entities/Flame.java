@@ -35,12 +35,12 @@ public class Flame extends Mobile{
 
     public Flame(double xPixel, double yPixel) {
         super(xPixel, yPixel);
-        mode = CENTER_MODE;
+        setMode(CENTER_MODE);
     }
 
     public Flame(double _x, double _y, double length,double dirX,double dirY, int damage, boolean friendly) {
         super(_x,_y);
-        mode = CENTER_MODE;
+
         //set speed
         speed = length / 10;
         this.length = length;
@@ -60,11 +60,11 @@ public class Flame extends Mobile{
         this.damage = damage;
             //friendly fire
         this.friendly = friendly;
+        setMode(CENTER_MODE);
     }
 
     public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration, int damage, boolean friendly) {
         super(_x,_y);
-        mode = CENTER_MODE;
         //set speed
         speed = length / (timer * FPS);
         this.length = length;
@@ -82,6 +82,7 @@ public class Flame extends Mobile{
         this.direction = new Vertex(dirX, dirY);
         //friendly fire
         this.friendly = friendly;
+        setMode(CENTER_MODE);
     }
     @Override
     public void update() {
@@ -114,20 +115,11 @@ public class Flame extends Mobile{
     //re-apply effects
     @Override
     public void render(GraphicsContext gc, Gameplay gameplay) {
-
         gc.setEffect(effect);
         // Whether object is on screen
         if(!onScreen(gameplay)) return;
-
-        if (mode == Entity.CENTER_MODE) {
-            renderCenter(gc, gameplay);
-        } else if (mode == Entity.BOTTOM_MODE) {
-            renderBottom(gc, gameplay);
-        } else {
-            gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
-                    , y - gameplay.translate_y + gameplay.offsetY);
-        }
-
+            gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX + shiftX
+                    , y - gameplay.translate_y + gameplay.offsetY + shiftY);
         gc.setEffect(null);
     }
 

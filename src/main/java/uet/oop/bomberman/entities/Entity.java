@@ -6,12 +6,14 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.others.Physics;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
+import static uet.oop.bomberman.game.Gameplay.tileCode;
 import static uet.oop.bomberman.game.Gameplay.tile_map;
 
 public abstract class Entity {
@@ -26,6 +28,9 @@ public abstract class Entity {
     public static final int CENTER_MODE = 1;
     public static final int BOTTOM_MODE = 2;
     protected int mode = NORMAL_MODE;
+    //image shifting
+    protected double shiftX = 0;
+    protected double shiftY = 0;
 
     /** Dành cho thực thể chuyển động theo tọa độ Pixel như Bomber, Enemy */
     public Entity(double xPixel, double yPixel) {
@@ -56,40 +61,21 @@ public abstract class Entity {
         gc.setEffect(effect);
         // Whether object is on screen
         if(!onScreen(gameplay)) return;
-
-        if (mode == Entity.CENTER_MODE) {
-            renderCenter(gc, gameplay);
-        } else if (mode == Entity.BOTTOM_MODE) {
-            renderBottom(gc, gameplay);
-        } else {
-            gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
-                    , y - gameplay.translate_y + gameplay.offsetY);
-        }
-
+        gc.drawImage(getImg(), x + shiftX - gameplay.translate_x + gameplay.offsetX,
+                                y + shiftY - gameplay.translate_y + gameplay.offsetY);
         gc.setEffect(null);
     }
 
+    public void render(GraphicsContext gc, Renderer renderer) {
+        gc.setEffect(effect);
+        renderer.renderImg(gc, getImg(), x + shiftX, y + shiftY);
+        gc.setEffect(null);
+    }
     /** Hiển thị trên màn hình cố định **/
     public void render(GraphicsContext gc, double x, double y) {
         gc.drawImage(this.getImg(), x, y);
     }
-
-    /** Hàm này coi x, y là tọa độ trung tâm **/
-    void renderCenter(GraphicsContext gc, Gameplay gameplay) {
-        double renderX = x - this.getWidth() / 2;
-        double renderY = y - this.getHeight() / 2;
-        gc.drawImage(this.getImg(),renderX - gameplay.translate_x + gameplay.offsetX
-                ,renderY - gameplay.translate_y + gameplay.offsetY);
-    }
-    /** Hàm này coi x là tọa độ trung tâm, y là tọa độ đáy **/
-    void renderBottom(GraphicsContext gc, Gameplay gameplay) {
-        double renderX = x - this.getWidth() / 2;
-        double renderY = y - this.getHeight();
-        gc.drawImage(this.getImg(),renderX - gameplay.translate_x + gameplay.offsetX
-                ,renderY - gameplay.translate_y + gameplay.offsetY);
-    }
     public abstract void update();
-
     public void setExisted(boolean existed) {
         this.existed = existed;
     }
@@ -128,6 +114,7 @@ public abstract class Entity {
     }
 
     public Image getImg() {
+        if(img == null) return null;
         return img;
     }
 
@@ -144,9 +131,24 @@ public abstract class Entity {
     }
     public void setMode(int mode) {
         this.mode = mode;
+        switch (mode) {
+            case NORMAL_MODE -> {
+                shiftX = 0;
+                shiftY = 0;
+            }
+            case CENTER_MODE -> {
+                shiftX = - getWidth() / 2;
+                shiftY = - getHeight() / 2;
+            }
+            case BOTTOM_MODE -> {
+                shiftX = - getWidth() / 2;
+                shiftY = - getHeight();
+            }
+        }
     }
 
     public void kill(){
 
     }
+
 }

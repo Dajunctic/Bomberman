@@ -64,7 +64,6 @@ public class Fire extends Entity{
 
     @Override
     public Image getImg() {
-
         if(!ignite.isDead()) return ignite.getImage();
             else if(!burn.isDead()) return burn.getImage();
                 else return fade.getImage();
@@ -85,22 +84,4 @@ public class Fire extends Entity{
         Gameplay.killTask.add(new Point(tileX,tileY));
     }
     //re-apply effects
-    @Override
-    public void render(GraphicsContext gc, Gameplay gameplay) {
-
-        gc.setEffect(effect);
-        // Whether object is on screen
-        if(!onScreen(gameplay)) return;
-
-        if (mode == Entity.CENTER_MODE) {
-            renderCenter(gc, gameplay);
-        } else if (mode == Entity.BOTTOM_MODE) {
-            renderBottom(gc, gameplay);
-        } else {
-            gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX
-                    , y - gameplay.translate_y + gameplay.offsetY);
-        }
-
-        gc.setEffect(null);
-    }
 }

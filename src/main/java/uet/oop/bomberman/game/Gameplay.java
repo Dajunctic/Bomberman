@@ -6,6 +6,7 @@ import javafx.util.Pair;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.DeadAnim;
+import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.AreaMap;
 import uet.oop.bomberman.maps.GameMap;
@@ -43,7 +44,13 @@ public class Gameplay {
     /** Canvas Offset - Chỉnh map cân bằng khi phóng to hay thu nhỏ */
     public double offsetX = 0;
     public double offsetY = 0;
-
+    /** Renderer - Trung gian render lên canvas */
+    //Renderer chính
+    Renderer wholeScene = new Renderer(offsetX, offsetY, 0, 0, 0, 0,
+                                BombermanGame.WIDTH * Sprite.SCALED_SIZE,
+                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE);
+    //Renderer cho 2 người chơi
+    List<Renderer> playerScene = new ArrayList<>();
     /** GUI GAME Image */
     Image gameFrame = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/frame.png")));
     Image gameBg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/bg.png")));
@@ -189,6 +196,11 @@ public class Gameplay {
 
     /** update */
     public void update(){
+        //update renderer
+        wholeScene.setOffsetX(offsetX);
+        wholeScene.setOffsetY(offsetY);
+        wholeScene.setTranslate(translate_x, translate_y);
+        //other
         player.update(this);
         skillFrame.update(player);
         minimap.update(player);
@@ -234,7 +246,7 @@ public class Gameplay {
 
         for(int i = low_y; i <= Math.min(height - 1,low_y + BombermanGame.HEIGHT); i ++) {
             for (int j = low_x; j <= Math.min(width - 1,low_x + BombermanGame.WIDTH); j++){
-                background[i][j].render(gc, this);
+                background[i][j].render(gc, wholeScene);
             }
         }
 
