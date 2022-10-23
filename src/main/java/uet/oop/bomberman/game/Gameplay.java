@@ -2,6 +2,7 @@ package uet.oop.bomberman.game;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.util.Pair;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.DeadAnim;
@@ -10,12 +11,12 @@ import uet.oop.bomberman.maps.AreaMap;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.maps.Minimap;
 import uet.oop.bomberman.others.SkillFrame;
-
+import com.google.common.collect.Multimap;
+import com.google.common.collect.ArrayListMultimap;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
-
 /** object handler */
 public class Gameplay {
 
@@ -57,7 +58,7 @@ public class Gameplay {
 
     /** Các tập hợp entity khác */
     public static ArrayList<Fence> fences = new ArrayList<>(); /* * Hàng rào giữa các màn chơi */
-    public static ArrayList<Point>  fires = new ArrayList<>(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
+    public static Multimap<Integer, Pair<Integer, Boolean>>  fires = ArrayListMultimap.create(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
     public static SkillFrame skillFrame = new SkillFrame();
 
     /** Load map from file */
@@ -139,7 +140,8 @@ public class Gameplay {
 
         createMap();
 
-        enemies.add(new Balloon( 8 * 48,48 * 48));
+        enemies.add(new Balloon( 14 * 48, 42 * 48));
+        enemies.add(new Balloon( 8 * 48, 48 * 48));
         System.out.println(enemies);
     }
 
@@ -335,5 +337,9 @@ public class Gameplay {
                 }
             }
         }
+    }
+    public static Integer tileCode(int x, int y) {
+        if(width >= height) return y * width + x;
+        else return x * height + y;
     }
 }

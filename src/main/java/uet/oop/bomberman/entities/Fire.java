@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
+import javafx.util.Pair;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
@@ -11,6 +12,7 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import uet.oop.bomberman.maps.GameMap;
 
+import static uet.oop.bomberman.game.Gameplay.fires;
 import static uet.oop.bomberman.game.Gameplay.tile_map;
 
 public class Fire extends Entity{
@@ -22,13 +24,16 @@ public class Fire extends Entity{
     int tileX ,tileY;
     Point firePoint;
     ColorAdjust effect;
+    private Integer index = 0;
+    private int damage = 3;
+    private Pair<Integer, Boolean> effector;
     public Fire(double xUnit, double yUnit) {
         super(xUnit, yUnit);
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
     }
 
-    public Fire(double xUnit, double yUnit, double duration, boolean friendly){
+    public Fire(double xUnit, double yUnit, double duration, int damage, boolean friendly){
         super(xUnit, yUnit);
         tileX = (int) xUnit;
         tileY = (int) yUnit;
@@ -42,9 +47,12 @@ public class Fire extends Entity{
             effect.setBrightness(-1);
             effect.setContrast(1.0);
         }
-        //Burning ground
-        firePoint = new Point(tileX, tileY);
-        Gameplay.fires.add(firePoint);
+        index = Gameplay.tileCode(tileX, tileY);
+        this.damage = damage;
+        effector = new Pair<>(damage, friendly);
+        Gameplay.fires.put(index, effector);
+        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
+        System.out.println("________________________________________________");
     }
 
     @Override
@@ -68,7 +76,7 @@ public class Fire extends Entity{
     }
     @Override
     public void deadAct(Gameplay gameplay) {
-        Gameplay.fires.remove(firePoint);
+        Gameplay.fires.get(index).remove(effector);
         Gameplay.kill(tileX, tileY);
     }
 

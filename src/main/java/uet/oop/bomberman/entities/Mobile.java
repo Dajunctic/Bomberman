@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
@@ -25,7 +26,7 @@ public class Mobile extends Entity{
 
     /** Health Point * */
     public static final int DEFAULT_HP = 1000;
-    public static final int HP_RECOVER_PER_SECOND = 2;
+    public static final int HP_RECOVER_PER_SECOND = 500;
     public static final int HP_RECOVER = 200 ; // Skill F
 
     public static final int FIRE_SUBTRACT_HP = 5;
@@ -48,7 +49,11 @@ public class Mobile extends Entity{
     public ManaBar manaBar;
 
     long lastTime = 0;
+    //fire properties
+    protected int tileX;
+    protected int tileY;
 
+    protected boolean isAlly = false;
 
     public static List<Mobile> mobiles = new ArrayList<>();
 
@@ -63,7 +68,6 @@ public class Mobile extends Entity{
         /* * Mana Constructor */
         manaBar = new ManaBar(xPixel, yPixel - 10, DEFAULT_MANA);
         setMana(DEFAULT_MANA);
-
         mobiles.add(this);
     }
 
@@ -89,28 +93,21 @@ public class Mobile extends Entity{
 
     /** Trả về số máu bị mất */
     public int getInjured() {
-
+        //extract hashcode
+        standingTile();
+        Integer tileCode = Gameplay.tileCode(tileX, tileY);
+        //processor
         int subtractHP = 0;
-
-
         /* *********** FIRE ************ */
-        boolean checkFire = false;
-
-        for (Point p: fires) {
-
-            Rectangle a = new Rectangle(p.getX() * Sprite.SCALED_SIZE, p.getY() * Sprite.SCALED_SIZE,
-                    Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
-
-            Rectangle b = getRect(x, y, getWidth(), getHeight());
-
-            if (Physics.collisionRectToRect(a, b)){
-                checkFire = true;
-            }
+        if(!fires.containsKey(tileCode)) return 0;
+        System.out.println(getClass() + ", Caught fire in:" + tileX + " " + tileY + ", " + tileCode + " " + fires.get(tileCode) );
+        for(Pair<Integer, Boolean> fire : fires.get(tileCode)) {
+            //friendly fire
+            if(fire.getValue() && isAlly) continue;
+            //damaging
+            subtractHP += fire.getKey();
+            System.out.println(String.format("-%d HP", fire.getKey()) );
         }
-        if (checkFire) {
-            subtractHP += FIRE_SUBTRACT_HP;
-        }
-
         return subtractHP;
     }
 
@@ -165,6 +162,7 @@ public class Mobile extends Entity{
         if(!checkCollision(ref_x,ref_y,5)) {
             x = ref_x;
             y = ref_y;
+            standingTile();
         }
     }
 
@@ -176,11 +174,30 @@ public class Mobile extends Entity{
         return new Rectangle(x, y, getWidth(), getHeight());
     }
 
+    //update standing tiles
+    public void standingTile() {
+        switch (mode) {
+            case NORMAL_MODE -> {
+                tileX = (int) Math.floor((x + getWidth() / 2) / Sprite.SCALED_SIZE);
+                tileY = (int) Math.floor((y + getHeight()) / Sprite.SCALED_SIZE);
+            }
+            case CENTER_MODE -> {
+                tileX = (int) Math.floor((x) / Sprite.SCALED_SIZE);
+                tileY = (int) Math.floor((y + getHeight()/2) / Sprite.SCALED_SIZE);
+            }
+            case BOTTOM_MODE -> {
+                tileX = (int) Math.floor((x) / Sprite.SCALED_SIZE);
+                tileY = (int) Math.floor((y) / Sprite.SCALED_SIZE);
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + mode);
+        }
+    }
+
+
     /** *** Tất cả hàm liên quan tới Health Point */
     public void setHP(int HP) {
         maxHP = HP;
         currentHP = HP;
-
         HPBar = new HealthBar(x, y - 10, HP);
         HPBar.setCurrentImg(maxHP);
         HPBar.setTempImg(0);

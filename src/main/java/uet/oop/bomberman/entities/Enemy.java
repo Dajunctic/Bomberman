@@ -43,19 +43,16 @@ public abstract class Enemy extends Mobile{
     /** Moving */
     protected int speed = 1;
     protected Vertex direction = new Vertex(0,1);
-    protected Point recent_tile;
 
     protected int reversed = 1;
     /** Life status */
     protected boolean isDead = false;
     public Enemy(double xPixel, double yPixel) {
         super(xPixel, yPixel);
-        recent_tile = new Point((int) xPixel / Sprite.SCALED_SIZE, (int) yPixel / Sprite.SCALED_SIZE);
     }
 
     public Enemy(double xUnit, double yUnit, Image img) {
         super(xUnit, yUnit, img);
-        recent_tile = new Point((int) xUnit / Sprite.SCALED_SIZE, (int) yUnit / Sprite.SCALED_SIZE);
     }
 
     //reverse the sprite
@@ -94,7 +91,7 @@ public abstract class Enemy extends Mobile{
             switchSprite();
         }
     }
-
+    //check whether path is blocked
     private boolean checkSight(Vertex line) {
         for(double i = 0; i <= 1; i += 1 / (double) sight_depth) {
             int tileX = (int) ((x + line.getX()*i) / Sprite.SCALED_SIZE);
@@ -105,6 +102,7 @@ public abstract class Enemy extends Mobile{
         }
         return true;
     }
+
     @Override
     public void move() {
         double ref_x = x +  speed * direction.getX();
@@ -118,19 +116,6 @@ public abstract class Enemy extends Mobile{
                 }
             x = ref_x;
             y = ref_y;
-
-            //capturing the tile, kills player
-            if(tile_map[(int) Math.floor(getCenterX() / Sprite.SCALED_SIZE)]
-                        [(int) Math.floor(getCenterY() / Sprite.SCALED_SIZE)] == '0'&&
-                tile_map[recent_tile.getX()][recent_tile.getY()] == '*'){
-
-                tile_map[(int) Math.floor(x / Sprite.SCALED_SIZE)]
-                        [(int) Math.floor(y / Sprite.SCALED_SIZE)] = '*';
-                killTask.add(recent_tile);
-                recent_tile.setX((int) Math.floor(x / Sprite.SCALED_SIZE));
-                recent_tile.setY((int) Math.floor(y / Sprite.SCALED_SIZE));
-            }
-
             //check if it reached its destination
             if(status == SERIOUS && destination.equals(new Point((int)x, (int)y))) {
                 status = WANDERING;
@@ -201,6 +186,10 @@ public abstract class Enemy extends Mobile{
             else return killed.getImage();
     }
 
+    @Override
+    public void update() {
+
+    }
     public abstract void update(Bomber player);
 
     @Override
@@ -217,7 +206,7 @@ public abstract class Enemy extends Mobile{
                                                             , y - gameplay.translate_y + gameplay.offsetY - 18 );
 
         // If it is going backward
-        gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX + (int) ((Sprite.SCALED_SIZE * (1 - reversed)) / 2)
+        gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX + ((Sprite.SCALED_SIZE * (1 - reversed)) / 2)
                 , y - gameplay.translate_y + gameplay.offsetY
                 , Sprite.SCALED_SIZE * reversed
                 , Sprite.SCALED_SIZE);

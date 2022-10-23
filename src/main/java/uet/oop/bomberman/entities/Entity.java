@@ -22,9 +22,9 @@ public abstract class Entity {
     protected Image img;
     protected Effect effect;
     /** Các mode in tọa render hình ảnh */
-    public static int NORMAL_MODE = 0;
-    public static int CENTER_MODE = 1;
-    public static int BOTTOM_MODE = 2;
+    public static final int NORMAL_MODE = 0;
+    public static final int CENTER_MODE = 1;
+    public static final int BOTTOM_MODE = 2;
     protected int mode = NORMAL_MODE;
 
     /** Dành cho thực thể chuyển động theo tọa độ Pixel như Bomber, Enemy */
@@ -118,10 +118,12 @@ public abstract class Entity {
     }
 
     public double getWidth() {
+        if(this.getImg() == null) return Sprite.SCALED_SIZE;
         return this.getImg().getWidth();
     }
 
     public double getHeight() {
+        if(this.getImg() == null) return Sprite.SCALED_SIZE;
         return this.getImg().getHeight();
     }
 

@@ -20,13 +20,14 @@ import static uet.oop.bomberman.game.Gameplay.*;
 
 public class Bomber extends Mobile {
     /** Thời gian dùng chiêu **/
-    public static final int Q_COOLDOWN = 5;
-    public static final int W_COOLDOWN = 10;
-    public static final int E_COOLDOWN = 15;
-    public static final int R_COOLDOWN = 120;
+    public static int Q_COOLDOWN = 5;
+    public static int W_COOLDOWN = 10;
+    public static int W_INVISIBLE_COOLDOWN = 2;
+    public static int E_COOLDOWN = 15;
+    public static int R_COOLDOWN = 120;
 
-    public static final int D_COOLDOWN = 20;
-    public static final int F_COOLDOWN = 180;
+    public static int D_COOLDOWN = 0;
+    public static int F_COOLDOWN = 180;
 
     private long lastQ = 0;
     private long lastW = 0;
@@ -80,13 +81,7 @@ public class Bomber extends Mobile {
 
     //toggle attacking in future
     private Vertex facing = new Vertex(0,0);
-    /**
-     * power properties
-     */
-    public int capacity = 1;
-    public int power = 2;
-    public double timer = 2.5;
-    List<Bomb> bombs = new ArrayList<>();
+
 
     /**
      * Đường dẫn đến folder của Model thôi không cần ảnh.
@@ -102,15 +97,18 @@ public class Bomber extends Mobile {
     private int icognito = 5;
 
     /** special skills */
-    //fire round
-    private int fireCapacity = 99;
-    private final double cooldown = 200;
-    private long lastAttack = 0;
+    //bomb
+    private int radius = 3;
+    private int damage = 4;
+    public double timer = 2.5;
+    List<Bomb> bombs = new ArrayList<>();
+    //firewaves
+    private int Wdivider = 1;
+    private int Wradius = 5;
+    private int Wdamage = 10;
     //TNT
-    private int TNTCapacity = 99;
     Nuke nuke = null;
     //dodges
-    private int dodges = 0;
     private int dodgeDistance = 2 * Sprite.SCALED_SIZE;
     private boolean dodging = false;
     private double lightShift = 0;
@@ -128,7 +126,9 @@ public class Bomber extends Mobile {
         speed_x = SPEED;
         speed_y = SPEED;
         motionEffect.setRadius(0);
+        isAlly = true;
         load();
+        standingTile();
     }
 
     /**
@@ -455,6 +455,8 @@ public class Bomber extends Mobile {
 
             gameplay.translate_y = Math.max(0, Math.min( y - (double) HEIGHT * Sprite.SCALED_SIZE / 2,
                     (Gameplay.height - HEIGHT) * Sprite.SCALED_SIZE ));
+            //update tiles
+            standingTile();
         }
     }
 
@@ -500,22 +502,10 @@ public class Bomber extends Mobile {
             }
         }
     }
-    public void placeBomb() {
-        /* * Điều kiện để có thể đặt được bomb * */
-        if (currentMana < Q_MANA_CONSUMING) return;
-        if (System.currentTimeMillis() - lastQ < Q_COOLDOWN * 1000) return;
 
-        int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
-        int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
-
-        bombs.add(new Bomb(i, j, timer, true));
-        subtractMana(Q_MANA_CONSUMING);
-        lastQ = System.currentTimeMillis();
-
-    }
 
     public void setDodge() {
-        if (System.currentTimeMillis() - lastD < F_COOLDOWN * 1000) return;
+        if (System.currentTimeMillis() - lastD < D_COOLDOWN * 1000) return;
         dodging = true;
         lastD = System.currentTimeMillis();
     }
@@ -547,7 +537,6 @@ public class Bomber extends Mobile {
     /**************************** BUFF AND BUGS ********************************/
     //invisible
     public void goInvisible(double time) {
-        if (icognito <= 0) return;
         if (currentMana < E_MANA_CONSUMING) return;
         if (System.currentTimeMillis() - lastE < E_COOLDOWN * 1000);
 
@@ -565,55 +554,75 @@ public class Bomber extends Mobile {
     }
     //bomb upgrade
     public void radiusUpgrade() {
-        power ++;
-    }
-    public void capacityUpgrade() {
-        capacity ++;
+        radius++;
     }
 
 
     /**************************** UNIQUE SKILL ********************************/
+    //bombing
+    public void placeBomb() {
+        /* * Điều kiện để có thể đặt được bomb * */
+        if ((currentMana < Q_MANA_CONSUMING) ||
+                (System.currentTimeMillis() - lastQ < Q_COOLDOWN * 1000L)) return;
+
+        int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
+        int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
+
+        bombs.add(new Bomb(i, j, timer, radius, damage, false));
+        subtractMana(Q_MANA_CONSUMING);
+        lastQ = System.currentTimeMillis();
+
+    }
     /* * Shoot 3 parallel fire */
     public void shootFireball() {
         /* * Điều kiện để bắn */
-        if (System.currentTimeMillis() - lastW <= cooldown) return;
-        if (currentMana < W_MANA_CONSUMING) return;
 
-
+        //if invisible
         if(invisible) {
-            entities.add(new Flame(this.x, this.y, 1, facing.getX(), facing.getY(), true));
-        } else if(fireCapacity > 0) {
-            fireCapacity --;
+            if (System.currentTimeMillis() - lastW <= W_INVISIBLE_COOLDOWN * 1000L) return;
+            //sqawn fires
             double startX =  Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
             double startY =  Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
+            entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE, facing.getX()
+                    , facing.getY()
+                    , 1, 4,
+                    Wdamage,  true));
+        } else {
+            //if not invisible
+            if ((currentMana < W_MANA_CONSUMING) ||
+                    (System.currentTimeMillis() - lastW <= W_COOLDOWN * 1000L))       return;
             /* * Spawn flames */
-            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE, facing.getX()
+            double startX =  Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
+            double startY =  Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
+            entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE, facing.getX()
                                                                                     , facing.getY()
-                                                                                    , 1, 0.5, true));
-            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE,  (double) 5 / HEIGHT * facing.getY() + facing.getX()
-                                                                                    ,  (double) 5 / HEIGHT * facing.getX() + facing.getY()
-                                                                                    , 1, 0.5, true));
-            entities.add(new Flame(startX, startY, HEIGHT * Sprite.SCALED_SIZE, -(double) 5 / HEIGHT * facing.getY() + facing.getX()
-                                                                                    , -(double) 5 / HEIGHT * facing.getX() + facing.getY()
-                                                                                    , 1, 0.5, true));
+                                                                                    , 1, 4,
+                                                                                    Wdamage,  true));
+            for(int i = 1; i <= Wdivider; i++) {
+                entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE,  (double) 2 * i / Wradius * facing.getY() + facing.getX()
+                                                     ,  (double) 2 * i / Wradius * facing.getX() + facing.getY()
+                                                        , 1, 0.5
+                                                        , Wdamage, true));
+                entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE, -(double) 2 * i / Wradius * facing.getY() + facing.getX()
+                                                     , -(double) 2 * i / Wradius * facing.getX() + facing.getY()
+                                                      , 1, 0.5
+                                                        , Wdamage, true));
+            }
+
+            subtractMana(W_MANA_CONSUMING);
         }
-        subtractMana(W_MANA_CONSUMING);
         lastW = System.currentTimeMillis();
     }
 
     /** Nuke placing, need to install impact on tile_map */
     public void placeNuke() {
-        if (currentMana < R_MANA_CONSUMING) return;
-        if (System.currentTimeMillis() - lastR < R_COOLDOWN * 1000) return;
-
-        if(TNTCapacity > 0) {
-            int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
-            int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
-            nuke = new Nuke(i, j, timer);
-
-            subtractMana(R_MANA_CONSUMING);
-            lastR = System.currentTimeMillis();
-        }
+        if ((currentMana < R_MANA_CONSUMING) ||
+            (System.currentTimeMillis() - lastR < R_COOLDOWN * 1000L)) return;
+        int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
+        int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
+        nuke = new Nuke(i, j, timer);
+        subtractMana(R_MANA_CONSUMING);
+        lastR = System.currentTimeMillis();
     }
     
     /** Jump 2 tiles, need to reinstall checkCollision for out of Map bug */
@@ -647,6 +656,9 @@ public class Bomber extends Mobile {
                 return (System.currentTimeMillis() - lastQ) / 1000 - Q_COOLDOWN;
             }
             case 'W' -> {
+                //if invisible
+                if(invisible) return (System.currentTimeMillis() - lastW) / 1000 - W_INVISIBLE_COOLDOWN;
+                //if not
                 return (System.currentTimeMillis() - lastW) / 1000 - W_COOLDOWN;
             }
             case 'E' -> {

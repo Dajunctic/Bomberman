@@ -19,7 +19,9 @@ public class Bomb extends Entity{
     public DeadAnim bomb = new DeadAnim(SpriteSheet.bomb, 12, 2.5);
     boolean exploded = false;
     boolean friendly = false;
-    //tí sửa sau :))) 
+    //tí sửa sau :)))
+    private int radius = 3;
+    private int damage = 4;
     public void relocate() {
 
     }
@@ -38,7 +40,7 @@ public class Bomb extends Entity{
         explosion.setScaleFactor(2);
     }
 
-    public Bomb(double xPixel, double yPixel, double timer, boolean friendly) {
+    public Bomb(double xPixel, double yPixel, double timer, int radius, int damage, boolean friendly) {
         super(xPixel, yPixel);
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
@@ -47,6 +49,8 @@ public class Bomb extends Entity{
         bomb = new DeadAnim(SpriteSheet.bomb, 15, timer);
         mode = CENTER_MODE;
         explosion.setScaleFactor(2);
+        this.radius = radius;
+        this.damage = damage;
         this.friendly = friendly;
     }
     @Override
@@ -75,10 +79,10 @@ public class Bomb extends Entity{
     public void deadAct(Gameplay gameplay) {
         if(exploded) return;
         exploded = true;
-        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, 1,0, friendly));
-        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, 0, 1, friendly));
-        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, 0,-1, friendly));
-        gameplay.generate(new Flame(x, y, 3 * Sprite.SCALED_SIZE, -1,0, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 1,0, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0, 1, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0,-1, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, -1,0, damage, friendly));
 
 
         /* ****** Attack Mobile Entity ********** */

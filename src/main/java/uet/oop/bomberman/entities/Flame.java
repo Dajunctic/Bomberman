@@ -25,6 +25,7 @@ public class Flame extends Mobile{
     protected double duration = 2;
     protected double dir_x;
     protected double dir_y;
+    private int damage = 3;
 
     /** Khi nào gặp vật cản như brick hoặc wall thì dừng luôn */
     boolean stop = false;
@@ -37,7 +38,7 @@ public class Flame extends Mobile{
         mode = CENTER_MODE;
     }
 
-    public Flame(double _x, double _y, double length,double dirX,double dirY, boolean friendly) {
+    public Flame(double _x, double _y, double length,double dirX,double dirY, int damage, boolean friendly) {
         super(_x,_y);
         mode = CENTER_MODE;
         //set speed
@@ -56,12 +57,12 @@ public class Flame extends Mobile{
                 flame = new DeadAnim(SpriteSheet.flame_left, 5, 0.5);
             }
         direction = new Vertex(dirX, dirY);
-
+        this.damage = damage;
             //friendly fire
         this.friendly = friendly;
     }
 
-    public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration, boolean friendly) {
+    public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration, int damage, boolean friendly) {
         super(_x,_y);
         mode = CENTER_MODE;
         //set speed
@@ -76,7 +77,7 @@ public class Flame extends Mobile{
             if(dirY > 0) flame = new DeadAnim(SpriteSheet.flame_down,5, timer);
             else flame = new DeadAnim(SpriteSheet.flame_up, 5, timer);
         }
-
+        this.damage = damage;
         this.duration = duration;
         this.direction = new Vertex(dirX, dirY);
         //friendly fire
@@ -175,7 +176,7 @@ public class Flame extends Mobile{
 
                         if (!floors.contains(i * 200 + j)) {
                             floors.add(i * 200 + j);
-                            entities.add(new Fire(i, j, Math.max(0.5, duration), friendly));
+                            entities.add(new Fire(i, j, Math.max(0.5, duration), damage, friendly));
                         }
                     }
                 }
