@@ -116,6 +116,8 @@ public abstract class Enemy extends Mobile{
                 }
             x = ref_x;
             y = ref_y;
+            //check standing tile
+            standingTile();
             //check if it reached its destination
             if(status == SERIOUS && destination.equals(new Point((int)x, (int)y))) {
                 status = WANDERING;
@@ -188,7 +190,7 @@ public abstract class Enemy extends Mobile{
 
     @Override
     public void update() {
-
+        super.update();
     }
     public abstract void update(Bomber player);
 

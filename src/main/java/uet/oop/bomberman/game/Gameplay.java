@@ -61,6 +61,8 @@ public class Gameplay {
     public static Multimap<Integer, Pair<Integer, Boolean>>  fires = ArrayListMultimap.create(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
     public static SkillFrame skillFrame = new SkillFrame();
 
+    public static Map<Integer, Buff> buffs = new HashMap<>();
+
     /** Load map from file */
     public void importing (String generalMap, String areaMap) throws IOException {
 
@@ -139,9 +141,10 @@ public class Gameplay {
         }
 
         createMap();
-
+        //testing things
         enemies.add(new Balloon( 14 * 48, 42 * 48));
         enemies.add(new Balloon( 8 * 48, 48 * 48));
+        buffs.put(tileCode(9,48), new Buff(9, 48, 1));
         System.out.println(enemies);
     }
 
@@ -245,7 +248,10 @@ public class Gameplay {
         for (Fence fence: fences) {
             fence.render(gc, this);
         }
-
+        /* * Buffs * */
+        for(Buff i : buffs.values()) {
+            i.render(gc, this);
+        }
         /* entities */
         entities.forEach(g -> g.render(gc, this));
 
@@ -255,6 +261,7 @@ public class Gameplay {
         /* * Player * */
         player.render(gc, this);
 
+
         /* * MiniMap * */
         minimap.render(gc, minimap.getX() + offsetX, minimap.getY() + offsetY);
 
@@ -263,7 +270,6 @@ public class Gameplay {
 
         /* * Khung màn hình game */
         gc.drawImage(gameFrame, this.offsetX - 320, this.offsetY - 255);
-
     }
 
     /** Destroy tiles */

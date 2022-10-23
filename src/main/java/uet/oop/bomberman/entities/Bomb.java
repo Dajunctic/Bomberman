@@ -84,16 +84,6 @@ public class Bomb extends Entity{
         gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0,-1, damage, friendly));
         gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, -1,0, damage, friendly));
 
-
-        /* ****** Attack Mobile Entity ********** */
-        for (Mobile mobile : Mobile.mobiles) {
-            Rectangle a = new Rectangle(x - getWidth() / 2, y - getHeight() / 2, getWidth() ,getHeight());
-            Rectangle b = mobile.getRectCollision();
-
-            if (Physics.collisionRectToRect(a, b)) {
-                mobile.subtractHP(Mobile.EXPLOSION_SUBTRACT_HP);
-            }
-        }
     }
 
     @Override

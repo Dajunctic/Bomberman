@@ -20,11 +20,11 @@ import static uet.oop.bomberman.game.Gameplay.*;
 
 public class Bomber extends Mobile {
     /** Thời gian dùng chiêu **/
-    public static int Q_COOLDOWN = 5;
-    public static int W_COOLDOWN = 10;
-    public static int W_INVISIBLE_COOLDOWN = 2;
-    public static int E_COOLDOWN = 15;
-    public static int R_COOLDOWN = 120;
+    public static double Q_COOLDOWN = 5;
+    public static double W_COOLDOWN = 10;
+    public static double W_INVISIBLE_COOLDOWN = 2;
+    public static double E_COOLDOWN = 15;
+    public static double R_COOLDOWN = 120;
 
     public static int D_COOLDOWN = 0;
     public static int F_COOLDOWN = 180;
@@ -93,21 +93,28 @@ public class Bomber extends Mobile {
     // go incognito
     private boolean invisible = false;
     private double alpha = 1;
-    private double fadeInSpeed = 0.05;
-    private int icognito = 5;
+    private double invisibleDuration = 3;
+    private double fadeInSpeed = 0.8 / (3 *FPS);
+    private int Elevel = 1;
 
     /** special skills */
     //bomb
-    private int radius = 3;
+    private int radius = 1;
     private int damage = 4;
     public double timer = 2.5;
+    public int Qlevel = 1;
+
     List<Bomb> bombs = new ArrayList<>();
     //firewaves
     private int Wdivider = 1;
-    private int Wradius = 5;
-    private int Wdamage = 10;
+    private int Wradius = 3;
+    private int Wdamage = 8;
+    public int Wlevel = 1;
     //TNT
     Nuke nuke = null;
+    private int Rdamage = 10;
+    private int Rradius = 4;
+    public int Rlevel = 1;
     //dodges
     private int dodgeDistance = 2 * Sprite.SCALED_SIZE;
     private boolean dodging = false;
@@ -457,6 +464,7 @@ public class Bomber extends Mobile {
                     (Gameplay.height - HEIGHT) * Sprite.SCALED_SIZE ));
             //update tiles
             standingTile();
+            checkBuff();
         }
     }
 
@@ -653,19 +661,19 @@ public class Bomber extends Mobile {
     public long getCoolDownTime(char skill) {
         switch (skill) {
             case 'Q' -> {
-                return (System.currentTimeMillis() - lastQ) / 1000 - Q_COOLDOWN;
+                return (long) ((System.currentTimeMillis() - lastQ) / 1000 - Q_COOLDOWN);
             }
             case 'W' -> {
                 //if invisible
-                if(invisible) return (System.currentTimeMillis() - lastW) / 1000 - W_INVISIBLE_COOLDOWN;
+                if(invisible) return (long) ((System.currentTimeMillis() - lastW) / 1000 - W_INVISIBLE_COOLDOWN);
                 //if not
-                return (System.currentTimeMillis() - lastW) / 1000 - W_COOLDOWN;
+                return (long) ((System.currentTimeMillis() - lastW) / 1000 - W_COOLDOWN);
             }
             case 'E' -> {
-                return (System.currentTimeMillis() - lastE) / 1000 - E_COOLDOWN;
+                return (long) ((System.currentTimeMillis() - lastE) / 1000 - E_COOLDOWN);
             }
             case 'R' -> {
-                return (System.currentTimeMillis() - lastR) / 1000 - R_COOLDOWN;
+                return (long) ((System.currentTimeMillis() - lastR) / 1000 - R_COOLDOWN);
             }
             case 'D' -> {
                 return (System.currentTimeMillis() - lastD) / 1000 - D_COOLDOWN;
@@ -674,7 +682,60 @@ public class Bomber extends Mobile {
                 return (System.currentTimeMillis() - lastF) / 1000 - F_COOLDOWN;
             }
         }
-
         return 0;
+    }
+    /********************** BUFFS **********************************/
+    public void buffBomb() {
+            Qlevel ++;
+            Q_COOLDOWN -= 0.5;
+            damage ++;
+            if(Qlevel % 2 == 0) {
+                radius++;
+            }
+            System.out.println("Q upgraded");
+            lvlUp();
+    }
+    public void buffFire() {
+            Wlevel ++;
+            Wdamage += 2;
+            Wradius ++;
+            System.out.println("W upgraded");
+            lvlUp();
+    }
+
+    public void buffInvisible() {
+            Elevel ++;
+            invisibleDuration += 0.4;
+            fadeInSpeed = 0.8 / invisibleDuration / FPS;
+            if(Elevel % 2 == 0) {
+                W_INVISIBLE_COOLDOWN -= 0.4;
+            }
+            System.out.println("E upgraded");
+            lvlUp();
+    }
+
+    public void buffNuke() {
+            Rlevel ++;
+            Rdamage += 5;
+            if(Rlevel % 2 == 0) {
+                Rradius ++;
+            }
+            System.out.println("R upgraded");
+            lvlUp();
+    }
+    public void lvlUp() {
+        int hpGap = maxHP - currentHP;
+        int mpGap = maxMana - currentMana;
+        setHP(maxHP + 50);
+        subtractHP(hpGap);
+        setMana(maxMana + 50);
+        subtractMana(mpGap);
+    }
+    //checks hitting buffs
+    public void checkBuff() {
+        Integer index = Gameplay.tileCode(tileX, tileY);
+        if(!buffs.containsKey(index)) return;
+        buffs.get(index).applyEffect(this);
+        buffs.remove(index);
     }
 }

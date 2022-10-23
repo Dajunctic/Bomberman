@@ -179,15 +179,15 @@ public class Mobile extends Entity{
         switch (mode) {
             case NORMAL_MODE -> {
                 tileX = (int) Math.floor((x + getWidth() / 2) / Sprite.SCALED_SIZE);
-                tileY = (int) Math.floor((y + getHeight()) / Sprite.SCALED_SIZE);
+                tileY = (int) Math.floor((y + getHeight() - 5) / Sprite.SCALED_SIZE);
             }
             case CENTER_MODE -> {
                 tileX = (int) Math.floor((x) / Sprite.SCALED_SIZE);
-                tileY = (int) Math.floor((y + getHeight()/2) / Sprite.SCALED_SIZE);
+                tileY = (int) Math.floor((y + getHeight()/2 - 5) / Sprite.SCALED_SIZE);
             }
             case BOTTOM_MODE -> {
                 tileX = (int) Math.floor((x) / Sprite.SCALED_SIZE);
-                tileY = (int) Math.floor((y) / Sprite.SCALED_SIZE);
+                tileY = (int) Math.floor((y - 5) / Sprite.SCALED_SIZE);
             }
             default -> throw new IllegalStateException("Unexpected value: " + mode);
         }
