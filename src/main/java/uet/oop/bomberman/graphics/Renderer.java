@@ -57,16 +57,29 @@ public class Renderer {
         this.offsetY = offsetY;
     }
 
+    //
+
+    public double getTranslateX() {
+        return translateX;
+    }
+
+    public double getTranslateY() {
+        return translateY;
+    }
+
     //check on screen
-    public boolean onScreen(double x, double y, double marginX, double marginY) {
-        return (Math.abs(x - translateX - centerX) <= centerX + marginX) && (Math.abs(y - translateY - centerY) <= centerY + marginY);
+    public boolean onScreen(double x, double y) {
+        return (Math.abs(x - translateX - centerX) <= centerX + Sprite.SCALED_SIZE) && (Math.abs(y - translateY - centerY) <= centerY + Sprite.SCALED_SIZE);
     }
     //render images
-    public void renderImg(GraphicsContext gc, Image img, double x, double y) {
-        if(!onScreen(x, y, img.getWidth(), img.getHeight())) return;
+    public void renderImg(GraphicsContext gc, Image img, double x, double y, boolean reverse) {
+        if(!onScreen(x, y)) return;
         double renderX = offsetX - translateX + shiftX;
         double renderY = offsetY - translateY + shiftY;
-        gc.drawImage(img, x + renderX, y + renderY, scaleX * img.getWidth(), scaleY * img.getHeight());
+        if(reverse) gc.drawImage(img, x + renderX + scaleX * img.getWidth(), y + renderY,
+                -scaleX * img.getWidth(), scaleY * img.getHeight());
+            else gc.drawImage(img, x + renderX, y + renderY,
+                scaleX * img.getWidth(), scaleY * img.getHeight());
     }
     //move camera to somewhere
     public void setGoal(double x, double y) {
@@ -91,7 +104,7 @@ public class Renderer {
     //directly set camera positions
     public void setTranslate(double x, double y) {
         if(translateX == x && translateY == y) return;
-        System.out.println("Camera set to"+ " " + x + " " + y);
+//        System.out.println("Camera set to"+ " " + x + " " + y);
         translateX = x;
         translateY = y;
     }

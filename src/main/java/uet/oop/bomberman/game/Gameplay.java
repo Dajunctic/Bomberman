@@ -46,11 +46,11 @@ public class Gameplay {
     public double offsetY = 0;
     /** Renderer - Trung gian render lên canvas */
     //Renderer chính
-    Renderer wholeScene = new Renderer(offsetX, offsetY, 0, 0, 0, 0,
+    public static Renderer wholeScene = new Renderer(0, 0, 0, 0, 0, 0,
                                 BombermanGame.WIDTH * Sprite.SCALED_SIZE,
                                 BombermanGame.HEIGHT * Sprite.SCALED_SIZE);
     //Renderer cho 2 người chơi
-    List<Renderer> playerScene = new ArrayList<>();
+    public static List<Renderer> playerScene = new ArrayList<>();
     /** GUI GAME Image */
     Image gameFrame = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/frame.png")));
     Image gameBg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/bg.png")));
@@ -69,6 +69,15 @@ public class Gameplay {
     public static SkillFrame skillFrame = new SkillFrame();
 
     public static Map<Integer, Buff> buffs = new HashMap<>();
+
+    public Gameplay() {
+        playerScene.add(new Renderer(offsetX, offsetY, 0, 0,
+                            0, 0,
+                                    Renderer.centerX, 2 * Renderer.centerY));
+        playerScene.add(new Renderer(offsetX, offsetY, Renderer.centerX, 0,
+                0, 0,
+                Renderer.centerX, 2 * Renderer.centerY));
+    }
 
     /** Load map from file */
     public void importing (String generalMap, String areaMap) throws IOException {
@@ -200,6 +209,12 @@ public class Gameplay {
         wholeScene.setOffsetX(offsetX);
         wholeScene.setOffsetY(offsetY);
         wholeScene.setTranslate(translate_x, translate_y);
+        for(Renderer i : playerScene) {
+            i.setOffsetX(offsetX);
+            i.setOffsetY(offsetY);
+        }
+        playerScene.get(0).setTranslate(translate_x, translate_y);
+        playerScene.get(1).setTranslate(enemies.get(0).getX() - Renderer.centerX / 2, enemies.get(0).getY() - Renderer.centerY / 2);
         //other
         player.update(this);
         skillFrame.update(player);
@@ -239,39 +254,42 @@ public class Gameplay {
         /* Game Background */
         gc.drawImage(gameBg, 0, 0);
 
+        for(int div = 0; div < 2; div ++) {
+            /* ** background general map rendering **/
+            int low_x =(int) Math.floor(playerScene.get(div).getTranslateX() / Sprite.SCALED_SIZE);
+            int low_y = (int) Math.floor(playerScene.get(div).getTranslateY() / Sprite.SCALED_SIZE);
 
-        /* ** background general map rendering **/
-        int low_x =(int) Math.floor(translate_x / Sprite.SCALED_SIZE);
-        int low_y = (int) Math.floor(translate_y / Sprite.SCALED_SIZE);
-
-        for(int i = low_y; i <= Math.min(height - 1,low_y + BombermanGame.HEIGHT); i ++) {
-            for (int j = low_x; j <= Math.min(width - 1,low_x + BombermanGame.WIDTH); j++){
-                background[i][j].render(gc, wholeScene);
+            for(int i = low_y; i <= Math.min(height - 1,low_y + BombermanGame.HEIGHT); i ++) {
+                for (int j = low_x; j <= Math.min(width - 1,low_x + BombermanGame.WIDTH / 2); j++){
+                    background[i][j].render(gc, playerScene.get(div));
+                }
             }
+
+
+            /* * Render map khu vực * */
+            for (AreaMap areaMap: areaMaps) {
+                areaMap.render(gc, playerScene.get(div));
+            }
+
+            /* * Hàng rào * */
+            for (Fence fence: fences) {
+                fence.render(gc, playerScene.get(div));
+            }
+            /* * Buffs * */
+            for(Buff i : buffs.values()) {
+                i.render(gc, playerScene.get(div));
+            }
+            /* entities */
+            int finalDiv = div;
+            entities.forEach(g -> g.render(gc, playerScene.get(finalDiv)));
+
+            /* * Enemies * */
+            enemies.forEach(g -> g.render(gc, playerScene.get(finalDiv)));
+
+            /* * Player * */
+            player.render(gc, playerScene.get(finalDiv));
         }
 
-
-        /* * Render map khu vực * */
-        for (AreaMap areaMap: areaMaps) {
-            areaMap.render(gc, this);
-        }
-
-        /* * Hàng rào * */
-        for (Fence fence: fences) {
-            fence.render(gc, this);
-        }
-        /* * Buffs * */
-        for(Buff i : buffs.values()) {
-            i.render(gc, this);
-        }
-        /* entities */
-        entities.forEach(g -> g.render(gc, this));
-
-        /* * Enemies * */
-        enemies.forEach(g -> g.render(gc, this));
-
-        /* * Player * */
-        player.render(gc, this);
 
 
         /* * MiniMap * */

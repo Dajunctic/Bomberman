@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.Objects;
@@ -87,6 +88,17 @@ public class Fence extends Entity {
             } else {
                 gc.drawImage(verticalDown, renderX, renderY);
             }
+        }
+    }
+
+    @Override
+    public void render(GraphicsContext gc, Renderer renderer) {
+        if(type == HORIZONTAL) {
+            renderer.renderImg(gc, (status == UP ? horizontalUp : horizontalDown),
+                                        posX + shiftX, posY + shiftY - 40, false);
+        } else if ( type == VERTICAL) {
+            renderer.renderImg(gc, (status == UP ? verticalUp : verticalDown),
+                                        posX + shiftX, posY + shiftY - 30, false);
         }
     }
 }

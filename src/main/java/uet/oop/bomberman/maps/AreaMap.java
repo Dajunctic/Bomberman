@@ -3,6 +3,7 @@ package uet.oop.bomberman.maps;
 import javafx.scene.canvas.GraphicsContext;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.graphics.Renderer;
 
 /** Map này là máp chính thức mỗi khu vực trong GameMap
  * Map gồm brick và wall mỗi màn (dùng mảng 2 chiều)
@@ -45,6 +46,17 @@ public class AreaMap {
 
                 if (tiles[i][j] != '.') {
                     obstacles[i][j].render(gc, gp);
+                }
+            }
+        }
+    }
+
+    public void render(GraphicsContext gc, Renderer renderer) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+
+                if (tiles[i][j] != '.') {
+                    obstacles[i][j].render(gc, renderer);
                 }
             }
         }

@@ -57,7 +57,7 @@ public class Floor extends Entity {
         super.render(gc, renderer);
 
         if (isKilled) {
-            renderer.renderImg(gc, this.destroyImg, x + shiftX, y + shiftY);
+            renderer.renderImg(gc, this.destroyImg, x + shiftX, y + shiftY, false);
         }
     }
 

@@ -3,6 +3,7 @@ package uet.oop.bomberman.others;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.graphics.Renderer;
 
 public class ManaBar extends Bar{
     public ManaBar(double xPixel, double yPixel, int maxMana) {
@@ -38,5 +39,12 @@ public class ManaBar extends Bar{
         gc.drawImage(this.getImg(), renderX, renderY);
         gc.drawImage(this.tempImg, renderX + 1 , renderY);
         gc.drawImage(this.currentImg, renderX + 1, renderY);
+    }
+
+    @Override
+    public void render(GraphicsContext gc, Renderer renderer) {
+        renderer.renderImg(gc, this.getImg(), x + shiftX, y + shiftY, false);
+        renderer.renderImg(gc, this.tempImg, x + shiftX + 1, y + shiftY, false);
+        renderer.renderImg(gc,this.currentImg, x + shiftX + 1, y + shiftY, false);
     }
 }

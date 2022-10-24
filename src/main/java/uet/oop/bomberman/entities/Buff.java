@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.ArrayList;
@@ -62,6 +63,19 @@ public class Buff extends Entity{
          double renderY = y - sizeY / 2 + floating;
          gc.drawImage(this.getImg(),renderX - gameplay.translate_x + gameplay.offsetX
                        ,renderY - gameplay.translate_y + gameplay.offsetY, sizeX, sizeY);
+        gc.setEffect(null);
+        //update animation
+        floating += floatingSpeed;
+        if(Math.abs(floating) > floatingThreshold) floatingSpeed *= -1;
+    }
+
+    @Override
+    public void render(GraphicsContext gc, Renderer renderer) {
+        gc.setEffect(effect);
+        double renderX = x - sizeX / 2;
+        double renderY = y - sizeY / 2 + floating;
+        renderer.renderImg(gc, this.getImg(),renderX + shiftX
+                ,renderY + shiftY, false);
         gc.setEffect(null);
         //update animation
         floating += floatingSpeed;

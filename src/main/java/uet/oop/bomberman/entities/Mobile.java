@@ -7,6 +7,7 @@ import javafx.util.Pair;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
+import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Basic;
@@ -43,7 +44,7 @@ public class Mobile extends Entity{
     public static final int Q_MANA_CONSUMING = 10;
     public static final int W_MANA_CONSUMING = 50;
     public static final int E_MANA_CONSUMING = 20;
-    public static final int R_MANA_CONSUMING = 200;
+    public static final int R_MANA_CONSUMING = 20;
     public int maxMana;
     public int currentMana;
     public ManaBar manaBar;
@@ -232,6 +233,13 @@ public class Mobile extends Entity{
         HPBar.render(gc, gameplay);
     }
 
+    public void renderHP(GraphicsContext gc, Renderer renderer) {
+        this.barX = x + (this.getImg().getWidth() - 38) / 2;
+        this.barY = y - 20;
+
+        HPBar.setPosition(barX, barY);
+        HPBar.render(gc, renderer);
+    }
     public int getMaxHP() {
         return maxHP;
     }
@@ -277,6 +285,15 @@ public class Mobile extends Entity{
         manaBar.setPosition(barX, barY);
 
         manaBar.render(gc, gameplay);
+    }
+
+    public void renderMana(GraphicsContext gc, Renderer renderer) {
+        this.barX = x + (this.getImg().getWidth() - 38) / 2;
+        this.barY = y - 13;
+
+        manaBar.setPosition(barX, barY);
+
+        manaBar.render(gc, renderer);
     }
 
     public int getMaxMana() {

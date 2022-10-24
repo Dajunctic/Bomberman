@@ -9,10 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
-import uet.oop.bomberman.graphics.Anim;
-import uet.oop.bomberman.graphics.DeadAnim;
-import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.graphics.*;
 import javafx.scene.input.KeyEvent;
 
 import static uet.oop.bomberman.game.BombermanGame.*;
@@ -23,8 +20,8 @@ public class Bomber extends Mobile {
     public static double Q_COOLDOWN = 5;
     public static double W_COOLDOWN = 10;
     public static double W_INVISIBLE_COOLDOWN = 2;
-    public static double E_COOLDOWN = 15;
-    public static double R_COOLDOWN = 120;
+    public static double E_COOLDOWN = 10;
+    public static double R_COOLDOWN = 2;
 
     public static int D_COOLDOWN = 0;
     public static int F_COOLDOWN = 180;
@@ -442,7 +439,26 @@ public class Bomber extends Mobile {
         renderMana(gc, gameplay);
     }
 
+    @Override
+    public void render(GraphicsContext gc, Renderer renderer) {
+        /* * Render bombs */
+        bombs.forEach(g -> g.render(gc, renderer));
+        gc.setEffect(effect);
+        if(invisible)  gc.setGlobalAlpha(alpha);
+        /* * Apply invisibility */
 
+        /* * Hiển thị nhân vật */
+        renderer.renderImg(gc, this.getImg(), x + shiftX, y + shiftY, false);
+        gc.setGlobalAlpha(1);
+        gc.setEffect(null);
+
+        if(nuke != null) nuke.render(gc, renderer);
+        if(!dodgeAnim.isDead()) renderer.renderImg(gc, dodgeAnim.getImage(), oldX + shiftX, oldY + shiftY, false);
+
+        /* * Hiển thị máu và mana */
+        renderHP(gc, renderer);
+        renderMana(gc, renderer);
+    }
     @Override
     public Image getImg() {
         return statusAnims[currentStatus].getImage();
@@ -457,10 +473,10 @@ public class Bomber extends Mobile {
         if(!checkCollision(ref_x,ref_y,5)) {
             x = ref_x;
             y = ref_y;
-            gameplay.translate_x = Math.max(0, Math.min( x - (double) WIDTH * Sprite.SCALED_SIZE / 2,
+            gameplay.translate_x = Math.max(0, Math.min( x - (double) WIDTH * Sprite.SCALED_SIZE / 4,
                     (Gameplay.width - WIDTH) * Sprite.SCALED_SIZE ));
 
-            gameplay.translate_y = Math.max(0, Math.min( y - (double) HEIGHT * Sprite.SCALED_SIZE / 2,
+            gameplay.translate_y = Math.max(0, Math.min( y - (double) HEIGHT * Sprite.SCALED_SIZE / 4,
                     (Gameplay.height - HEIGHT) * Sprite.SCALED_SIZE ));
             //update tiles
             standingTile();

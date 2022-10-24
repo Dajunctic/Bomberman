@@ -8,6 +8,7 @@ import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.DeadAnim;
+import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import uet.oop.bomberman.maps.AreaMap;
@@ -123,6 +124,13 @@ public class Flame extends Mobile{
         gc.setEffect(null);
     }
 
+    @Override
+    public void render(GraphicsContext gc, Renderer renderer) {
+        gc.setEffect(effect);
+        if(!renderer.onScreen(x, y)) return ;
+        renderer.renderImg(gc, this.getImg(), x + shiftX, y + shiftY, false);
+        gc.setEffect(null);
+    }
     @Override
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
         if(ref_x < 0 || ref_y < 0

@@ -8,6 +8,7 @@ import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.DeadAnim;
+import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.others.Basic;
@@ -44,7 +45,7 @@ public abstract class Enemy extends Mobile{
     protected int speed = 1;
     protected Vertex direction = new Vertex(0,1);
 
-    protected int reversed = 1;
+    protected boolean reversed = false;
     /** Life status */
     protected boolean isDead = false;
     public Enemy(double xPixel, double yPixel) {
@@ -57,7 +58,7 @@ public abstract class Enemy extends Mobile{
 
     //reverse the sprite
     private void switchSprite() {
-        reversed =  (direction.getX() < 0 ? -1 : 1);
+        reversed =  (direction.getX() < 0);
     }
     /** random setter */
     public void switchDirection() {
@@ -199,6 +200,7 @@ public abstract class Enemy extends Mobile{
 
     @Override
     public void render(GraphicsContext gc, Gameplay gameplay) {
+        double dim = (reversed ? -1 : 1);
         /* * Hiển thị máu */
         renderHP(gc, gameplay);
 
@@ -211,11 +213,28 @@ public abstract class Enemy extends Mobile{
                                                             , y - gameplay.translate_y + gameplay.offsetY - 18 );
 
         // If it is going backward
-        gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX + ((Sprite.SCALED_SIZE * (1 - reversed)) / 2)
+        gc.drawImage(this.getImg(), x - gameplay.translate_x + gameplay.offsetX + ((Sprite.SCALED_SIZE * (1 - dim)) / 2)
                 , y - gameplay.translate_y + gameplay.offsetY
-                , Sprite.SCALED_SIZE * reversed
+                , Sprite.SCALED_SIZE * dim
                 , Sprite.SCALED_SIZE);
         gc.setEffect(null);
     }
 
+    @Override
+    public void render(GraphicsContext gc, Renderer renderer) {
+        /* * Hiển thị máu */
+        renderHP(gc, renderer);
+
+        gc.setEffect(effect);
+        // Whether object is on screen
+//        if(!onScreen(gameplay)) return;
+
+        //  If spotted bomber
+        if(status == SERIOUS) renderer.renderImg(gc, spot.getFxImage(), x + shiftX + this.getWidth() / 2
+                , y + shiftY - 18, false);
+
+        // If it is going backward
+        renderer.renderImg(gc, this.getImg(), x + shiftX, y + shiftY, reversed);
+        gc.setEffect(null);
+    }
 }

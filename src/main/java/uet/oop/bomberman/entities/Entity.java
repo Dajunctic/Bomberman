@@ -68,7 +68,7 @@ public abstract class Entity {
 
     public void render(GraphicsContext gc, Renderer renderer) {
         gc.setEffect(effect);
-        renderer.renderImg(gc, getImg(), x + shiftX, y + shiftY);
+        renderer.renderImg(gc, getImg(), x + shiftX, y + shiftY, false);
         gc.setEffect(null);
     }
     /** Hiển thị trên màn hình cố định **/

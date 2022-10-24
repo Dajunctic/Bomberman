@@ -18,7 +18,6 @@ public class Nuke extends Entity{
     private boolean exploded = false;
     public Nuke(double xUnit, double yUnit, double timer) {
         super(xUnit, yUnit);
-        setMode(CENTER_MODE);
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
         x += (double) Sprite.SCALED_SIZE / 2;
@@ -26,9 +25,8 @@ public class Nuke extends Entity{
         tileX = (int) xUnit;
         tileY = (int) yUnit;
         nuke = new DeadAnim(SpriteSheet.nuke, 6, timer * (timer + 1) / 2);
-        explosion.setScaleFactor(2);
-        explosion.setScaleFactor(2);
         System.out.println("NUKE placed!!!");
+        setMode(BOTTOM_MODE);
     }
 
     @Override
@@ -41,6 +39,7 @@ public class Nuke extends Entity{
             nuke.update(2);
             nukeThreshold += 0.04;
             effect = new Glow(nukeThreshold);
+            if(nuke.isDead()) setMode(BOTTOM_MODE);
         }
     }
 
