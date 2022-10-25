@@ -95,6 +95,16 @@ abstract public class Basic {
         return  blueImage;
     }
     public static double mapping(double x1, double y1, double x2, double y2, double pointer) {
+        if((pointer - x1) * (pointer - y1) > 0) {
+            if(x1 > y1) {
+                if(pointer > x1) return x2;
+                if(pointer < y1) return y2;
+            }
+            if(x1 <= y1) {
+                if(pointer > y1) return y2;
+                if(pointer < x1) return x2;
+            }
+        }
         return x2 + (y2 - x2)*(pointer - x1) / (y1 - x1);
     }
 }

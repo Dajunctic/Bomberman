@@ -42,6 +42,7 @@ public class Sound {
     //properties
     public static double ratio = 1;
     public static double threshold = 8 * Sprite.SCALED_SIZE;
+    private double impact = threshold;
     protected MediaPlayer audio;
     protected Vertex position;
     protected Vertex balance = new Vertex(0,1);
@@ -78,9 +79,10 @@ public class Sound {
             isPlaying = true;
         }
         double dis = balance.abs();
-        double volume = Basic.mapping(0, threshold, 1, 0, balance.abs()) * ratio;
+        double volume = Basic.mapping(0, impact, 1, 0, balance.abs()) * ratio;
         balance.normalize();
         audio.setBalance(-balance.getX() * (dis / threshold));
+        audio.setVolume(volume);
         System.out.println("Balance: " + audio.getBalance());
         if(audio.getCurrentTime().toMillis() == audio.getStopTime().toMillis()) Audio.start(audio);
     }
