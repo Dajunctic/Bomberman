@@ -11,12 +11,16 @@ import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.GameMap;
+import uet.oop.bomberman.music.Audio;
+import uet.oop.bomberman.music.Sound;
 import uet.oop.bomberman.others.Basic;
 import uet.oop.bomberman.others.Physics;
 
 import java.util.Random;
 
 import static java.lang.Math.random;
+import static uet.oop.bomberman.game.BombermanGame.FPS;
+import static uet.oop.bomberman.game.BombermanGame.currentFrame;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.graphics.Sprite.spot;
 
@@ -194,7 +198,10 @@ public abstract class Enemy extends Mobile{
     public void update() {
         if(isDead) return;
         super.update();
-        if(currentHP <= 0) isDead = true;
+        if(currentHP <= 0) {
+            isDead = true;
+            sounds.add(new Sound(x, y, Audio.copy(Audio.enemy_dead), -1));
+        }
     }
     public abstract void update(Bomber player);
 

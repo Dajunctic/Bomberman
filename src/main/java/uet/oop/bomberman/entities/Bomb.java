@@ -10,6 +10,8 @@ import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.music.Audio;
+import uet.oop.bomberman.music.Sound;
 import uet.oop.bomberman.others.Physics;
 
 public class Bomb extends Entity{
@@ -22,6 +24,7 @@ public class Bomb extends Entity{
     //tí sửa sau :)))
     private int radius = 3;
     private int damage = 4;
+    private double duration = 2;
     public void relocate() {
 
     }
@@ -38,9 +41,10 @@ public class Bomb extends Entity{
         bomb = new DeadAnim(SpriteSheet.bomb, 15, timer);
         setMode(CENTER_MODE);
         explosion.setScaleFactor(2);
+        Gameplay.sounds.add(new Sound(x, y, Audio.copy(Audio.bomb), timer));
     }
 
-    public Bomb(double xPixel, double yPixel, double timer, int radius, int damage, boolean friendly) {
+    public Bomb(double xPixel, double yPixel, double timer, int radius, double duration,int damage, boolean friendly) {
         super(xPixel, yPixel);
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
@@ -49,6 +53,7 @@ public class Bomb extends Entity{
         bomb = new DeadAnim(SpriteSheet.bomb, 15, timer);
         explosion.setScaleFactor(2);
         this.radius = radius;
+        this.duration = duration;
         this.damage = damage;
         this.friendly = friendly;
         setMode(CENTER_MODE);
@@ -58,6 +63,7 @@ public class Bomb extends Entity{
         if (bomb.isDead()) {
             explosion.update();
             setMode(CENTER_MODE);
+            explode();
         } else {
             bomb.update();
         }
@@ -79,14 +85,18 @@ public class Bomb extends Entity{
     @Override
     public void deadAct(Gameplay gameplay) {
         if(exploded) return;
-        exploded = true;
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 1,0, damage, friendly));
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0, 1, damage, friendly));
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0,-1, damage, friendly));
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, -1,0, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 1,0, 0.5, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0, 1, 0.5, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0,-1, 0.5, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, -1,0, 0.5, duration, damage, friendly));
 
     }
 
+    public void explode() {
+        if(exploded) return;
+        exploded = true;
+        Gameplay.sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1));
+    }
     @Override
     public double getWidth() {
         if (bomb.isDead())

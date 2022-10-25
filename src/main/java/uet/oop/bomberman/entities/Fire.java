@@ -51,8 +51,8 @@ public class Fire extends Entity{
         this.damage = damage;
         effector = new Pair<>(damage, friendly);
         Gameplay.fires.put(index, effector);
-        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
-        System.out.println("________________________________________________");
+//        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
+//        System.out.println("________________________________________________");
     }
 
     @Override

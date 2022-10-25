@@ -1,0 +1,3 @@
+Using the template file
+
+Draw a house, a car, and "tween" between the house and the car. Make an animation from that. 

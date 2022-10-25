@@ -11,6 +11,7 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.AreaMap;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.maps.Minimap;
+import uet.oop.bomberman.music.Sound;
 import uet.oop.bomberman.others.SkillFrame;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.ArrayListMultimap;
@@ -28,7 +29,7 @@ public class Gameplay {
 
     /** Terminate */
     public static List<Point> killTask = new ArrayList<>();
-    protected Bomber player;
+    private Bomber player;
     protected List<Enemy> enemies = new ArrayList<>();
 
     /** Map tổng quan*/
@@ -69,6 +70,8 @@ public class Gameplay {
     public static SkillFrame skillFrame = new SkillFrame();
 
     public static Map<Integer, Buff> buffs = new HashMap<>();
+    /** Tiếng */
+    public static ArrayList<Sound> sounds = new ArrayList<>();
 
     public Gameplay() {
         playerScene.add(new Renderer(offsetX, offsetY, 0, 0,
@@ -231,6 +234,7 @@ public class Gameplay {
                 i --;
             }
         }
+
 
         /* * Enemies */
         for(int i = 0; i < enemies.size(); i++){

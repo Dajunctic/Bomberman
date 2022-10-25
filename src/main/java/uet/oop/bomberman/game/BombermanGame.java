@@ -8,6 +8,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.music.Audio;
+import uet.oop.bomberman.music.Music;
+import uet.oop.bomberman.others.TotalScene;
+
+
 
 import java.io.IOException;
 
@@ -19,15 +24,17 @@ public class BombermanGame extends Application {
 
     /** Frame control */
     public static final int FPS = 80;
+    public static int currentFrame = 0;
     private GraphicsContext gc;
-    private Canvas canvas;
+    public static Canvas canvas = new Canvas(WIDTH * Sprite.SCALED_SIZE, HEIGHT * Sprite.SCALED_SIZE);;
     public static Scene scene;
     private Gameplay game = new Gameplay();
-
+    private Music music = new Music();
+    public static Audio audio;
+    private TotalScene totalScene = new TotalScene();
     @Override
     public void start(Stage stage) throws IOException {
         /* * Tạo canvas */
-        canvas = new Canvas();
         gc = canvas.getGraphicsContext2D();
 
         StackPane stackPane = new StackPane();
@@ -44,21 +51,23 @@ public class BombermanGame extends Application {
                 stackPane.heightProperty());
 
         /* * Thêm scene vao stage */
-        stage.setScene(scene);
+        stage.setScene(totalScene.getMenu().getScene());
 
         stage.show();
         stage.setTitle("League of Bomberman");
         AnimationTimer timer = new AnimationTimer() {
 
+            //Control FPS
+            public long  time_gap = 1_000_000_000/FPS;
             private long  lastUpdate = 0;
             @Override
             public void handle(long l) {
                 /* * Control FPS */
-                long time_gap = 1_000_000_000 / FPS;
                 if( l - lastUpdate >= time_gap){
-                    update();
+                    update(stage);
                     render();
                     lastUpdate = l;
+                    currentFrame++;
                 }
             }
         };
@@ -71,7 +80,8 @@ public class BombermanGame extends Application {
 
 
     /** Updating */
-    public void update() {
+    public void update(Stage stage) {
+        totalScene.update(stage);
         game.update();
     }
 
@@ -84,6 +94,8 @@ public class BombermanGame extends Application {
     }
 
     public static void main(String[] args) {
+        audio = new Audio();
+
         Application.launch(BombermanGame.class);
     }
 }

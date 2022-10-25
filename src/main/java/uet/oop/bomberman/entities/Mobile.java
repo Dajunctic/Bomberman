@@ -101,13 +101,13 @@ public class Mobile extends Entity{
         int subtractHP = 0;
         /* *********** FIRE ************ */
         if(!fires.containsKey(tileCode)) return 0;
-        System.out.println(getClass() + ", Caught fire in:" + tileX + " " + tileY + ", " + tileCode + " " + fires.get(tileCode) );
+//        System.out.println(getClass() + ", Caught fire in:" + tileX + " " + tileY + ", " + tileCode + " " + fires.get(tileCode) );
         for(Pair<Integer, Boolean> fire : fires.get(tileCode)) {
             //friendly fire
             if(fire.getValue() && isAlly) continue;
             //damaging
             subtractHP += fire.getKey();
-            System.out.println(String.format("-%d HP", fire.getKey()) );
+//            System.out.println(String.format("-%d HP", fire.getKey()) );
         }
         return subtractHP;
     }

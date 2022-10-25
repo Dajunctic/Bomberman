@@ -5,6 +5,9 @@ import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.music.Audio;
+import uet.oop.bomberman.music.LargeSound;
+
 //The nuke
 public class Nuke extends Entity{
 
@@ -27,6 +30,7 @@ public class Nuke extends Entity{
         nuke = new DeadAnim(SpriteSheet.nuke, 6, timer * (timer + 1) / 2);
         System.out.println("NUKE placed!!!");
         setMode(BOTTOM_MODE);
+        Gameplay.sounds.add(new LargeSound(this.x, this.y, Audio.copy(Audio.nuke), timer));
     }
 
     @Override
@@ -35,6 +39,7 @@ public class Nuke extends Entity{
             explosion.update();
             expThreshold += 0.005;
             effect = new Bloom(expThreshold);
+            explode();
         } else {
             nuke.update(2);
             nukeThreshold += 0.04;
@@ -59,9 +64,13 @@ public class Nuke extends Entity{
     public void deadAct(Gameplay gameplay) {
         //destroy all tiles including walls
         //implement method to find areaMap grid for bordering
-        if(exploded) return;
     }
 
+    public void explode() {
+        if(exploded) return;
+        exploded = true;
+        Gameplay.sounds.add(new LargeSound(this.x, this.y, Audio.copy(Audio.nuke_explosion), -1));
+    }
     @Override
     public double getWidth() {
         if (nuke.isDead())

@@ -1,0 +1,94 @@
+package uet.oop.bomberman.music;
+
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.generals.Vertex;
+import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.others.Basic;
+
+import java.net.URISyntaxException;
+
+public class Sound {
+
+    private long createTime;
+    private long duration;
+    //sources
+    public static String _background_music = "/sound/Background/background.mp3";
+    //player status audio
+    public static String _fatal = "/sound/Player/Status/fatal.mp3";
+    public static String _dead = "/sound/Player/Status/dead.wav";
+    //player abilities audio
+    public static String _buff = "/sound/Player/Abilities/buff.mp3";
+    public static String _dodge = "/sound/Player/Abilities/dodge.wav";
+    public static String _place_bomb = "/sound/Player/Abilities/bombing.mp3";
+    public static String _heal = "/sound/Player/Abilities/heal.mp3";
+    public static String _invisible = "/sound/Player/Abilities/invisible.mp3";
+    public static String _shooting_fire = "/sound/Player/Abilities/shooting_fire.mp3";
+    public static String _nuke = "/sound/Player/Entities/nuke.mp3";
+    public static String _nuke_explosion = "/sound/Player/Entities/nuke_explosion_final.mp3";
+    //bomb related audio
+    public static String _bomb = "/sound/Player/Entities/bomb.mp3";
+    public static String _bomb_explosion = "/sound/Player/Entities/bomb_explosion.mp3";
+    public static String _flame = "/sound/Player/Entities/flame.mp3";
+    public static String _fire = "/sound/Player/Entities/fire.mp3";
+    //enemy
+    public static String _enemy_dead = "/sound/Enemy/dead.mp3";
+
+
+
+    //properties
+    public static double ratio = 1;
+    public static double threshold = 8 * Sprite.SCALED_SIZE;
+    protected MediaPlayer audio;
+    protected Vertex position;
+    protected Vertex balance = new Vertex(0,1);
+    protected boolean isPlaying = true;
+    public Sound(double x, double y, String path, double duration) throws URISyntaxException {
+        position = new Vertex(x, y);
+        audio = new MediaPlayer(new Media( getClass().getResource(path).toURI().toString()));
+        audio.setAutoPlay(true);
+        this.duration =  (long)(duration * 1000);
+        if(duration < 0) this.duration = (long) audio.getStopTime().toMillis();
+        createTime = System.currentTimeMillis();
+
+    }
+    public Sound(double x, double y, MediaPlayer audio, double duration)  {
+        position = new Vertex(x, y);
+        this.audio = audio;
+        audio.setAutoPlay(true);
+        this.duration =  (long)(duration * 1000);
+        if(duration < 0) this.duration = (long) audio.getStopTime().toMillis();
+        createTime = System.currentTimeMillis();
+    }
+    public void update(Bomber player) {
+        balance.set(player.getX() - position.getX(), player.getY() - position.getY());
+        if(balance.abs() > threshold ) {
+            System.out.println("Out of range");
+            if(isPlaying) {
+                audio.pause();
+                isPlaying = false;
+            }
+            return;
+        }
+        if(!isPlaying) {
+            audio.play();
+            isPlaying = true;
+        }
+        double dis = balance.abs();
+        double volume = Basic.mapping(0, threshold, 1, 0, balance.abs()) * ratio;
+        balance.normalize();
+        audio.setBalance(-balance.getX() * (dis / threshold));
+        System.out.println("Balance: " + audio.getBalance());
+        if(audio.getCurrentTime().toMillis() == audio.getStopTime().toMillis()) Audio.start(audio);
+    }
+    public boolean exists() {
+        return System.currentTimeMillis() - createTime <= duration;
+    }
+
+    public MediaPlayer getAudio() {
+        return audio;
+    }
+}

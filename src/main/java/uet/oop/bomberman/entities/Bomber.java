@@ -6,11 +6,13 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.MotionBlur;
 import javafx.scene.image.Image;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
 import javafx.scene.input.KeyEvent;
+import uet.oop.bomberman.music.Audio;
 
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
@@ -87,26 +89,32 @@ public class Bomber extends Mobile {
     private final String path;
 
     /** abilities */
+    MediaPlayer buffed = Audio.copy(Audio.buff);
     // go incognito
     private boolean invisible = false;
     private double alpha = 1;
     private double invisibleDuration = 3;
     private double fadeInSpeed = 0.8 / (3 *FPS);
     private int Elevel = 1;
+    private MediaPlayer Eaudio = Audio.copy(Audio.invisible);
 
     /** special skills */
     //bomb
     private int radius = 1;
     private int damage = 4;
     public double timer = 2.5;
+
+    private double bombDuration = 10;
     public int Qlevel = 1;
 
     List<Bomb> bombs = new ArrayList<>();
+    private static MediaPlayer Qaudio = Audio.copy(Audio.place_bomb);
     //firewaves
     private int Wdivider = 1;
     private int Wradius = 3;
     private int Wdamage = 8;
     public int Wlevel = 1;
+    private MediaPlayer Waudio = Audio.copy(Audio.shooting_fire);
     //TNT
     Nuke nuke = null;
     private int Rdamage = 10;
@@ -120,9 +128,13 @@ public class Bomber extends Mobile {
     private int lighten = 1;
     private double oldX = 0;
     private double oldY = 0;
-
+    private MediaPlayer Daudio = Audio.copy(Audio.dodge);
     private DeadAnim dodgeAnim;
-
+    //heal
+    private MediaPlayer Faudio = Audio.copy(Audio.heal);
+    //Rep
+    private MediaPlayer fatality = Audio.copy(Audio.fatal);
+    private  boolean isFatal = false;
     //Constructor
     public Bomber(double x, double y, String path) {
         super(x, y);
@@ -334,7 +346,10 @@ public class Bomber extends Mobile {
                     case E -> goInvisible(5);
                     case R -> placeNuke();
                     case D -> setDodge();
-                    case F -> recover();
+                    case F -> {
+                        Audio.start(Faudio);
+                        recover();
+                    }
                 }
             }});
 
@@ -366,6 +381,8 @@ public class Bomber extends Mobile {
             if(!(effect instanceof ColorAdjust)) effect = dodgeEffect;
             dodgeEffect.setBrightness(lightShift);
             if(lightShift >= 1) {
+                lightShift = 1;
+                Audio.start(Daudio);
                 dodge();
                 lighten = -lighten;
             }
@@ -412,6 +429,28 @@ public class Bomber extends Mobile {
         //handling vulnerabilities
         if(invisible) alpha += fadeInSpeed;
         if(alpha >= 1) invisible = false;
+
+        //immense audio
+        if(currentHP <= maxHP / 4  ) {
+            if(!isFatal) {
+                isFatal = true;
+                Audio.start(fatality);
+            }
+            fatality.setVolume((double)(currentHP / maxHP + 0.3));
+        }   else if(isFatal) {
+            isFatal = false;
+            fatality.stop();
+        }
+        for(int i = 0; i < sounds.size(); i ++) {
+            sounds.get(i).update(this);
+            if(!sounds.get(i).exists()) {
+                sounds.remove(i);
+                i--;
+                System.out.println(sounds);
+            }
+            System.out.println("Sound update");
+        }
+
    }
 
     /** Hàm render animation nên overload hàm render của Entity. */
@@ -561,6 +600,7 @@ public class Bomber extends Mobile {
     /**************************** BUFF AND BUGS ********************************/
     //invisible
     public void goInvisible(double time) {
+        Audio.start(Eaudio);
         if (currentMana < E_MANA_CONSUMING) return;
         if (System.currentTimeMillis() - lastE < E_COOLDOWN * 1000);
 
@@ -592,15 +632,15 @@ public class Bomber extends Mobile {
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
 
-        bombs.add(new Bomb(i, j, timer, radius, damage, false));
+        bombs.add(new Bomb(i, j, timer, radius, bombDuration, damage, false));
         subtractMana(Q_MANA_CONSUMING);
         lastQ = System.currentTimeMillis();
-
+        Audio.start(Qaudio);
     }
     /* * Shoot 3 parallel fire */
     public void shootFireball() {
         /* * Điều kiện để bắn */
-
+        Audio.start(Waudio);
         //if invisible
         if(invisible) {
             if (System.currentTimeMillis() - lastW <= W_INVISIBLE_COOLDOWN * 1000L) return;
@@ -647,6 +687,7 @@ public class Bomber extends Mobile {
         nuke = new Nuke(i, j, timer);
         subtractMana(R_MANA_CONSUMING);
         lastR = System.currentTimeMillis();
+        Audio.start(Qaudio);
     }
     
     /** Jump 2 tiles, need to reinstall checkCollision for out of Map bug */
@@ -705,6 +746,7 @@ public class Bomber extends Mobile {
             Qlevel ++;
             Q_COOLDOWN -= 0.5;
             damage ++;
+            bombDuration += 0.5;
             if(Qlevel % 2 == 0) {
                 radius++;
             }
@@ -746,6 +788,7 @@ public class Bomber extends Mobile {
         subtractHP(hpGap);
         setMana(maxMana + 50);
         subtractMana(mpGap);
+        Audio.start(buffed);
     }
     //checks hitting buffs
     public void checkBuff() {

@@ -13,6 +13,9 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import uet.oop.bomberman.maps.AreaMap;
 import uet.oop.bomberman.maps.GameMap;
+import uet.oop.bomberman.music.Audio;
+import uet.oop.bomberman.music.DynamicSound;
+import uet.oop.bomberman.music.Sound;
 import uet.oop.bomberman.others.Physics;
 
 import java.util.HashSet;
@@ -33,7 +36,7 @@ public class Flame extends Mobile{
     boolean friendly = false;
     HashSet<Integer> floors = new HashSet<>();
     ColorAdjust effect;
-
+    DynamicSound audio;
     public Flame(double xPixel, double yPixel) {
         super(xPixel, yPixel);
         setMode(CENTER_MODE);
@@ -62,6 +65,8 @@ public class Flame extends Mobile{
             //friendly fire
         this.friendly = friendly;
         setMode(CENTER_MODE);
+        sounds.add(new DynamicSound(x, y, Audio.copy(Audio.flame), -1, this));
+        sounds.add(new Sound(x, y, Audio.copy(Audio.fire), duration));
     }
 
     public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration, int damage, boolean friendly) {
@@ -84,6 +89,8 @@ public class Flame extends Mobile{
         //friendly fire
         this.friendly = friendly;
         setMode(CENTER_MODE);
+        sounds.add(new DynamicSound(x, y, Audio.copy(Audio.flame), -1, this));
+        sounds.add(new Sound(x, y, Audio.copy(Audio.fire), duration));
     }
     @Override
     public void update() {

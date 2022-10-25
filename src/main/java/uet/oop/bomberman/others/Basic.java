@@ -8,6 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 abstract public class Basic {
+    public static double inf = 1e9 + 7;
     public static void drawRectangle(GraphicsContext gc, Rectangle rect){
         gc.setFill(Color.WHITESMOKE);
         gc.fillRect(rect.getX(),
@@ -93,5 +94,7 @@ abstract public class Basic {
         }
         return  blueImage;
     }
-
+    public static double mapping(double x1, double y1, double x2, double y2, double pointer) {
+        return x2 + (y2 - x2)*(pointer - x1) / (y1 - x1);
+    }
 }
