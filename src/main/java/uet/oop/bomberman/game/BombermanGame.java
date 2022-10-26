@@ -6,7 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.Music;
@@ -15,6 +17,8 @@ import uet.oop.bomberman.others.TotalScene;
 
 
 import java.io.IOException;
+
+import static uet.oop.bomberman.music.Sound.ratio;
 
 public class BombermanGame extends Application {
 
@@ -30,8 +34,16 @@ public class BombermanGame extends Application {
     public static Scene scene;
     private Gameplay game = new Gameplay();
     private Music music = new Music();
-    public static Audio audio;
+    public static Audio audio = new Audio();
     private TotalScene totalScene = new TotalScene();
+    public static MediaPlayer menu_bg = Audio.copy(Audio.background_music);
+    public static MediaPlayer game_bg = Audio.copy(Audio.gameplay);
+    static {
+        menu_bg.setCycleCount(MediaPlayer.INDEFINITE);
+        game_bg.setCycleCount(MediaPlayer.INDEFINITE);
+        game_bg.stop();
+        menu_bg.play();
+    }
     @Override
     public void start(Stage stage) throws IOException {
         /* * Tạo canvas */
@@ -93,8 +105,17 @@ public class BombermanGame extends Application {
         game.render(gc, canvas.getWidth(), canvas.getHeight());
     }
 
+    public static void startGame() {
+        menu_bg.seek(Duration.ZERO);
+        menu_bg.stop();
+        game_bg.play();
+    }
+    public static void setBgVolume() {
+        menu_bg.setVolume(ratio);
+        game_bg.setVolume(ratio * 0.6);
+        System.out.println("Volume set to: " + ratio);
+    }
     public static void main(String[] args) {
-        audio = new Audio();
 
         Application.launch(BombermanGame.class);
     }

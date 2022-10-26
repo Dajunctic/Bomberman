@@ -57,11 +57,12 @@ public class TotalScene {
         });
         choosePlayer.playerBt1.getText().setOnMouseClicked(event -> {
             stage.setScene(BombermanGame.scene);
+            BombermanGame.startGame();
 
         });
         choosePlayer.playerBt2.getText().setOnMouseClicked(event -> {
             stage.setScene(BombermanGame.scene);
-
+            BombermanGame.startGame();
         });
     }
 

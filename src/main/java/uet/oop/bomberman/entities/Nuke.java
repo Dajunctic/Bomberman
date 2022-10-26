@@ -1,8 +1,10 @@
 package uet.oop.bomberman.entities;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
+import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import uet.oop.bomberman.music.Audio;
@@ -30,6 +32,7 @@ public class Nuke extends Entity{
         nuke = new DeadAnim(SpriteSheet.nuke, 6, timer * (timer + 1) / 2);
         System.out.println("NUKE placed!!!");
         setMode(BOTTOM_MODE);
+        explosion.setScaleFactor(2);
         Gameplay.sounds.add(new LargeSound(this.x, this.y, Audio.copy(Audio.nuke), timer));
     }
 
@@ -39,12 +42,14 @@ public class Nuke extends Entity{
             explosion.update();
             expThreshold += 0.005;
             effect = new Bloom(expThreshold);
-            explode();
         } else {
             nuke.update(2);
             nukeThreshold += 0.04;
             effect = new Glow(nukeThreshold);
-            if(nuke.isDead()) setMode(BOTTOM_MODE);
+            if(nuke.isDead()){
+                explode();
+                setMode(BOTTOM_MODE);
+            }
         }
     }
 
@@ -87,5 +92,11 @@ public class Nuke extends Entity{
     @Override
     public boolean onScreen(Gameplay gameplay) {
         return  true;
+    }
+    @Override
+    public void render(GraphicsContext gc, Renderer renderer) {
+        gc.setEffect(effect);
+        renderer.renderDirectImg(gc, getImg(), x + shiftX, y + shiftY, false);
+        gc.setEffect(null);
     }
 }

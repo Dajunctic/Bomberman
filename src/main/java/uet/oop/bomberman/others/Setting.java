@@ -5,12 +5,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Slider;
 import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.music.Music;
+import uet.oop.bomberman.music.Sound;
 
 public class Setting extends BaseScene{
     Text_Sc Back =new Text_Sc((int) (BombermanGame.canvas.getWidth()/10*7),(int) (BombermanGame.canvas.getHeight()/10*7),"BACK");
 
     Text_Sc volum = new Text_Sc((int) (BombermanGame.canvas.getWidth()/10*2),(int) (BombermanGame.canvas.getHeight()/10*3),"VOLUM");
-    Slider volum_= new Slider(0,100,100);
+    Slider volum_= new Slider(0,1,0.01);
 
     public Setting() {
         try
@@ -29,8 +30,8 @@ public class Setting extends BaseScene{
             @Override
             public void changed(ObservableValue<? extends Number> observable, //
                                 Number oldValue, Number newValue) {
-                Music.setVolumm_((Double) newValue);
-
+                Sound.ratio = (double) newValue;
+                BombermanGame.setBgVolume();
             }
         });
 

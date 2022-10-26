@@ -8,6 +8,7 @@ import javafx.scene.effect.MotionBlur;
 import javafx.scene.image.Image;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
@@ -16,6 +17,7 @@ import uet.oop.bomberman.music.Audio;
 
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
+import static uet.oop.bomberman.music.Sound.ratio;
 
 public class Bomber extends Mobile {
     /** Thời gian dùng chiêu **/
@@ -26,7 +28,7 @@ public class Bomber extends Mobile {
     public static double R_COOLDOWN = 2;
 
     public static int D_COOLDOWN = 0;
-    public static int F_COOLDOWN = 180;
+    public static int F_COOLDOWN = 0;
 
     private long lastQ = 0;
     private long lastW = 0;
@@ -100,11 +102,11 @@ public class Bomber extends Mobile {
 
     /** special skills */
     //bomb
-    private int radius = 1;
+    private int radius = 20;
     private int damage = 4;
     public double timer = 2.5;
 
-    private double bombDuration = 10;
+    private double bombDuration = 0;
     public int Qlevel = 1;
 
     List<Bomb> bombs = new ArrayList<>();
@@ -346,25 +348,9 @@ public class Bomber extends Mobile {
                     case E -> goInvisible(5);
                     case R -> placeNuke();
                     case D -> setDodge();
-                    case F -> {
-                        Audio.start(Faudio);
-                        recover();
-                    }
+                    case F -> recover();
                 }
             }});
-
-        /* * Toggle bomb */
-        scene.setOnKeyTyped(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()) {
-                    case SPACE -> placeBomb();
-                    case Q -> shootFireball();
-                    case W -> goInvisible(5);
-                }
-//                System.out.println(bombs.size());
-            }
-        });
     }
 
     //inheritances
@@ -428,7 +414,11 @@ public class Bomber extends Mobile {
 
         //handling vulnerabilities
         if(invisible) alpha += fadeInSpeed;
-        if(alpha >= 1) invisible = false;
+        if(alpha >= 1 && invisible) {
+            invisible = false;
+            Eaudio.setVolume(1);
+            Eaudio.seek(Duration.millis(Eaudio.getStopTime().toMillis() - 1500));
+        }
 
         //immense audio
         if(currentHP <= maxHP / 4  ) {
@@ -440,15 +430,6 @@ public class Bomber extends Mobile {
         }   else if(isFatal) {
             isFatal = false;
             fatality.stop();
-        }
-        for(int i = 0; i < sounds.size(); i ++) {
-            sounds.get(i).update(this);
-            if(!sounds.get(i).exists()) {
-                sounds.remove(i);
-                i--;
-                System.out.println(sounds);
-            }
-            System.out.println("Sound update");
         }
 
    }
@@ -577,8 +558,8 @@ public class Bomber extends Mobile {
         if (System.currentTimeMillis() - lastF < F_COOLDOWN * 1000) return;
 
         addHP(HP_RECOVER);
-
         lastF = System.currentTimeMillis();
+        Audio.start(Faudio);
     }
 
     /** Override RECT COLLISION cho Nhân vật */
@@ -600,8 +581,9 @@ public class Bomber extends Mobile {
     /**************************** BUFF AND BUGS ********************************/
     //invisible
     public void goInvisible(double time) {
-        Audio.start(Eaudio);
+
         if (currentMana < E_MANA_CONSUMING) return;
+        Audio.start(Eaudio);
         if (System.currentTimeMillis() - lastE < E_COOLDOWN * 1000);
 
         subtractMana(E_MANA_CONSUMING);
@@ -640,7 +622,7 @@ public class Bomber extends Mobile {
     /* * Shoot 3 parallel fire */
     public void shootFireball() {
         /* * Điều kiện để bắn */
-        Audio.start(Waudio);
+
         //if invisible
         if(invisible) {
             if (System.currentTimeMillis() - lastW <= W_INVISIBLE_COOLDOWN * 1000L) return;
@@ -675,6 +657,7 @@ public class Bomber extends Mobile {
 
             subtractMana(W_MANA_CONSUMING);
         }
+        Audio.start(Waudio);
         lastW = System.currentTimeMillis();
     }
 

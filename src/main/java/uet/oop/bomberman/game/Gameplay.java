@@ -19,6 +19,9 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static uet.oop.bomberman.game.BombermanGame.FPS;
+
 /** object handler */
 public class Gameplay {
 
@@ -29,7 +32,7 @@ public class Gameplay {
 
     /** Terminate */
     public static List<Point> killTask = new ArrayList<>();
-    private Bomber player;
+    public static Bomber player;
     protected List<Enemy> enemies = new ArrayList<>();
 
     /** Map tổng quan*/
@@ -235,6 +238,19 @@ public class Gameplay {
             }
         }
 
+        /** Sound **/
+        if(BombermanGame.currentFrame % (FPS / 5) == 0) {
+            for (int i = 0; i < sounds.size(); i++) {
+                sounds.get(i).update(player);
+                if (!sounds.get(i).exists()) {
+                    sounds.get(i).stop();
+                    sounds.remove(i);
+                    i--;
+                    System.out.println(sounds);
+                }
+                System.out.println("Sound update");
+            }
+        }
 
         /* * Enemies */
         for(int i = 0; i < enemies.size(); i++){

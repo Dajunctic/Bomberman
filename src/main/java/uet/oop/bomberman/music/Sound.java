@@ -17,6 +17,7 @@ public class Sound {
     private long duration;
     //sources
     public static String _background_music = "/sound/Background/background.mp3";
+    public static String _gameplay = "/sound/Background/sound_game.mp3";
     //player status audio
     public static String _fatal = "/sound/Player/Status/fatal.mp3";
     public static String _dead = "/sound/Player/Status/dead.wav";
@@ -47,22 +48,25 @@ public class Sound {
     protected Vertex position;
     protected Vertex balance = new Vertex(0,1);
     protected boolean isPlaying = true;
-    public Sound(double x, double y, String path, double duration) throws URISyntaxException {
+    public Sound(double x, double y, String path, double durationm, double impact) throws URISyntaxException {
         position = new Vertex(x, y);
         audio = new MediaPlayer(new Media( getClass().getResource(path).toURI().toString()));
         audio.setAutoPlay(true);
         this.duration =  (long)(duration * 1000);
         if(duration < 0) this.duration = (long) audio.getStopTime().toMillis();
         createTime = System.currentTimeMillis();
-
+        audio.setCycleCount(MediaPlayer.INDEFINITE);
+        this.impact = impact * Sprite.SCALED_SIZE;
     }
-    public Sound(double x, double y, MediaPlayer audio, double duration)  {
+    public Sound(double x, double y, MediaPlayer audio, double duration, double impact)  {
         position = new Vertex(x, y);
         this.audio = audio;
         audio.setAutoPlay(true);
         this.duration =  (long)(duration * 1000);
         if(duration < 0) this.duration = (long) audio.getStopTime().toMillis();
         createTime = System.currentTimeMillis();
+        audio.setCycleCount(MediaPlayer.INDEFINITE);
+        this.impact = impact;
     }
     public void update(Bomber player) {
         balance.set(player.getX() - position.getX(), player.getY() - position.getY());
@@ -83,8 +87,8 @@ public class Sound {
         balance.normalize();
         audio.setBalance(-balance.getX() * (dis / threshold));
         audio.setVolume(volume);
-        System.out.println("Balance: " + audio.getBalance());
-        if(audio.getCurrentTime().toMillis() == audio.getStopTime().toMillis()) Audio.start(audio);
+//        System.out.println("Balance: " + audio.getBalance());
+//        if(audio.getCurrentTime().toMillis() == audio.getStopTime().toMillis()) Audio.start(audio);
     }
     public boolean exists() {
         return System.currentTimeMillis() - createTime <= duration;
@@ -92,5 +96,8 @@ public class Sound {
 
     public MediaPlayer getAudio() {
         return audio;
+    }
+    public void stop() {
+        audio.stop();
     }
 }

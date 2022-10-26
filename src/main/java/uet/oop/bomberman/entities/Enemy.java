@@ -176,11 +176,6 @@ public abstract class Enemy extends Mobile{
                         return true;
                     }
                 }
-                //will need reimplemented
-                if (tile_map[j][i] == '!') {
-                    isDead = true;
-                    return false;
-                }
             }
         }
 
@@ -200,7 +195,7 @@ public abstract class Enemy extends Mobile{
         super.update();
         if(currentHP <= 0) {
             isDead = true;
-            sounds.add(new Sound(x, y, Audio.copy(Audio.enemy_dead), -1));
+            sounds.add(new Sound(x, y, Audio.copy(Audio.enemy_dead), -1, 8));
         }
     }
     public abstract void update(Bomber player);

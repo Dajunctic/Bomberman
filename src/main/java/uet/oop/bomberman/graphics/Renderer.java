@@ -81,6 +81,14 @@ public class Renderer {
             else gc.drawImage(img, x + renderX, y + renderY,
                 scaleX * img.getWidth(), scaleY * img.getHeight());
     }
+    public void renderDirectImg(GraphicsContext gc, Image img, double x, double y, boolean reverse) {
+        double renderX = offsetX - translateX + shiftX;
+        double renderY = offsetY - translateY + shiftY;
+        if(reverse) gc.drawImage(img, x + renderX + scaleX * img.getWidth(), y + renderY,
+                -scaleX * img.getWidth(), scaleY * img.getHeight());
+        else gc.drawImage(img, x + renderX, y + renderY,
+                scaleX * img.getWidth(), scaleY * img.getHeight());
+    }
     //move camera to somewhere
     public void setGoal(double x, double y) {
         if(Math.abs(translateX - goal.getX()) <= margin &&

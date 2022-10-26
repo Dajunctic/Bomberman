@@ -77,6 +77,9 @@ public class DeadAnim extends Anim{
          countTime = 0;
          dead = false;
     }
+    public void setDead() {
+        this.dead = true;
+    }
     public boolean isDead() {
         return dead;
     }

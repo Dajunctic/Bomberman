@@ -65,8 +65,8 @@ public class Flame extends Mobile{
             //friendly fire
         this.friendly = friendly;
         setMode(CENTER_MODE);
-        sounds.add(new DynamicSound(x, y, Audio.copy(Audio.flame), -1, this));
-        sounds.add(new Sound(x, y, Audio.copy(Audio.fire), duration));
+        audio = new DynamicSound(x, y, Audio.copy(Audio.flame), 0.5, 5 * Sprite.SCALED_SIZE, this);
+        sounds.add(new Sound(x, y, Audio.copy(Audio.fire), duration, length * 2));
     }
 
     public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration, int damage, boolean friendly) {
@@ -89,8 +89,8 @@ public class Flame extends Mobile{
         //friendly fire
         this.friendly = friendly;
         setMode(CENTER_MODE);
-        sounds.add(new DynamicSound(x, y, Audio.copy(Audio.flame), -1, this));
-        sounds.add(new Sound(x, y, Audio.copy(Audio.fire), duration));
+        audio = new DynamicSound(x, y, Audio.copy(Audio.flame), timer, 5 * Sprite.SCALED_SIZE, this);
+        sounds.add(new Sound(x, y, Audio.copy(Audio.fire), duration, length * 2));
     }
     @Override
     public void update() {
@@ -102,12 +102,26 @@ public class Flame extends Mobile{
             if(length <= 0) speed = 0;
             x = ref_x;
             y = ref_y;
+
         } else {
-            stop = true;
+            flame.setDead();
+            if(audio != null) {
+                audio.stop();
+                audio = null;
+            }
+
         }
         //animation and status update
         flame.update();
-
+        if(flame.isDead()) {
+            if(audio != null) {
+                audio.stop();
+                audio = null;
+            }
+        }
+        if(player != null && audio != null) {
+            audio.update(player);
+        }
     }
 
     @Override

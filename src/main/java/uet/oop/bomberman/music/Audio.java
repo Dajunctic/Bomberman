@@ -11,6 +11,7 @@ import static uet.oop.bomberman.music.Sound.*;
 public class Audio {
     //srcs Media
     public static MediaPlayer background_music;
+    public static MediaPlayer gameplay;
     public static MediaPlayer fatal;
     public static MediaPlayer dead;
     public static MediaPlayer buff;
@@ -30,6 +31,7 @@ public class Audio {
     public Audio() {
         try {
             background_music = new MediaPlayer(new Media(getClass().getResource(_background_music).toURI().toString()));
+            gameplay = new MediaPlayer(new Media(getClass().getResource(_gameplay).toURI().toString()));
             fatal =  new MediaPlayer(new Media(getClass().getResource(_fatal).toURI().toString()));
             dead =  new MediaPlayer(new Media(getClass().getResource(_dead).toURI().toString()));
             buff =  new MediaPlayer(new Media(getClass().getResource(_buff).toURI().toString()));
@@ -57,6 +59,7 @@ public class Audio {
     }
 
     public static void start(MediaPlayer inp) {
+                inp.setVolume(ratio);
                 inp.seek(Duration.millis(100));
                 inp.play();
     }

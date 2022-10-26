@@ -7,11 +7,11 @@ import java.net.URISyntaxException;
 
 public class LargeSound extends Sound{
     public LargeSound(double x, double y, String path, double duration) throws URISyntaxException {
-        super(x, y, path, duration);
+        super(x, y, path, duration,1);
         audio.setVolume(ratio);
     }
     public LargeSound(double x, double y, MediaPlayer audio, double duration) {
-        super(x, y, audio, duration);
+        super(x, y, audio, duration,1);
     }
     @Override
     public void update(Bomber player) {

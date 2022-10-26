@@ -14,11 +14,14 @@ import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.Sound;
 import uet.oop.bomberman.others.Physics;
 
+import static uet.oop.bomberman.game.Gameplay.player;
+
 public class Bomb extends Entity{
 
     //animation
     DeadAnim explosion = new DeadAnim(SpriteSheet.explosion, 6, 1);
     public DeadAnim bomb = new DeadAnim(SpriteSheet.bomb, 12, 2.5);
+    private Sound audio;
     boolean exploded = false;
     boolean friendly = false;
     //tí sửa sau :)))
@@ -41,7 +44,7 @@ public class Bomb extends Entity{
         bomb = new DeadAnim(SpriteSheet.bomb, 15, timer);
         setMode(CENTER_MODE);
         explosion.setScaleFactor(2);
-        Gameplay.sounds.add(new Sound(x, y, Audio.copy(Audio.bomb), timer));
+        audio = new Sound(x, y, Audio.copy(Audio.bomb), timer, 6 * Sprite.SCALED_SIZE);
     }
 
     public Bomb(double xPixel, double yPixel, double timer, int radius, double duration,int damage, boolean friendly) {
@@ -57,15 +60,20 @@ public class Bomb extends Entity{
         this.damage = damage;
         this.friendly = friendly;
         setMode(CENTER_MODE);
+        audio = new Sound(x, y, Audio.copy(Audio.bomb), timer, 6 * Sprite.SCALED_SIZE);
     }
     @Override
     public void update() {
         if (bomb.isDead()) {
             explosion.update();
-            setMode(CENTER_MODE);
-            explode();
+
         } else {
             bomb.update();
+            audio.update(player);
+            if(bomb.isDead()) {
+                setMode(CENTER_MODE);
+                explode();
+            }
         }
     }
 
@@ -85,17 +93,17 @@ public class Bomb extends Entity{
     @Override
     public void deadAct(Gameplay gameplay) {
         if(exploded) return;
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 1,0, 0.5, duration, damage, friendly));
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0, 1, 0.5, duration, damage, friendly));
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0,-1, 0.5, duration, damage, friendly));
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, -1,0, 0.5, duration, damage, friendly));
-
+        exploded = true;
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 1,0, 5, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0, 1, 5, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0,-1, 5, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, -1,0, 5, duration, damage, friendly));
     }
 
     public void explode() {
-        if(exploded) return;
-        exploded = true;
-        Gameplay.sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1));
+        audio.stop();
+        audio = null;
+        Gameplay.sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1, 8 * Sprite.SCALED_SIZE));
     }
     @Override
     public double getWidth() {
@@ -110,4 +118,5 @@ public class Bomb extends Entity{
             return explosion.getImage().getHeight();
         return bomb.getImage().getHeight();
     }
+
 }
