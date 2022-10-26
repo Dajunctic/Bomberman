@@ -36,10 +36,10 @@ public class DynamicSound extends Sound{
     public void move() {
         if(src != null) {
             position.set(src.getX(), src.getY());
-            System.out.println(src);
+//            System.out.println(src);
             return ;
         }
-        System.out.println("src is null");
+//        System.out.println("src is null");
         if(goal.abs() == 0 || position.distance(goal) <= 10) return;
         position.add(speed);
     }

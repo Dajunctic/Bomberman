@@ -17,7 +17,6 @@ import uet.oop.bomberman.music.Audio;
 
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
-import static uet.oop.bomberman.music.Sound.ratio;
 
 public class Bomber extends Mobile {
     /** Thời gian dùng chiêu **/
@@ -25,7 +24,7 @@ public class Bomber extends Mobile {
     public static double W_COOLDOWN = 10;
     public static double W_INVISIBLE_COOLDOWN = 2;
     public static double E_COOLDOWN = 10;
-    public static double R_COOLDOWN = 2;
+    public static double R_COOLDOWN = 0;
 
     public static int D_COOLDOWN = 0;
     public static int F_COOLDOWN = 0;
@@ -147,6 +146,7 @@ public class Bomber extends Mobile {
         isAlly = true;
         load();
         standingTile();
+        setMana(10000);
     }
 
     /**
@@ -285,73 +285,17 @@ public class Bomber extends Mobile {
         else if(motionEffect.getRadius() != 0) motionEffect.setRadius(0);
     }
 
-    /** input reader */
-    private void interaction() {
-        // read input form keyboard
-        // pressed
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                this.handleEvent(keyEvent);
-            }
-
-            private void handleEvent(KeyEvent keyEvent) {
-
-                switch (keyEvent.getCode()) {
-                    case UP -> {
-                        currentStatus = Bomber.UP;
-                        moving = true;
-                        moveSet.add(currentStatus);
-                    }
-                    case DOWN -> {
-                        currentStatus = Bomber.DOWN;
-                        moving = true;
-                        moveSet.add(currentStatus);
-                    }
-                    case LEFT -> {
-                        currentStatus = Bomber.LEFT;
-                        moving = true;
-                        moveSet.add(currentStatus);
-                    }
-                    case RIGHT -> {
-                        currentStatus = Bomber.RIGHT;
-                        moving = true;
-                        moveSet.add(currentStatus);
-                    }
-                }
-            }
-        });
-        /* * released */
-        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()) {
-                    case UP -> {
-                        moveSet.remove(Bomber.UP);
-                        resetSpeed();
-                    }
-                    case DOWN -> {
-                        moveSet.remove(Bomber.DOWN);
-                        resetSpeed();
-                    }
-                    case LEFT -> {
-                        moveSet.remove(Bomber.LEFT);
-                        resetSpeed();
-                    }
-                    case RIGHT -> {
-                        moveSet.remove(Bomber.RIGHT);
-                        resetSpeed();
-                    }
-
-                    case Q -> placeBomb();
-                    case W -> shootFireball();
-                    case E -> goInvisible(5);
-                    case R -> placeNuke();
-                    case D -> setDodge();
-                    case F -> recover();
-                }
-            }});
+    public void moves(int dir) {
+        currentStatus = dir;
+        moving = true;
+        moveSet.add(dir);
     }
+    public void stopMoving(int dir) {
+        moveSet.remove(dir);
+        resetSpeed();
+    }
+
+
 
     //inheritances
     @Override
@@ -397,9 +341,6 @@ public class Bomber extends Mobile {
     /** Updates */
     public void update(Gameplay gameplay) {
         super.update();
-
-        //interacting
-        interaction();
 
         //movement
         move(gameplay);
@@ -493,11 +434,7 @@ public class Bomber extends Mobile {
         if(!checkCollision(ref_x,ref_y,5)) {
             x = ref_x;
             y = ref_y;
-            gameplay.translate_x = Math.max(0, Math.min( x - (double) WIDTH * Sprite.SCALED_SIZE / 4,
-                    (Gameplay.width - WIDTH) * Sprite.SCALED_SIZE ));
 
-            gameplay.translate_y = Math.max(0, Math.min( y - (double) HEIGHT * Sprite.SCALED_SIZE / 4,
-                    (Gameplay.height - HEIGHT) * Sprite.SCALED_SIZE ));
             //update tiles
             standingTile();
             checkBuff();
@@ -667,7 +604,7 @@ public class Bomber extends Mobile {
             (System.currentTimeMillis() - lastR < R_COOLDOWN * 1000L)) return;
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
-        nuke = new Nuke(i, j, timer);
+        entities.add(new Nuke(i, j, timer));
         subtractMana(R_MANA_CONSUMING);
         lastR = System.currentTimeMillis();
         Audio.start(Qaudio);

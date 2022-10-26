@@ -136,7 +136,6 @@ public class SpriteSheet {
 		PixelWriter pw = wr.getPixelWriter();
 		for (int x = 0; x < w; x++) {
 			for (int y = 0; y < h; y++) {
-
 				pw.setArgb(x, y, pixels[x + y * w]);
 			}
 		}

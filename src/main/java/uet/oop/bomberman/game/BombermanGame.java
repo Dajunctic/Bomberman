@@ -32,6 +32,7 @@ public class BombermanGame extends Application {
     private GraphicsContext gc;
     public static Canvas canvas = new Canvas(WIDTH * Sprite.SCALED_SIZE, HEIGHT * Sprite.SCALED_SIZE);;
     public static Scene scene;
+    public static StackPane stackPane;
     private Gameplay game = new Gameplay();
     private Music music = new Music();
     public static Audio audio = new Audio();
@@ -49,7 +50,7 @@ public class BombermanGame extends Application {
         /* * Tạo canvas */
         gc = canvas.getGraphicsContext2D();
 
-        StackPane stackPane = new StackPane();
+        stackPane = new StackPane();
         stackPane.setPrefSize(Sprite.SCALED_SIZE * WIDTH + 200, Sprite.SCALED_SIZE * HEIGHT + 200);
         stackPane.getChildren().add(canvas);
 

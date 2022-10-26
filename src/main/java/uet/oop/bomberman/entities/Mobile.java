@@ -18,6 +18,8 @@ import uet.oop.bomberman.others.Physics;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uet.oop.bomberman.game.BombermanGame.HEIGHT;
+import static uet.oop.bomberman.game.BombermanGame.WIDTH;
 import static uet.oop.bomberman.game.Gameplay.*;
 
 /** Everything that moves */
@@ -57,7 +59,6 @@ public class Mobile extends Entity{
     protected boolean isAlly = false;
 
     public static List<Mobile> mobiles = new ArrayList<>();
-
     // inheritance
     public Mobile(double xPixel, double yPixel) {
         super(xPixel, yPixel);
@@ -302,5 +303,17 @@ public class Mobile extends Entity{
 
     public int getCurrentMana() {
         return currentMana;
+    }
+
+    public Vertex translation(double dW, double dH) {
+        double translate_x = Math.max(0, Math.min( x - dW / 2,
+                Gameplay.width * Sprite.SCALED_SIZE - dW));
+
+        double translate_y = Math.max(0, Math.min( y - dH / 2,
+                Gameplay.height * Sprite.SCALED_SIZE - dH ));
+        return new Vertex(translate_x, translate_y);
+    }
+    public boolean isAlly() {
+        return isAlly;
     }
 }

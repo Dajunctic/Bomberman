@@ -1,11 +1,14 @@
 package uet.oop.bomberman.game;
 
+import javafx.event.EventHandler;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Pair;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
-import uet.oop.bomberman.graphics.DeadAnim;
+import uet.oop.bomberman.graphics.EntityPov;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.AreaMap;
@@ -17,16 +20,16 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.ArrayListMultimap;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ThreadLocalRandom;
 
-import static uet.oop.bomberman.game.BombermanGame.FPS;
+import static uet.oop.bomberman.game.BombermanGame.*;
+import static uet.oop.bomberman.game.BombermanGame.scene;
 
 /** object handler */
 public class Gameplay {
 
     public static int width;
     public static int height;
+
 
     public static List<Entity> entities = new ArrayList<>();
 
@@ -50,13 +53,18 @@ public class Gameplay {
     public double offsetY = 0;
     /** Renderer - Trung gian render lên canvas */
     //Renderer chính
-    public static Renderer wholeScene = new Renderer(0, 0, 0, 0, 0, 0,
-                                BombermanGame.WIDTH * Sprite.SCALED_SIZE,
-                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE);
-    //Renderer cho 2 người chơi
-    public static List<Renderer> playerScene = new ArrayList<>();
+    public static Renderer wholeScene = new Renderer(0.5, 0.5, 0, 0, 0, 0,
+                                                BombermanGame.WIDTH* Sprite.SCALED_SIZE,
+                                            BombermanGame.HEIGHT  * Sprite.SCALED_SIZE , 1);
+
+    //enemy
+    public EntityPov enemyScene = new EntityPov(BombermanGame.WIDTH * Sprite.SCALED_SIZE / 3,
+                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE / 3);
+    public static int chosenEnemy = 0;
+    public static int bufferMode = 0;
     /** GUI GAME Image */
     Image gameFrame = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/frame.png")));
+    Image enemyFrame = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/enemy_frame.png")));
     Image gameBg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/bg.png")));
 
     /** Minimap cho màn chơi */
@@ -77,12 +85,6 @@ public class Gameplay {
     public static ArrayList<Sound> sounds = new ArrayList<>();
 
     public Gameplay() {
-        playerScene.add(new Renderer(offsetX, offsetY, 0, 0,
-                            0, 0,
-                                    Renderer.centerX, 2 * Renderer.centerY));
-        playerScene.add(new Renderer(offsetX, offsetY, Renderer.centerX, 0,
-                0, 0,
-                Renderer.centerX, 2 * Renderer.centerY));
     }
 
     /** Load map from file */
@@ -168,6 +170,8 @@ public class Gameplay {
         enemies.add(new Balloon( 8 * 48, 48 * 48));
         buffs.put(tileCode(9,48), new Buff(9, 48, 1));
         System.out.println(enemies);
+        wholeScene.setPov(player);
+        enemyScene.setPov(enemies.get(0));
     }
 
     /** Tạo map hoàn chỉnh */
@@ -211,20 +215,15 @@ public class Gameplay {
 
     /** update */
     public void update(){
+        //interaction
+        interaction();
+
         //update renderer
-        wholeScene.setOffsetX(offsetX);
-        wholeScene.setOffsetY(offsetY);
-        wholeScene.setTranslate(translate_x, translate_y);
-        for(Renderer i : playerScene) {
-            i.setOffsetX(offsetX);
-            i.setOffsetY(offsetY);
-        }
-        playerScene.get(0).setTranslate(translate_x, translate_y);
-        playerScene.get(1).setTranslate(enemies.get(0).getX() - Renderer.centerX / 2, enemies.get(0).getY() - Renderer.centerY / 2);
+        wholeScene.setOffSet(canvas);
+        wholeScene.update();
         //other
         player.update(this);
         skillFrame.update(player);
-        minimap.update(player);
 
         /* * Cập nhật map khu vực hiện tại * */
         updateAreaMaps();
@@ -258,63 +257,80 @@ public class Gameplay {
             if(!enemies.get(i).isExisted()) {
                 enemies.get(i).deadAct(this);
                 enemies.remove(i);
+                if(i == chosenEnemy){
+                    chosenEnemy --;
+                    switchPov();
+                }
                 i--;
             }
         }
         kill();
+        switch (bufferMode) {
+            default -> {}
+            case 1 -> enemyScene.update();
+            case 2 -> minimap.update(player);
+        }
     }
     /** Render objects.
      * Thứ tự render/ layering:
      * Tiles -> Buffs -> Mobile -> Bomb/Items -> Player -> Nuke -> Fx images */
+
+    public void render(GraphicsContext gc, Renderer renderer) {
+        int low_x =(int) Math.floor(renderer.getTranslateX() / Sprite.SCALED_SIZE);
+        int low_y = (int) Math.floor(renderer.getTranslateY() / Sprite.SCALED_SIZE);
+        int bound_x = (int) Math.round(renderer.getWidth() / Sprite.SCALED_SIZE);
+        int bound_y = (int) Math.round(renderer.getHeight() / Sprite.SCALED_SIZE);
+        for(int i = low_y; i <= Math.min(height - 1,low_y + bound_y); i ++) {
+            for (int j = low_x; j <= Math.min(width - 1,low_x + bound_x); j++){
+                background[i][j].render(gc, renderer);
+            }
+        }
+
+
+        /* * Render map khu vực * */
+        for (AreaMap areaMap: areaMaps) {
+            areaMap.render(gc, renderer);
+        }
+
+        /* * Hàng rào * */
+        for (Fence fence: fences) {
+            fence.render(gc, renderer);
+        }
+        /* * Buffs * */
+        for(Buff i : buffs.values()) {
+            i.render(gc, renderer);
+        }
+
+        entities.forEach(g -> g.render(gc, renderer));
+
+        /* * Enemies * */
+        enemies.forEach(g -> g.render(gc,renderer));
+
+        /* * Player * */
+        if(renderer.getPov().isAlly() == player.isAlly() || player.vulnerable()) player.render(gc, renderer);
+    }
+
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
 
         offsetX = Math.max(0, (canvasWidth - BombermanGame.WIDTH * Sprite.SCALED_SIZE) / 2);
         offsetY = Math.max(0, (canvasHeight - BombermanGame.HEIGHT * Sprite.SCALED_SIZE) / 2);
-
         /* Game Background */
         gc.drawImage(gameBg, 0, 0);
 
-        for(int div = 0; div < 2; div ++) {
-            /* ** background general map rendering **/
-            int low_x =(int) Math.floor(playerScene.get(div).getTranslateX() / Sprite.SCALED_SIZE);
-            int low_y = (int) Math.floor(playerScene.get(div).getTranslateY() / Sprite.SCALED_SIZE);
+        render(gc, wholeScene);
 
-            for(int i = low_y; i <= Math.min(height - 1,low_y + BombermanGame.HEIGHT); i ++) {
-                for (int j = low_x; j <= Math.min(width - 1,low_x + BombermanGame.WIDTH / 2); j++){
-                    background[i][j].render(gc, playerScene.get(div));
-                }
+        /* * Buffer * */
+        switch (bufferMode) {
+            default -> {}
+            case 1 -> {
+                enemyScene.render(this);
+                gc.drawImage(enemyScene.getImg(),minimap.getX() + offsetX - 20, minimap.getY() + offsetY
+                                                , wholeScene.centerX / 2, wholeScene.centerY / 2 );
+                gc.drawImage(enemyFrame, minimap.getX() + offsetX - 30, minimap.getY() + offsetY - 10
+                                                ,wholeScene.centerX / 2 + 20, wholeScene.centerY / 2 + 30);
             }
-
-
-            /* * Render map khu vực * */
-            for (AreaMap areaMap: areaMaps) {
-                areaMap.render(gc, playerScene.get(div));
-            }
-
-            /* * Hàng rào * */
-            for (Fence fence: fences) {
-                fence.render(gc, playerScene.get(div));
-            }
-            /* * Buffs * */
-            for(Buff i : buffs.values()) {
-                i.render(gc, playerScene.get(div));
-            }
-            /* entities */
-            int finalDiv = div;
-            entities.forEach(g -> g.render(gc, playerScene.get(finalDiv)));
-
-            /* * Enemies * */
-            enemies.forEach(g -> g.render(gc, playerScene.get(finalDiv)));
-
-            /* * Player * */
-            player.render(gc, playerScene.get(finalDiv));
+            case 2 -> minimap.render(gc, minimap.getX() + offsetX, minimap.getY() + offsetY);
         }
-
-
-
-        /* * MiniMap * */
-        minimap.render(gc, minimap.getX() + offsetX, minimap.getY() + offsetY);
-
         /* * Khung Skill * */
         skillFrame.render(gc, this, player);
 
@@ -397,5 +413,73 @@ public class Gameplay {
     public static Integer tileCode(int x, int y) {
         if(width >= height) return y * width + x;
         else return x * height + y;
+    }
+
+    public void switchPov() {
+        if(enemies.size() == 0) {
+            enemyScene.setPov(null);
+            return;
+        }
+        chosenEnemy = (chosenEnemy + 1) % enemies.size();
+        enemyScene.setPov(enemies.get(chosenEnemy));
+    }
+
+
+    //transported to gameplay
+    /** input reader */
+    private void interaction() {
+        // read input form keyboard
+        // pressed
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                this.handleEvent(keyEvent);
+            }
+
+            private void handleEvent(KeyEvent keyEvent) {
+
+                switch (keyEvent.getCode()) {
+                    case UP -> {
+                        player.moves(Bomber.UP);
+                    }
+                    case DOWN -> {
+                        player.moves(Bomber.DOWN);
+                    }
+                    case LEFT -> {
+                        player.moves(Bomber.LEFT);
+                    }
+                    case RIGHT -> {
+                        player.moves(Bomber.RIGHT);
+                    }
+                }
+            }
+        });
+        /* * released */
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                switch (keyEvent.getCode()) {
+                    case UP -> {
+                        player.stopMoving(Bomber.UP);
+                    }
+                    case DOWN -> {
+                        player.stopMoving(Bomber.DOWN);
+                    }
+                    case LEFT -> {
+                        player.stopMoving(Bomber.LEFT);
+                    }
+                    case RIGHT -> {
+                        player.stopMoving(Bomber.RIGHT);
+                    }
+                    case Q -> player.placeBomb();
+                    case W -> player.shootFireball();
+                    case E -> player.goInvisible(5);
+                    case R -> player.placeNuke();
+                    case D -> player.setDodge();
+                    case F -> player.recover();
+                    case TAB -> bufferMode = (bufferMode + 1) % 3;
+                    case T -> switchPov();
+                }
+            }});
     }
 }
