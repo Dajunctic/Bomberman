@@ -9,6 +9,9 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.LargeSound;
+import uet.oop.bomberman.music.Sound;
+
+import static uet.oop.bomberman.game.Gameplay.*;
 
 //The nuke
 public class Nuke extends Entity{
@@ -19,8 +22,11 @@ public class Nuke extends Entity{
     private double expThreshold = 0.01;
     private int tileX;
     private int tileY;
-    private int radius = 5;
+    private int radius = 3;
     private boolean exploded = false;
+    private boolean friendly = false;
+    private double duration = 2;
+    private int damage = 20;
     public Nuke(double xUnit, double yUnit, double timer) {
         super(xUnit, yUnit);
         x *= Sprite.SCALED_SIZE;
@@ -34,6 +40,22 @@ public class Nuke extends Entity{
         setMode(BOTTOM_MODE);
         explosion.setScaleFactor(2);
         Gameplay.sounds.add(new LargeSound(this.x, this.y, Audio.copy(Audio.nuke), timer));
+    }
+
+    public Nuke(double xUnit, double yUnit, double timer, int radius) {
+        super(xUnit, yUnit);
+        x *= Sprite.SCALED_SIZE;
+        y *= Sprite.SCALED_SIZE;
+        x += (double) Sprite.SCALED_SIZE / 2;
+        y +=  Sprite.SCALED_SIZE;
+        tileX = (int) xUnit;
+        tileY = (int) yUnit;
+        nuke = new DeadAnim(SpriteSheet.nuke, 6, timer * (timer + 1) / 2);
+        System.out.println("NUKE placed!!!");
+        setMode(BOTTOM_MODE);
+        explosion.setScaleFactor(1 + radius / 4);
+        Gameplay.sounds.add(new LargeSound(this.x, this.y, Audio.copy(Audio.nuke), timer));
+        this.radius = radius;
     }
 
     @Override
@@ -74,7 +96,9 @@ public class Nuke extends Entity{
     public void explode() {
         if(exploded) return;
         exploded = true;
-        Gameplay.sounds.add(new LargeSound(this.x, this.y, Audio.copy(Audio.nuke_explosion), -1));
+        entities.add(new ShockWave(x, y, friendly, radius, damage, duration));
+        sounds.add(new Sound(x ,y, Audio.copy(Audio.fire), duration, radius * 3));
+        Gameplay.sounds.add(new LargeSound(this.x + shiftX, this.y + shiftY, Audio.copy(Audio.nuke_explosion), -1));
     }
     @Override
     public double getWidth() {
@@ -98,5 +122,9 @@ public class Nuke extends Entity{
         gc.setEffect(effect);
         renderer.renderDirectImg(gc, getImg(), x + shiftX, y + shiftY, false);
         gc.setEffect(null);
+    }
+
+    public void setEffect(Effect effect) {
+        this.effect = effect;
     }
 }

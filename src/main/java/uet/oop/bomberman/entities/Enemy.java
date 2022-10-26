@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.generals.Point;
@@ -23,6 +24,7 @@ import static uet.oop.bomberman.game.BombermanGame.FPS;
 import static uet.oop.bomberman.game.BombermanGame.currentFrame;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.graphics.Sprite.spot;
+import static uet.oop.bomberman.others.Basic.inf;
 
 public abstract class Enemy extends Mobile{
 
@@ -37,14 +39,19 @@ public abstract class Enemy extends Mobile{
     protected static final int SERIOUS = 1;
 
     /** Detect player */
-    private final double sight_depth = 5;
+    protected double sight_depth = 5;
     protected int frequency = 10;
     protected double sight_angle = Math.PI / 4;
     protected int status = WANDERING;
     protected int strict = 5;
 
-    protected Point destination = new Point(0,0);
+    protected Vertex destination = new Vertex(0,0);
+    protected Vertex distance = new Vertex(inf, inf);
+    /** Attack */
+    protected double attackRange = (double) Sprite.SCALED_SIZE / 3;
 
+    protected DeadAnim attack;
+    protected boolean isAttacking = false;
     /** Moving */
     protected int speed = 1;
     protected Vertex direction = new Vertex(0,1);
@@ -52,9 +59,13 @@ public abstract class Enemy extends Mobile{
     protected boolean reversed = false;
     /** Life status */
     protected boolean isDead = false;
+    protected int margin = 5;
+
     public Enemy(double xPixel, double yPixel) {
         super(xPixel, yPixel);
+        load();
     }
+    public abstract void load();
 
     public Enemy(double xUnit, double yUnit, Image img) {
         super(xUnit, yUnit, img);
@@ -92,12 +103,12 @@ public abstract class Enemy extends Mobile{
             direction.set(player.x - x, player.y - y);
             direction.normalize();
             status = SERIOUS;
-            destination.set((int) player.x, (int) player.y);
+            destination.set( player.x, player.y);
             switchSprite();
         }
     }
     //check whether path is blocked
-    private boolean checkSight(Vertex line) {
+    protected boolean checkSight(Vertex line) {
         for(double i = 0; i <= 1; i += 1 / (double) sight_depth) {
             int tileX = (int) ((x + line.getX()*i) / Sprite.SCALED_SIZE);
             int tileY = (int) ((y + line.getY()*i)/ Sprite.SCALED_SIZE);
@@ -112,7 +123,7 @@ public abstract class Enemy extends Mobile{
     public void move() {
         double ref_x = x +  speed * direction.getX();
         double ref_y = y +  speed * direction.getY();
-        if(!checkCollision(ref_x, ref_y, 5)){
+        if(!checkCollision(ref_x, ref_y, margin)){
             if(focus != null)
                 if(ref_x - focus.getX() <= strict && ref_y - focus.getY() <= strict) {
                     focus = null;
@@ -234,9 +245,9 @@ public abstract class Enemy extends Mobile{
         //  If spotted bomber
         if(status == SERIOUS) renderer.renderImg(gc, spot.getFxImage(), x + shiftX + this.getWidth() / 2
                 , y + shiftY - 18, false);
-
         // If it is going backward
         renderer.renderImg(gc, this.getImg(), x + shiftX, y + shiftY, reversed);
         gc.setEffect(null);
     }
+    public abstract void attack(Bomber player);
 }

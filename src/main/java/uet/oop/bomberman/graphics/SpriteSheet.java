@@ -143,5 +143,10 @@ public class SpriteSheet {
 		return new ImageView(wr).getImage();
 	}
 
-
+	public double getWidth() {
+		return w / this.components.length;
+	}
+	public double getHeight() {
+		return h ;
+	}
 }

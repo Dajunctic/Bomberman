@@ -97,12 +97,13 @@ public class Renderer {
         return (Math.abs(x - translateX - centerX) <= centerX + Sprite.SCALED_SIZE) && (Math.abs(y - translateY - centerY) <= centerY + Sprite.SCALED_SIZE);
     }
     //render images
-    public void renderImg(GraphicsContext gc, Image img, double x, double y, boolean reverse) {
-        if(!onScreen(x, y)) return;
-        double renderX = boundX - translateX + shiftX + (x + (reverse ? img.getWidth(): 0)) * scale;
-        double renderY = y * scale + boundY - translateY + shiftY;
+    public boolean renderImg(GraphicsContext gc, Image img, double x, double y, boolean reverse) {
+        if(!onScreen(x, y)) return false;
+        double renderX = boundX - translateX + shiftX + x + (reverse ? img.getWidth(): 0);
+        double renderY = y + boundY - translateY + shiftY;
         gc.drawImage(img, renderX, renderY,
-                scale * img.getWidth() * (reverse ? -1 : 1), scale * img.getHeight());
+                 img.getWidth() * (reverse ? -1 : 1),  img.getHeight());
+        return true;
     }
     public void renderDirectImg(GraphicsContext gc, Image img, double x, double y, boolean reverse) {
         double renderX = boundX - translateX + shiftX + (x + (reverse ? img.getWidth(): 0)) * scale;
@@ -120,6 +121,29 @@ public class Renderer {
         speed.set((x-translateX) / (interval * FPS), (y - translateY) / (interval * FPS));
         stable = false;
     }
+
+    public void renderImg(GraphicsContext gc, Image img, double x, double y, boolean reverse, double scale) {
+        if(!onScreen(x, y)) return;
+        double offX = img.getWidth() * (1 - scale);
+        double offY = img.getHeight() * (1 - scale);
+        double renderX = boundX - translateX + shiftX + x + (reverse ? img.getWidth(): 0) * scale + offX * (reverse ? -1 : 1);
+        double renderY = y + boundY - translateY + shiftY  + offY;
+        gc.drawImage(img, renderX, renderY,
+                scale * img.getWidth() * (reverse ? -1 : 1)
+                    , scale * img.getHeight());
+    }
+
+    public void renderCenterImg(GraphicsContext gc, Image img, double x, double y, boolean reverse, double scale) {
+        if(!onScreen(x, y)) return;
+        double offX = img.getWidth() * scale / 2;
+        double offY = img.getHeight() * scale / 2;
+        double renderX = x + boundX - translateX + shiftX - offX * (reverse ? -1 : 1);
+        double renderY = y + boundY - translateY + shiftY - offY;
+        gc.drawImage(img, renderX, renderY,
+                scale * img.getWidth() * (reverse ? -1 : 1)
+                , scale * img.getHeight());
+    }
+
     //update camera positions
     public void update() {
         if(pov != null){

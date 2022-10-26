@@ -83,4 +83,10 @@ public class DeadAnim extends Anim{
     public boolean isDead() {
         return dead;
     }
+    public double getWidth() {
+        return sheet.getWidth();
+    }
+    public double getHeight() {
+        return  sheet.getHeight();
+    }
 }

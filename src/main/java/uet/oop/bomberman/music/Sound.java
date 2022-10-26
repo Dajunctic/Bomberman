@@ -37,6 +37,7 @@ public class Sound {
     public static String _fire = "/sound/Player/Entities/fire.mp3";
     //enemy
     public static String _enemy_dead = "/sound/Enemy/dead.mp3";
+    public static String _balloon_attack = "/sound/Enemy/balloon_attack.mp3";
 
 
 
@@ -48,6 +49,7 @@ public class Sound {
     protected Vertex position;
     protected Vertex balance = new Vertex(0,1);
     protected boolean isPlaying = true;
+    protected boolean replayable = false;
     public Sound(double x, double y, String path, double durationm, double impact) throws URISyntaxException {
         position = new Vertex(x, y);
         audio = new MediaPlayer(new Media( getClass().getResource(path).toURI().toString()));
@@ -67,6 +69,18 @@ public class Sound {
         createTime = System.currentTimeMillis();
         audio.setCycleCount(MediaPlayer.INDEFINITE);
         this.impact = impact;
+    }
+
+    public Sound(double x, double y, MediaPlayer audio, double duration, double impact, boolean replayable)  {
+        position = new Vertex(x, y);
+        this.audio = audio;
+        audio.setAutoPlay(true);
+        this.duration =  (long)(duration * 1000);
+        if(duration < 0) this.duration = (long) audio.getStopTime().toMillis();
+        createTime = System.currentTimeMillis();
+        audio.setCycleCount(MediaPlayer.INDEFINITE);
+        this.impact = impact;
+        this.replayable = replayable;
     }
     public void update(Bomber player) {
         balance.set(player.getX() - position.getX(), player.getY() - position.getY());
@@ -99,5 +113,9 @@ public class Sound {
     }
     public void stop() {
         audio.stop();
+    }
+
+    public void start() {
+        Audio.start(audio);
     }
 }

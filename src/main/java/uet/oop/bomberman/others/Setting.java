@@ -19,6 +19,7 @@ public class Setting extends BaseScene{
         catch (Exception e){
             System.out.println("KKk");
         }
+        volum_.setValue(1);
         this.getRoot().getChildren().add(Back.getText());
         this.getRoot().getChildren().add(volum.getText());
         volum_.setLayoutX((int) (BombermanGame.canvas.getWidth()/10*5));

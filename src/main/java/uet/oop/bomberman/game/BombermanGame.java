@@ -114,7 +114,7 @@ public class BombermanGame extends Application {
     public static void setBgVolume() {
         menu_bg.setVolume(ratio);
         game_bg.setVolume(ratio * 0.6);
-        System.out.println("Volume set to: " + ratio);
+//        System.out.println("Volume set to: " + ratio);
     }
     public static void main(String[] args) {
 

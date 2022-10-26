@@ -111,8 +111,8 @@ public class Bomber extends Mobile {
     List<Bomb> bombs = new ArrayList<>();
     private static MediaPlayer Qaudio = Audio.copy(Audio.place_bomb);
     //firewaves
-    private int Wdivider = 1;
-    private int Wradius = 3;
+    private int Wdivider = 3;
+    private int Wradius = 10;
     private int Wdamage = 8;
     public int Wlevel = 1;
     private MediaPlayer Waudio = Audio.copy(Audio.shooting_fire);
@@ -241,8 +241,6 @@ public class Bomber extends Mobile {
                 this.secondStatus = secondStatus;
                 setDir(firstStatus, false);
                 setDir(secondStatus, false);
-
-
 
             }
         }
@@ -579,16 +577,16 @@ public class Bomber extends Mobile {
             double startY =  Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
             entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE, facing.getX()
                                                                                     , facing.getY()
-                                                                                    , 1, 4,
+                                                                                    , 1, bombDuration,
                                                                                     Wdamage,  true));
             for(int i = 1; i <= Wdivider; i++) {
                 entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE,  (double) 2 * i / Wradius * facing.getY() + facing.getX()
                                                      ,  (double) 2 * i / Wradius * facing.getX() + facing.getY()
-                                                        , 1, 0.5
+                                                        , 1, bombDuration
                                                         , Wdamage, true));
                 entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE, -(double) 2 * i / Wradius * facing.getY() + facing.getX()
                                                      , -(double) 2 * i / Wradius * facing.getX() + facing.getY()
-                                                      , 1, 0.5
+                                                      , 1, bombDuration
                                                         , Wdamage, true));
             }
 
@@ -604,7 +602,7 @@ public class Bomber extends Mobile {
             (System.currentTimeMillis() - lastR < R_COOLDOWN * 1000L)) return;
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
-        entities.add(new Nuke(i, j, timer));
+        nukes.add(new Nuke(i, j, timer));
         subtractMana(R_MANA_CONSUMING);
         lastR = System.currentTimeMillis();
         Audio.start(Qaudio);

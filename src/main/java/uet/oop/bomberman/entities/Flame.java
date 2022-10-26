@@ -90,7 +90,7 @@ public class Flame extends Mobile{
         this.friendly = friendly;
         setMode(CENTER_MODE);
         audio = new DynamicSound(x, y, Audio.copy(Audio.flame), timer, 5 * Sprite.SCALED_SIZE, this);
-        sounds.add(new Sound(x, y, Audio.copy(Audio.fire), duration, length * 2));
+        sounds.add(new Sound(x + length * dirX / 2, y + length * dirY / 2, Audio.copy(Audio.fire), duration, length * 2));
     }
     @Override
     public void update() {

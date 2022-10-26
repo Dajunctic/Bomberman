@@ -32,6 +32,7 @@ public class Gameplay {
 
 
     public static List<Entity> entities = new ArrayList<>();
+    public static List<Entity> nukes = new ArrayList<>();
 
     /** Terminate */
     public static List<Point> killTask = new ArrayList<>();
@@ -166,8 +167,8 @@ public class Gameplay {
 
         createMap();
         //testing things
-        enemies.add(new Balloon( 14 * 48, 42 * 48));
-        enemies.add(new Balloon( 8 * 48, 48 * 48));
+        enemies.add(new Jumper(8 * 48, 48 * 48));
+        enemies.add(new Balloon(8 * 48, 48 * 48));
         buffs.put(tileCode(9,48), new Buff(9, 48, 1));
         System.out.println(enemies);
         wholeScene.setPov(player);
@@ -236,6 +237,14 @@ public class Gameplay {
                 i --;
             }
         }
+        for(int i = 0; i < nukes.size(); i++) {
+            nukes.get(i).update();
+            if (!nukes.get(i).isExisted()) {
+                nukes.get(i).deadAct(this);
+                nukes.remove(i);
+                i --;
+            }
+        }
 
         /** Sound **/
         if(BombermanGame.currentFrame % (FPS / 5) == 0) {
@@ -245,9 +254,9 @@ public class Gameplay {
                     sounds.get(i).stop();
                     sounds.remove(i);
                     i--;
-                    System.out.println(sounds);
+//                    System.out.println(sounds);
                 }
-                System.out.println("Sound update");
+//                System.out.println("Sound update");
             }
         }
 
@@ -303,11 +312,16 @@ public class Gameplay {
 
         entities.forEach(g -> g.render(gc, renderer));
 
-        /* * Enemies * */
-        enemies.forEach(g -> g.render(gc,renderer));
+
 
         /* * Player * */
         if(renderer.getPov().isAlly() == player.isAlly() || player.vulnerable()) player.render(gc, renderer);
+
+        /* * Enemies * */
+        enemies.forEach(g -> g.render(gc,renderer));
+
+        /* * Nukes * */
+        nukes.forEach(g -> g.render(gc,renderer));
     }
 
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
@@ -417,7 +431,7 @@ public class Gameplay {
 
     public void switchPov() {
         if(enemies.size() == 0) {
-            enemyScene.setPov(null);
+            enemyScene.setPov(player);
             return;
         }
         chosenEnemy = (chosenEnemy + 1) % enemies.size();

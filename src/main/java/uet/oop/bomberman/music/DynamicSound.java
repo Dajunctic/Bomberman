@@ -13,6 +13,7 @@ public class DynamicSound extends Sound{
     private double interval = 1;
     private Vertex goal = new Vertex(0,0);
     private Mobile src = null;
+    private boolean loop = false;
     public DynamicSound(double x, double y, String path, double duration, double impact) throws URISyntaxException {
         super(x, y, path, duration, impact);
         speed = new Vertex(0, 0);

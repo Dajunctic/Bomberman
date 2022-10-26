@@ -75,7 +75,7 @@ public class Buff extends Entity{
         double renderX = x - sizeX / 2;
         double renderY = y - sizeY / 2 + floating;
         renderer.renderImg(gc, this.getImg(),renderX + shiftX
-                ,renderY + shiftY, false);
+                ,renderY + shiftY, false, 0.5);
         gc.setEffect(null);
         //update animation
         floating += floatingSpeed;
