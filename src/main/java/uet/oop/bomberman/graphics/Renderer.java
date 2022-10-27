@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.generals.Point;
+import uet.oop.bomberman.generals.Triplets;
 import uet.oop.bomberman.generals.Vertex;
 
 import javax.swing.text.html.HTMLDocument;
@@ -41,6 +42,7 @@ public class Renderer {
     public  double centerX = BombermanGame.WIDTH * Sprite.SCALED_SIZE / 2;
     public  double centerY = BombermanGame.HEIGHT * Sprite.SCALED_SIZE / 2;
     private Mobile pov = null;
+     private Vertex span = new Vertex(1,1);
     public Renderer(double offsetX, double offsetY, double shiftX, double shiftY, double translateX, double translateY, double width, double height, double scale) {
         this.offsetX = offsetX;
         this.offsetY = offsetY;
@@ -94,7 +96,8 @@ public class Renderer {
 
     //check on screen
     public boolean onScreen(double x, double y) {
-        return (Math.abs(x - translateX - centerX) <= centerX + Sprite.SCALED_SIZE) && (Math.abs(y - translateY - centerY) <= centerY + Sprite.SCALED_SIZE);
+        return (Math.abs(x - translateX - width / 2) <= width / 2 + Sprite.SCALED_SIZE * 2)
+                && (Math.abs(y - translateY - height / 2) <= height / 2 + Sprite.SCALED_SIZE * 2);
     }
     //render images
     public boolean renderImg(GraphicsContext gc, Image img, double x, double y, boolean reverse) {
@@ -106,6 +109,7 @@ public class Renderer {
         return true;
     }
     public void renderDirectImg(GraphicsContext gc, Image img, double x, double y, boolean reverse) {
+
         double renderX = boundX - translateX + shiftX + (x + (reverse ? img.getWidth(): 0)) * scale;
         double renderY = y * scale + boundY - translateY + shiftY;
          gc.drawImage(img, renderX, renderY,
@@ -144,6 +148,21 @@ public class Renderer {
                 , scale * img.getHeight());
     }
 
+    public void renderLayer(GraphicsContext gc, Image img, Triplets details, boolean reverse) {
+        double x = details.v1 * width;
+        double y = details.v2 * height;
+        double scale = details.v3 * width / img.getWidth();
+        if(!onScreen(x, y)) return;
+        if(!onScreen(x, y)) return;
+        double offX = img.getWidth() * (1 - scale);
+        double offY = img.getHeight() * (1 - scale);
+        double renderX = boundX - translateX + shiftX + x + (reverse ? img.getWidth(): 0) * scale + offX * (reverse ? -1 : 1);
+        double renderY = y + boundY - translateY + shiftY  + offY;
+        gc.drawImage(img, renderX, renderY,
+                scale * img.getWidth() * (reverse ? -1 : 1)
+                , scale * img.getHeight());
+    }
+
     //update camera positions
     public void update() {
         if(pov != null){
@@ -171,8 +190,15 @@ public class Renderer {
     }
 
     public void setOffSet(Canvas canvas) {
+        resize(canvas);
         boundX = canvas.getWidth() * offsetX - width * scale /2;
         boundY = canvas.getHeight() * offsetY - height * scale /2;
+    }
+    public void resize(Canvas canvas) {
+        span.set(width, height);
+        width = canvas.getWidth();
+        height = canvas.getHeight();
+        span.divide(width, height);
     }
     public void setPov(Mobile pov){
         this.pov = pov;
@@ -192,5 +218,9 @@ public class Renderer {
 
     public Mobile getPov() {
         return pov;
+    }
+
+    public Vertex getSpan() {
+        return span;
     }
 }

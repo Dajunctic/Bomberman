@@ -7,6 +7,7 @@ import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.maps.GameMap;
 
 import static java.lang.Math.*;
 import static uet.oop.bomberman.game.Gameplay.*;
@@ -26,8 +27,9 @@ public class ShockWave extends Entity{
     private int stage = 0;
     private double speed;
     private double span = 0;
+    private boolean destructive = false;
 
-    public ShockWave(double xPixel, double yPixel, boolean friendly, double radius, int damage, double duration) {
+    public ShockWave(double xPixel, double yPixel, boolean friendly, double radius, int damage, double duration, boolean destructive) {
         super(xPixel, yPixel);
         this.friendly = friendly;
         this.radius = radius;
@@ -38,6 +40,7 @@ public class ShockWave extends Entity{
         setMode(CENTER_MODE);
         tileX =(int) x / Sprite.SCALED_SIZE;
         tileY =(int)y / Sprite.SCALED_SIZE;
+        this.destructive = destructive;
     }
 
     @Override
@@ -68,8 +71,14 @@ public class ShockWave extends Entity{
             if(!fires.get(tileCode(tileX, tileY)).isEmpty()) continue;
 
             //destroy
-            Gameplay.set('.', tileX, tileY, true);
-            entities.add(new Fire(tileX, tileY, duration, damage, friendly));
+            if(destructive) {
+                Gameplay.set('.', tileX, tileY, true);
+                entities.add(new Fire(tileX, tileY, duration, damage, friendly));
+            } else if (Gameplay.get(tile_map[tileY][tileX], tileX, tileY) != GameMap.WALL) {
+                Gameplay.set('.', tileX, tileY, true);
+                entities.add(new Fire(tileX, tileY, duration, damage, friendly));
+            }
+
         }
     }
     @Override

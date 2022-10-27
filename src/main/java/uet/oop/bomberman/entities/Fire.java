@@ -8,6 +8,11 @@ import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.music.Audio;
+import uet.oop.bomberman.music.Sound;
+
+import static uet.oop.bomberman.game.Gameplay.sounds;
+import static uet.oop.bomberman.graphics.SpriteSheet.explosion;
 
 public class Fire extends Entity{
 
@@ -43,6 +48,31 @@ public class Fire extends Entity{
         effector = new Pair<>(damage, friendly);
 
         Gameplay.fires.put(index, effector);
+//        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
+//        System.out.println("________________________________________________");
+    }
+
+    public Fire(double xUnit, double yUnit, double duration, int damage, boolean friendly, boolean special){
+        super(xUnit, yUnit);
+        tileX = (int) xUnit;
+        tileY = (int) yUnit;
+        x *= Sprite.SCALED_SIZE;
+        y *= Sprite.SCALED_SIZE;
+        burn = new DeadAnim(SpriteSheet.fire, 8, duration);
+        this.friendly = friendly;
+        if(!friendly) {
+            super.effect = fireEffect;
+        }
+        index = Gameplay.tileCode(tileX, tileY);
+        this.damage = damage;
+        effector = new Pair<>(damage, friendly);
+
+        Gameplay.fires.put(index, effector);
+        if(special){
+            ignite = new DeadAnim(explosion, 5, 1);
+            ignite.setScaleFactor(1);
+            sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1, 5 * Sprite.SCALED_SIZE));
+        }
 //        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
 //        System.out.println("________________________________________________");
     }

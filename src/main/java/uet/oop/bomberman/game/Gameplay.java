@@ -1,14 +1,14 @@
 package uet.oop.bomberman.game;
 
 import javafx.event.EventHandler;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Pair;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
-import uet.oop.bomberman.graphics.EntityPov;
+import uet.oop.bomberman.generals.Triplets;
+import uet.oop.bomberman.graphics.Layer;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.AreaMap;
@@ -59,8 +59,8 @@ public class Gameplay {
                                             BombermanGame.HEIGHT  * Sprite.SCALED_SIZE , 1);
 
     //enemy
-    public EntityPov enemyScene = new EntityPov(BombermanGame.WIDTH * Sprite.SCALED_SIZE / 3,
-                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE / 3);
+    public Layer enemyScene = new Layer(0.75, 0.1, BombermanGame.WIDTH * Sprite.SCALED_SIZE / 3,
+                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE / 3, 0.2);
     public static int chosenEnemy = 0;
     public static int bufferMode = 0;
     /** GUI GAME Image */
@@ -167,8 +167,7 @@ public class Gameplay {
 
         createMap();
         //testing things
-        enemies.add(new Jumper(8 * 48, 48 * 48));
-        enemies.add(new Balloon(8 * 48, 48 * 48));
+        enemies.add(new Mage( 17 * 48, 52 * 48));
         buffs.put(tileCode(9,48), new Buff(9, 48, 1));
         System.out.println(enemies);
         wholeScene.setPov(player);
@@ -338,18 +337,12 @@ public class Gameplay {
             default -> {}
             case 1 -> {
                 enemyScene.render(this);
-                gc.drawImage(enemyScene.getImg(),minimap.getX() + offsetX - 20, minimap.getY() + offsetY
-                                                , wholeScene.centerX / 2, wholeScene.centerY / 2 );
-                gc.drawImage(enemyFrame, minimap.getX() + offsetX - 30, minimap.getY() + offsetY - 10
-                                                ,wholeScene.centerX / 2 + 20, wholeScene.centerY / 2 + 30);
+                renderLayer(gc, enemyScene, enemyFrame, 8, 13);
             }
             case 2 -> minimap.render(gc, minimap.getX() + offsetX, minimap.getY() + offsetY);
         }
         /* * Khung Skill * */
         skillFrame.render(gc, this, player);
-
-        /* * Khung màn hình game */
-        gc.drawImage(gameFrame, this.offsetX - 320, this.offsetY - 255);
     }
 
     /** Destroy tiles */
@@ -495,5 +488,14 @@ public class Gameplay {
                     case T -> switchPov();
                 }
             }});
+    }
+    public void renderLayer(GraphicsContext gc, Layer input, Image cover, double coverThicknessX, double coverThicknessY){
+        Triplets v = input.details();
+        gc.drawImage(input.getImg(),wholeScene.getWidth() * v.v1, wholeScene.getHeight() * v.v2
+                , wholeScene.getWidth() * v.v3, wholeScene.getHeight() * v.v3);
+        if(cover != null) {
+            gc.drawImage(cover,wholeScene.getWidth() * v.v1 - coverThicknessX, wholeScene.getHeight() * v.v2 - coverThicknessY
+                    , wholeScene.getWidth() * v.v3 + coverThicknessX * 2, wholeScene.getHeight() * v.v3 + coverThicknessY * 2);
+        }
     }
 }

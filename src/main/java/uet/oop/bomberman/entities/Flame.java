@@ -35,8 +35,9 @@ public class Flame extends Mobile{
     boolean stop = false;
     boolean friendly = false;
     HashSet<Integer> floors = new HashSet<>();
-    ColorAdjust effect;
-    DynamicSound audio;
+    private ColorAdjust effect;
+    private DynamicSound audio;
+    private boolean special = false;
     public Flame(double xPixel, double yPixel) {
         super(xPixel, yPixel);
         setMode(CENTER_MODE);
@@ -91,6 +92,31 @@ public class Flame extends Mobile{
         setMode(CENTER_MODE);
         audio = new DynamicSound(x, y, Audio.copy(Audio.flame), timer, 5 * Sprite.SCALED_SIZE, this);
         sounds.add(new Sound(x + length * dirX / 2, y + length * dirY / 2, Audio.copy(Audio.fire), duration, length * 2));
+    }
+
+    public Flame(double _x, double _y, double length,double dirX,double dirY, double timer,double duration, int damage, boolean friendly, boolean special) {
+        super(_x,_y);
+        //set speed
+        speed = length / (timer * FPS);
+        this.length = length;
+        // Animation
+        if(Math.abs(dirX) > Math.abs(dirY)) {
+            if(dirX > 0) flame = new DeadAnim(SpriteSheet.flame_right, 5, timer);
+            else flame = new DeadAnim(SpriteSheet.flame_left, 5, timer);
+        }
+        else {
+            if(dirY > 0) flame = new DeadAnim(SpriteSheet.flame_down,5, timer);
+            else flame = new DeadAnim(SpriteSheet.flame_up, 5, timer);
+        }
+        this.damage = damage;
+        this.duration = duration;
+        this.direction = new Vertex(dirX, dirY);
+        //friendly fire
+        this.friendly = friendly;
+        setMode(CENTER_MODE);
+        audio = new DynamicSound(x, y, Audio.copy(Audio.flame), timer, 5 * Sprite.SCALED_SIZE, this);
+        sounds.add(new Sound(x + length * dirX / 2, y + length * dirY / 2, Audio.copy(Audio.fire), duration, length * 2));
+        this.special = special;
     }
     @Override
     public void update() {
@@ -147,8 +173,8 @@ public class Flame extends Mobile{
 
     @Override
     public void render(GraphicsContext gc, Renderer renderer) {
+        if(special) return ;
         gc.setEffect(effect);
-        if(!renderer.onScreen(x, y)) return ;
         renderer.renderImg(gc, this.getImg(), x + shiftX, y + shiftY, false);
         gc.setEffect(null);
     }
@@ -167,6 +193,8 @@ public class Flame extends Mobile{
         // Thay vì ngồi debug code Hưng fake thì tôi kiểm tra tất cả các tiles xung quanh thực thể luôn.
         int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE));
         int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE));
+
+        if(!areaMaps.get(currentArea).checkInArea(tileStartX, tileStartY)) return true;
         int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
         int tileEndY = (int) Math.ceil((rect.getY() + rect.getHeight()) / Sprite.SCALED_SIZE);
         tileEndX = Math.min(tileEndX, Gameplay.width - 1);
@@ -182,14 +210,14 @@ public class Flame extends Mobile{
                 // Kiểm tra tilemap[j][i] là loại gì O(1)
                 if (Gameplay.get(tile_map[j][i], i, j) == GameMap.WALL)  {
                     if (Physics.collisionRectToRect(rect, tileRect)) {
-                        return true;
+                        if(!special) return true;
                     }
                 }
                 else if(Gameplay.get(tile_map[j][i], i, j) == GameMap.BRICK) {
                     //Do something
                     if (Physics.collisionRectToRect(rect, tileRect)) {
                         killTask.add(new Point(i,j));
-                        return true;
+                        if(!special) return true;
                     }
                 }
                 else if(Gameplay.get(tile_map[j][i], i, j) == GameMap.FLOOR) {
@@ -197,7 +225,7 @@ public class Flame extends Mobile{
 
                         if (!floors.contains(i * 200 + j)) {
                             floors.add(i * 200 + j);
-                            entities.add(new Fire(i, j, Math.max(0.5, duration), damage, friendly));
+                            entities.add(new Fire(i, j, Math.max(0.5, duration), damage, friendly, special));
                         }
                     }
                 }

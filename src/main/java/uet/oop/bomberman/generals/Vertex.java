@@ -57,9 +57,18 @@ public class Vertex {
         x /= factor;
         y /= factor;
     }
+    public void divide(double factorX, double factorY) {
+        x /= factorX;
+        y /= factorY;
+    }
     public void normalize() {
         double abs = abs();
         x /= abs;
         y /= abs;
+    }
+    public double distance(double x, double y) {
+        double px = this.x - x;
+        double py = this.y - y;
+        return Math.sqrt(px*px + py*py);
     }
 }

@@ -1,7 +1,6 @@
 package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.generals.Point;
@@ -14,14 +13,10 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.Sound;
-import uet.oop.bomberman.others.Basic;
 import uet.oop.bomberman.others.Physics;
 
 import java.util.Random;
 
-import static java.lang.Math.random;
-import static uet.oop.bomberman.game.BombermanGame.FPS;
-import static uet.oop.bomberman.game.BombermanGame.currentFrame;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.graphics.Sprite.spot;
 import static uet.oop.bomberman.others.Basic.inf;
@@ -53,7 +48,7 @@ public abstract class Enemy extends Mobile{
     protected DeadAnim attack;
     protected boolean isAttacking = false;
     /** Moving */
-    protected int speed = 1;
+    protected double speed = 1;
     protected Vertex direction = new Vertex(0,1);
 
     protected boolean reversed = false;
@@ -77,7 +72,8 @@ public abstract class Enemy extends Mobile{
     }
     /** random setter */
     public void switchDirection() {
-        if(direction.getX() == 1 || direction.getX() == -1) {
+        if(isAttacking) return;
+        if(Math.abs(direction.getX()) > Math.abs(direction.getY())) {
             direction.setX(0);
             direction.setY(dir[(int) Math.round(Math.random()) + 1]);
         }
@@ -91,9 +87,7 @@ public abstract class Enemy extends Mobile{
     //also need to be adjusted to fit in new map
     /** Tracking player*/
     protected void search(Bomber player) {
-        if(!player.vulnerable()) {
-            return;
-        }
+        if(!player.vulnerable()) return;
 
         Vertex line = new Vertex(player.x - x, player.y - y);
         if(Math.abs(direction.angle(line)) <= sight_angle
@@ -103,18 +97,16 @@ public abstract class Enemy extends Mobile{
             direction.set(player.x - x, player.y - y);
             direction.normalize();
             status = SERIOUS;
-            destination.set( player.x, player.y);
+            destination = new Vertex( player.x, player.y);
             switchSprite();
         }
     }
     //check whether path is blocked
     protected boolean checkSight(Vertex line) {
         for(double i = 0; i <= 1; i += 1 / (double) sight_depth) {
-            int tileX = (int) ((x + line.getX()*i) / Sprite.SCALED_SIZE);
-            int tileY = (int) ((y + line.getY()*i)/ Sprite.SCALED_SIZE);
-            if(Gameplay.get(tile_map[tileY][tileX], tileX, tileY) != GameMap.FLOOR) {
-                return false;
-            }
+            int tileX = (int) (x + line.getX()*i) / Sprite.SCALED_SIZE;
+            int tileY = (int) (y + line.getY()*i) / Sprite.SCALED_SIZE;
+            if(Gameplay.get(tile_map[tileY][tileX], tileX, tileY) != GameMap.FLOOR) return false;
         }
         return true;
     }
@@ -123,25 +115,20 @@ public abstract class Enemy extends Mobile{
     public void move() {
         double ref_x = x +  speed * direction.getX();
         double ref_y = y +  speed * direction.getY();
-        if(!checkCollision(ref_x, ref_y, margin)){
-            if(focus != null)
-                if(ref_x - focus.getX() <= strict && ref_y - focus.getY() <= strict) {
-                    focus = null;
-                    status = WANDERING;
-                    switchDirection();
-                }
+        if(!checkCollision(ref_x, ref_y, (status == SERIOUS ? margin + 3 : margin))) {
             x = ref_x;
             y = ref_y;
             //check standing tile
             standingTile();
             //check if it reached its destination
-            if(status == SERIOUS && destination.equals(new Point((int)x, (int)y))) {
-                status = WANDERING;
-                int dirx = dir[(int) Math.floor(Math.random() * 2.9)];
-                direction.set(dirx, 1 - Math.abs(dirx));
-            }
+            if(destination != null)
+                if(status == SERIOUS && destination.distance(x, y) <= margin && !isAttacking) {
+                    destination = null;
+                    status = WANDERING;
+                    switchDirection();
+                }
         }
-        else{
+        else {
             if(status == SERIOUS) status = WANDERING;
             switchDirection();
         }
@@ -151,6 +138,7 @@ public abstract class Enemy extends Mobile{
     //need to be reinstalled
     @Override
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
+
         /* * Kiểm tra border map */
         if(ref_x < 0 || ref_y < 0
                 || ref_x > width * Sprite.SCALED_SIZE - this.getWidth()
@@ -158,7 +146,7 @@ public abstract class Enemy extends Mobile{
 
         Rectangle rect;
         if(mode == CENTER_MODE)
-            rect = new Rectangle(ref_x - this.getWidth() / 2 + margin, ref_y - this.getHeight() / 2 + margin, this.getWidth() - margin, this.getHeight() - margin);
+            rect = new Rectangle(ref_x - this.getWidth() / 2 , ref_y - this.getHeight() / 2, this.getWidth() , this.getHeight());
         else
             rect = this.getRect(ref_x, ref_y, this.getWidth(), this.getHeight());
 
@@ -166,6 +154,9 @@ public abstract class Enemy extends Mobile{
 
         int tileStartX = (int) Math.max(0, Math.floor(rect.getX() / Sprite.SCALED_SIZE));
         int tileStartY = (int) Math.max(0, Math.floor(rect.getY() / Sprite.SCALED_SIZE));
+
+        if(!areaMaps.get(currentArea).checkInArea(tileStartX, tileStartY)) return true;
+
         int tileEndX = (int) Math.ceil((rect.getX() + rect.getWidth()) / Sprite.SCALED_SIZE);
         int tileEndY = (int) Math.ceil((rect.getY() + rect.getHeight()) / Sprite.SCALED_SIZE);
         tileEndX = Math.min(tileEndX, Gameplay.width - 1);
@@ -176,7 +167,7 @@ public abstract class Enemy extends Mobile{
                 int tileX = i * Sprite.SCALED_SIZE;
                 int tileY = j * Sprite.SCALED_SIZE;
 
-                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
+                Rectangle tileRect = new Rectangle(tileX + margin, tileY + margin, Sprite.SCALED_SIZE - 2 * margin, Sprite.SCALED_SIZE - 2 * margin);
 
                 /* * Kiểm tra tile có phải kiểu WALL hoặc BRICK không! */
 

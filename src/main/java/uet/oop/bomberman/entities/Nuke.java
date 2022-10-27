@@ -96,7 +96,7 @@ public class Nuke extends Entity{
     public void explode() {
         if(exploded) return;
         exploded = true;
-        entities.add(new ShockWave(x, y, friendly, radius, damage, duration));
+        entities.add(new ShockWave(x, y, friendly, radius, damage, duration, true));
         sounds.add(new Sound(x ,y, Audio.copy(Audio.fire), duration, radius * 3));
         Gameplay.sounds.add(new LargeSound(this.x + shiftX, this.y + shiftY, Audio.copy(Audio.nuke_explosion), -1));
     }

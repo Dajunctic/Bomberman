@@ -5,7 +5,6 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import uet.oop.bomberman.entities.Bomber;
-import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.game.Gameplay;
 
@@ -51,6 +50,8 @@ public class SkillFrame {
     int maxMana;
     Image mana;
 
+    final double xRatio = 0.1;
+    final double yRatio = 0.8;
     public SkillFrame() {
         for (int i = 0 ; i < healthPixels.length; i ++) {
             for (int j = 0 ; j < healthPixels[0].length; j++) {
@@ -96,10 +97,12 @@ public class SkillFrame {
     }
 
     public void render(GraphicsContext gc, Gameplay game, Bomber player) {
-        double barX = 350;
-        double barY = 430;
-        gc.drawImage(BAR, barX + game.offsetX, barY + game.offsetY);
-        gc.drawImage(CHAR_FRAME, barX - 40 + game.offsetX, barY  + 30 + game.offsetY);
+        double barX = 0;
+        double barY = 0;
+        double offsetX = game.wholeScene.getWidth() * xRatio;
+        double offsetY = game.wholeScene.getHeight() * yRatio;
+        gc.drawImage(BAR, barX + offsetX, barY + offsetY);
+        gc.drawImage(CHAR_FRAME, barX - 40 + offsetX, barY  + 30 + offsetY);
 
 
         gc.setFont(Font.font ("Segoe UI", FontWeight.BOLD,13));
@@ -109,8 +112,8 @@ public class SkillFrame {
         Color timeLeftColor = new Color(51 / 255.0, 153 / 255.0, 255 / 255.0, 1.0);
 
         /* ********************** Skill Q ******************************* */
-        double skillQX = 80 + barX + game.offsetX;
-        double skillQY = barY + 48 + game.offsetY;
+        double skillQX = 80 + barX + offsetX;
+        double skillQY = barY + 48 + offsetY;
         gc.drawImage(FRAME, skillQX, skillQY);
 
 
@@ -131,8 +134,8 @@ public class SkillFrame {
         gc.fillText("Q", skillQX - 2, skillQY + 45);
 
         /* ********************** Skill W ******************************* */
-        double skillWX = 135 + barX + game.offsetX;
-        double skillWY = barY + 48 + game.offsetY;
+        double skillWX = 135 + barX + offsetX;
+        double skillWY = barY + 48 + offsetY;
         gc.drawImage(FRAME, skillWX, skillWY);
 
         if (player.getCoolDownTime('W') < 0) {
@@ -152,8 +155,8 @@ public class SkillFrame {
         gc.fillText("W", skillWX - 2, skillWY + 45);
 
         /* ********************** Skill E ******************************* */
-        double skillEX = 190 + barX + game.offsetX;
-        double skillEY = barY + 48 + game.offsetY;
+        double skillEX = 190 + barX + offsetX;
+        double skillEY = barY + 48 + offsetY;
         gc.drawImage(FRAME, skillEX, skillEY);
 
 
@@ -174,8 +177,8 @@ public class SkillFrame {
         gc.fillText("E", skillEX - 2, skillEY + 45);
 
         /* ********************** Skill R ******************************* */
-        double skillRX = 245 + barX + game.offsetX;
-        double skillRY = barY + 48 + game.offsetY;
+        double skillRX = 245 + barX + offsetX;
+        double skillRY = barY + 48 + offsetY;
         gc.drawImage(FRAME, skillRX, skillRY);
 
         if (player.getCoolDownTime('R') < 0) {
@@ -195,8 +198,8 @@ public class SkillFrame {
         gc.fillText("R", skillRX - 2, skillRY + 45);
 
         /* ********************** Skill D ******************************* */
-        double skillDX = 315 + barX + game.offsetX;
-        double skillDY = barY + 48 + game.offsetY;
+        double skillDX = 315 + barX + offsetX;
+        double skillDY = barY + 48 + offsetY;
         gc.drawImage(SMALL_FRAME, skillDX, skillDY);
         gc.drawImage(D, skillDX + 1, skillDY + 1);
 
@@ -214,8 +217,8 @@ public class SkillFrame {
         gc.fillText("D", skillDX - 2, skillDY + 35);
 
         /* ********************** Skill F ******************************* */
-        double skillFX = 350 + barX + game.offsetX;
-        double skillFY = barY + 48 + game.offsetY;
+        double skillFX = 350 + barX + offsetX;
+        double skillFY = barY + 48 + offsetY;
         gc.drawImage(SMALL_FRAME, skillFX, skillFY);
 
         if (player.getCoolDownTime('F') < 0) {
@@ -232,8 +235,8 @@ public class SkillFrame {
         gc.fillText("F", skillFX - 2, skillFY + 35);
 
         /* ********************** Health Point ******************************* */
-        double pointBarX = 80 + barX + game.offsetX;
-        double pointBarY = 100 + barY + game.offsetY;
+        double pointBarX = 80 + barX + offsetX;
+        double pointBarY = 100 + barY + offsetY;
         gc.drawImage(POINT_BAR, pointBarX, pointBarY);
         gc.drawImage(health, pointBarX + 2, pointBarY);
 
