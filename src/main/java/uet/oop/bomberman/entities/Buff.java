@@ -21,6 +21,8 @@ public class Buff extends Entity{
     public static final int TNT = 3;
     public static final int MP = 4;
     public static final int HP = 5;
+
+    public static final int ITEM_STAFF = 6;
     private static final List<Sprite> imgs = new ArrayList<>();
     static {
         imgs.add(new Sprite("/sprites/Buffs/invisible.png",Sprite.NORMAL));
@@ -29,6 +31,7 @@ public class Buff extends Entity{
         imgs.add(new Sprite("/sprites/Buffs/nuke.png",Sprite.NORMAL));
         imgs.add(new Sprite("/sprites/Buffs/mp.png",Sprite.NORMAL));
         imgs.add(new Sprite("/sprites/Buffs/heal.png",Sprite.NORMAL));
+        imgs.add(new Sprite("/sprites/Buffs/staff.png", Sprite.NORMAL));
     }
     private int type;
     private int tilex;
@@ -75,7 +78,7 @@ public class Buff extends Entity{
         double renderX = x - sizeX / 2;
         double renderY = y - sizeY / 2 + floating;
         renderer.renderImg(gc, this.getImg(),renderX + shiftX
-                ,renderY + shiftY, false, 0.5);
+                ,renderY + shiftY, false, 1);
         gc.setEffect(null);
         //update animation
         floating += floatingSpeed;
@@ -104,6 +107,9 @@ public class Buff extends Entity{
             case HP -> {
                 player.addHP(player.getMaxHP() / 4);
 
+            }
+            case ITEM_STAFF -> {
+                player.acquiredStaff();
             }
         }
         System.out.println("Buff applied");

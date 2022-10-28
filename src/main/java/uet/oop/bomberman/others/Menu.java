@@ -28,12 +28,6 @@ public class Menu extends BaseScene{
 
     @Override
     public Scene getScene() {
-        try {
-            Music.mediaStage.play();
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-        }
         return super.getScene();
     }
 }

@@ -91,6 +91,7 @@ public class Mobile extends Entity{
         subtractHP(getInjured());
 
         manaBar.update();
+
     }
 
     /** Trả về số máu bị mất */
@@ -315,5 +316,9 @@ public class Mobile extends Entity{
     }
     public boolean isAlly() {
         return isAlly;
+    }
+
+    public boolean visible(Renderer renderer) {
+        return true;
     }
 }

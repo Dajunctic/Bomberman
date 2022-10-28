@@ -55,6 +55,9 @@ public abstract class Enemy extends Mobile{
     /** Life status */
     protected boolean isDead = false;
     protected int margin = 5;
+    protected long lastSwitchDirect = 0;
+    public final long switchCooldown = 400;
+    protected boolean lastCheck = false;
 
     public Enemy(double xPixel, double yPixel) {
         super(xPixel, yPixel);
@@ -72,7 +75,7 @@ public abstract class Enemy extends Mobile{
     }
     /** random setter */
     public void switchDirection() {
-        if(isAttacking) return;
+        if(isAttacking || System.currentTimeMillis() - lastSwitchDirect < switchCooldown) return;
         if(Math.abs(direction.getX()) > Math.abs(direction.getY())) {
             direction.setX(0);
             direction.setY(dir[(int) Math.round(Math.random()) + 1]);

@@ -1,7 +1,7 @@
 package uet.oop.bomberman.entities;
 
 import java.util.*;
-import javafx.event.EventHandler;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.MotionBlur;
@@ -12,9 +12,9 @@ import javafx.util.Duration;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
-import javafx.scene.input.KeyEvent;
 import uet.oop.bomberman.music.Audio;
 
+import static uet.oop.bomberman.entities.Mage.mage_staff;
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 
@@ -116,6 +116,10 @@ public class Bomber extends Mobile {
     private int Wdamage = 8;
     public int Wlevel = 1;
     private MediaPlayer Waudio = Audio.copy(Audio.shooting_fire);
+    //superb W
+    private DeadAnim itemStaff = new DeadAnim(mage_staff, 6, 1);
+    private boolean staffEquipped = true;
+    private boolean staffIsUsing = false;
     //TNT
     Nuke nuke = null;
     private int Rdamage = 10;
@@ -335,6 +339,14 @@ public class Bomber extends Mobile {
         statusAnims[currentStatus].update();
         /* * Buffs */
         dodgeAnim.update();
+        if(staffIsUsing) {
+            itemStaff.update();
+            if(itemStaff.isDead()) {
+                staffIsUsing = false;
+                itemStaff.reset();
+//                staffEquipped = false;
+            }
+        }
     }
     /** Updates */
     public void update(Gameplay gameplay) {
@@ -400,6 +412,7 @@ public class Bomber extends Mobile {
 
     @Override
     public void render(GraphicsContext gc, Renderer renderer) {
+        if(renderer.getPov().isAlly != isAlly && invisible) return;
         /* * Render bombs */
         bombs.forEach(g -> g.render(gc, renderer));
         gc.setEffect(effect);
@@ -410,7 +423,12 @@ public class Bomber extends Mobile {
         renderer.renderImg(gc, this.getImg(), x + shiftX, y + shiftY, false);
         gc.setGlobalAlpha(1);
         gc.setEffect(null);
-
+        if(staffEquipped) {
+            boolean reverse = (currentStatus == LEFT || currentStatus == UP);
+            double offset = 10 * (reverse ? 1 : -1.5);
+            renderer.renderImg(gc, itemStaff.getImage(), x + shiftX + offset, y + shiftY
+                    , reverse);
+        }
         if(nuke != null) nuke.render(gc, renderer);
         if(!dodgeAnim.isDead()) renderer.renderImg(gc, dodgeAnim.getImage(), oldX + shiftX, oldY + shiftY, false);
 
@@ -549,7 +567,7 @@ public class Bomber extends Mobile {
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
 
-        bombs.add(new Bomb(i, j, timer, radius, bombDuration, damage, false));
+        bombs.add(new Bomb(i, j, timer, radius, bombDuration, damage, true));
         subtractMana(Q_MANA_CONSUMING);
         lastQ = System.currentTimeMillis();
         Audio.start(Qaudio);
@@ -557,7 +575,9 @@ public class Bomber extends Mobile {
     /* * Shoot 3 parallel fire */
     public void shootFireball() {
         /* * Điều kiện để bắn */
-
+        if(staffEquipped) {
+            staffIsUsing = true;
+        }
         //if invisible
         if(invisible) {
             if (System.currentTimeMillis() - lastW <= W_INVISIBLE_COOLDOWN * 1000L) return;
@@ -567,7 +587,7 @@ public class Bomber extends Mobile {
             entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE, facing.getX()
                     , facing.getY()
                     , 1, 4,
-                    Wdamage,  true));
+                    Wdamage,  true, staffEquipped));
         } else {
             //if not invisible
             if ((currentMana < W_MANA_CONSUMING) ||
@@ -578,16 +598,16 @@ public class Bomber extends Mobile {
             entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE, facing.getX()
                                                                                     , facing.getY()
                                                                                     , 1, bombDuration,
-                                                                                    Wdamage,  true));
+                                                                                    Wdamage,  true, staffEquipped));
             for(int i = 1; i <= Wdivider; i++) {
                 entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE,  (double) 2 * i / Wradius * facing.getY() + facing.getX()
                                                      ,  (double) 2 * i / Wradius * facing.getX() + facing.getY()
                                                         , 1, bombDuration
-                                                        , Wdamage, true));
+                                                        , Wdamage, true, staffEquipped));
                 entities.add(new Flame(startX, startY, Wradius * Sprite.SCALED_SIZE, -(double) 2 * i / Wradius * facing.getY() + facing.getX()
                                                      , -(double) 2 * i / Wradius * facing.getX() + facing.getY()
                                                       , 1, bombDuration
-                                                        , Wdamage, true));
+                                                        , Wdamage, true, staffEquipped));
             }
 
             subtractMana(W_MANA_CONSUMING);
@@ -602,7 +622,7 @@ public class Bomber extends Mobile {
             (System.currentTimeMillis() - lastR < R_COOLDOWN * 1000L)) return;
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
-        nukes.add(new Nuke(i, j, timer));
+        nukes.add(new Nuke(i, j, timer, Rradius));
         subtractMana(R_MANA_CONSUMING);
         lastR = System.currentTimeMillis();
         Audio.start(Qaudio);
@@ -698,6 +718,11 @@ public class Bomber extends Mobile {
             }
             System.out.println("R upgraded");
             lvlUp();
+    }
+    public void acquiredStaff() {
+        staffEquipped = true;
+        staffIsUsing = false;
+        itemStaff.reset();
     }
     public void lvlUp() {
         int hpGap = maxHP - currentHP;

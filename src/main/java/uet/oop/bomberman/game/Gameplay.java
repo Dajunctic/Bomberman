@@ -168,6 +168,13 @@ public class Gameplay {
         createMap();
         //testing things
         enemies.add(new Mage( 17 * 48, 52 * 48));
+        enemies.add(new Mage( 13 * 48, 42 * 48));
+        enemies.add(new Jumper(15 * 48, 42 * 48));
+        enemies.add(new Jumper(15 * 48, 40 * 48));
+        enemies.add(new Suicider(15 * 48, 52 * 48));
+        enemies.add(new Suicider(15 * 48, 52 * 48));
+        enemies.add(new Suicider(15 * 48, 52 * 48));
+        enemies.add(new Balloon(12 * 48, 48 * 48));
         buffs.put(tileCode(9,48), new Buff(9, 48, 1));
         System.out.println(enemies);
         wholeScene.setPov(player);
@@ -314,7 +321,7 @@ public class Gameplay {
 
 
         /* * Player * */
-        if(renderer.getPov().isAlly() == player.isAlly() || player.vulnerable()) player.render(gc, renderer);
+        player.render(gc, renderer);
 
         /* * Enemies * */
         enemies.forEach(g -> g.render(gc,renderer));

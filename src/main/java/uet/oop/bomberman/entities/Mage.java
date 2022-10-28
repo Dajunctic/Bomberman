@@ -2,6 +2,7 @@ package uet.oop.bomberman.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Bloom;
+import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.music.Audio;
@@ -11,8 +12,7 @@ import uet.oop.bomberman.music.Sound;
 import javax.swing.text.html.HTMLDocument;
 
 import static java.lang.Math.PI;
-import static uet.oop.bomberman.game.Gameplay.entities;
-import static uet.oop.bomberman.game.Gameplay.sounds;
+import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.graphics.Sprite.spot;
 import static uet.oop.bomberman.others.Basic.inf;
 import static uet.oop.bomberman.others.Basic.mapping;
@@ -20,7 +20,7 @@ import static uet.oop.bomberman.others.Basic.mapping;
 public class Mage extends Enemy{
     private static SpriteSheet mage = new SpriteSheet("/sprites/enemy/Mage/move.png", 2);
     private static SpriteSheet mage_dead = new SpriteSheet("/sprites/enemy/Mage/dead.png", 12);
-    private static SpriteSheet mage_staff = new SpriteSheet("/sprites/enemy/Mage/staff.png", 13);
+    public static SpriteSheet mage_staff = new SpriteSheet("/sprites/enemy/Mage/staff.png", 13);
     private int damage;
     private long cooldown = 2000;
     private final long chargeTime = 2000;
@@ -39,6 +39,7 @@ public class Mage extends Enemy{
         sight_angle = PI / 3;
         sight_depth = 8;
         attackRange = Sprite.SCALED_SIZE * 3;
+        margin = 0;
     }
 
     @Override
@@ -119,5 +120,14 @@ public class Mage extends Enemy{
     @Override
     public boolean isExisted() {
         return !killed.isDead();
+    }
+
+    @Override
+    public void deadAct(Gameplay gameplay) {
+        if(Math.round(Math.random()) >= 1) {
+            int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
+            int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
+            buffs.put(tileCode(i, j), new Buff(i, j, Buff.ITEM_STAFF));
+        }
     }
 }

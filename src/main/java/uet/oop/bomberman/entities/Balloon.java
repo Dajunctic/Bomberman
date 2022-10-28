@@ -32,6 +32,7 @@ public class Balloon extends Enemy{
         killed = new DeadAnim(SpriteSheet.balloon_die, 5, 1);
         attack = new DeadAnim(balloonAttack, 6, 1);
         attackRange = (double) Sprite.SCALED_SIZE / 2;
+        margin = 5;
         setHP(1000);
         standingTile();
     }

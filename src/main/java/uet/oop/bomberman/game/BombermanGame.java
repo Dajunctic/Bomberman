@@ -34,7 +34,6 @@ public class BombermanGame extends Application {
     public static Scene scene;
     public static StackPane stackPane;
     private Gameplay game = new Gameplay();
-    private Music music = new Music();
     public static Audio audio = new Audio();
     private TotalScene totalScene = new TotalScene();
     public static MediaPlayer menu_bg = Audio.copy(Audio.background_music);

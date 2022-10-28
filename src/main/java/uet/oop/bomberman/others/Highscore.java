@@ -43,6 +43,5 @@ public class Highscore extends BaseScene{
                 System.out.println("bug doc font");
             }
         }
-        Music.start.play();
     }
 }

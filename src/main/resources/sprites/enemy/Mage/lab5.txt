@@ -1,0 +1,5 @@
+Using the template file
+
+Draw a house
+Using 2D transformations to create different houses
+Links with keyboard events to be able to translate/rotate/scale the house 

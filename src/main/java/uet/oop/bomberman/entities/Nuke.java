@@ -24,7 +24,7 @@ public class Nuke extends Entity{
     private int tileY;
     private int radius = 3;
     private boolean exploded = false;
-    private boolean friendly = false;
+    private boolean friendly = true;
     private double duration = 2;
     private int damage = 20;
     public Nuke(double xUnit, double yUnit, double timer) {
