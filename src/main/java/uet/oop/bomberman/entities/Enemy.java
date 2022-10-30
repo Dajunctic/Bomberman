@@ -6,10 +6,7 @@ import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.graphics.Anim;
-import uet.oop.bomberman.graphics.DeadAnim;
-import uet.oop.bomberman.graphics.Renderer;
-import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.Sound;
@@ -23,7 +20,9 @@ import static uet.oop.bomberman.others.Basic.inf;
 
 public abstract class Enemy extends Mobile{
 
+    protected SpriteSheet enemy_appear = new SpriteSheet("/sprites/enemy/appear.png", 9);
     protected Anim enemy;
+    protected DeadAnim appear = new DeadAnim(enemy_appear, 3, 1);
     protected DeadAnim killed;
     protected Point focus;
 
@@ -189,6 +188,7 @@ public abstract class Enemy extends Mobile{
 
     @Override
     public Image getImg() {
+        if(!appear.isDead()) return  appear.getImage();
         if(!isDead) return enemy.getImage();
             else return killed.getImage();
     }

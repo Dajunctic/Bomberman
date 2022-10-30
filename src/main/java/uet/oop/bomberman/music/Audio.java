@@ -11,6 +11,7 @@ import static uet.oop.bomberman.music.Sound.*;
 public class Audio {
     //srcs Media
     public static Media background_music;
+    public static Media button;
     public static Media gameplay;
     public static Media fatal;
     public static Media dead;
@@ -33,6 +34,7 @@ public class Audio {
         try {
             balloon_attack = new Media(getClass().getResource(_balloon_attack).toURI().toString());
             background_music = new Media(getClass().getResource(_background_music).toURI().toString());
+            button = new Media(getClass().getResource(_button).toURI().toString());
             gameplay = new Media(getClass().getResource(_gameplay).toURI().toString());
             fatal =  new Media(getClass().getResource(_fatal).toURI().toString());
             dead =  new Media(getClass().getResource(_dead).toURI().toString());

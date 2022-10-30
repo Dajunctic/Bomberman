@@ -50,6 +50,7 @@ public class Suicider extends Enemy{
     @Override
     public Image getImg()
     {
+        if(!appear.isDead()) return  appear.getImage();
         if(!isDead) {
             if(isAttacking) return attack.getImage();
             return enemy.getImage();
@@ -58,7 +59,12 @@ public class Suicider extends Enemy{
 
     @Override
     public void update(Bomber player) {
-//hp update
+        //Make appearance
+        if(!appear.isDead()){
+            appear.update();
+            return;
+        }
+        //hp update
         super.update();
         //status
         if(!isDead){
@@ -89,12 +95,6 @@ public class Suicider extends Enemy{
         if(enemy.getTime() % frequency == 0) {
             search(player);
         }
-    }
-
-    @Override
-    public void switchDirection() {
-        if(isAttacking) return;
-        super.switchDirection();
     }
     public void explode() {
         if(exploded) return;

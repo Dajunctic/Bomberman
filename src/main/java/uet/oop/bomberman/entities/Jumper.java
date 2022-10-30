@@ -100,6 +100,7 @@ public class Jumper extends Balloon{
 
     @Override
     public Image getImg() {
+        if(!appear.isDead()) return  appear.getImage();
         if(isDead) return killed.getImage();
         else  {
             if(isAttacking) return attack.getImage();
@@ -110,6 +111,11 @@ public class Jumper extends Balloon{
 
     @Override
     public void update(Bomber player) {
+        //Make appearance
+        if(!appear.isDead()){
+            appear.update();
+            return;
+        }
         //hp update
         update();
         //status

@@ -38,7 +38,7 @@ public class Gameplay {
     public static List<Point> killTask = new ArrayList<>();
     public static Bomber player;
     protected List<Enemy> enemies = new ArrayList<>();
-
+    protected Stack<Enemy> enemyStack = new Stack<>();
     /** Map tổng quan*/
     protected BufferedReader sourceMap;
     public static Entity[][] background;
@@ -167,18 +167,18 @@ public class Gameplay {
 
         createMap();
         //testing things
-        enemies.add(new Mage( 17 * 48, 52 * 48));
-        enemies.add(new Mage( 13 * 48, 42 * 48));
-        enemies.add(new Jumper(15 * 48, 42 * 48));
-        enemies.add(new Jumper(15 * 48, 40 * 48));
-        enemies.add(new Suicider(15 * 48, 52 * 48));
-        enemies.add(new Suicider(15 * 48, 52 * 48));
-        enemies.add(new Suicider(15 * 48, 52 * 48));
-        enemies.add(new Balloon(12 * 48, 48 * 48));
+        enemyStack.add(new Mage( 17 * 48, 52 * 48));
+        enemyStack.add(new Mage( 13 * 48, 42 * 48));
+        enemyStack.add(new Jumper(15 * 48, 42 * 48));
+        enemyStack.add(new Jumper(15 * 48, 40 * 48));
+        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+        enemyStack.add(new Balloon(12 * 48, 48 * 48));
         buffs.put(tileCode(9,48), new Buff(9, 48, 1));
         System.out.println(enemies);
         wholeScene.setPov(player);
-        enemyScene.setPov(enemies.get(0));
+        enemyScene.setPov(player);
     }
 
     /** Tạo map hoàn chỉnh */
@@ -222,6 +222,7 @@ public class Gameplay {
 
     /** update */
     public void update(){
+        if(currentFrame % FPS == 0 && !enemyStack.isEmpty()) enemies.add(enemyStack.pop());
         //interaction
         interaction();
 

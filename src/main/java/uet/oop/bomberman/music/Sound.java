@@ -17,6 +17,7 @@ public class Sound {
     private long duration;
     //sources
     public static String _background_music = "/sound/Background/background.mp3";
+    public static String _button = "/sound/Background/button.mp3";
     public static String _gameplay = "/sound/Background/sound_game.mp3";
     //player status audio
     public static String _fatal = "/sound/Player/Status/fatal.mp3";

@@ -44,6 +44,8 @@ public class BombermanGame extends Application {
         game_bg.stop();
         menu_bg.play();
     }
+
+    public static boolean gameActive = false;
     @Override
     public void start(Stage stage) throws IOException {
         /* * Tạo canvas */
@@ -94,18 +96,18 @@ public class BombermanGame extends Application {
     /** Updating */
     public void update(Stage stage) {
         totalScene.update(stage);
-        game.update();
+        if(gameActive) game.update();
     }
 
 
     /** Render objects */
     public void render() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-        game.render(gc, canvas.getWidth(), canvas.getHeight());
+        if(gameActive) game.render(gc, canvas.getWidth(), canvas.getHeight());
     }
 
     public static void startGame() {
+        gameActive = true;
         menu_bg.seek(Duration.ZERO);
         menu_bg.stop();
         game_bg.play();

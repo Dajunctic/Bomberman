@@ -44,6 +44,11 @@ public class Mage extends Enemy{
 
     @Override
     public void update(Bomber player) {
+        //Make appearance
+        if(!appear.isDead()){
+            appear.update();
+            return;
+        }
         //hp update
         super.update();
         //status
