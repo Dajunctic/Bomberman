@@ -4,7 +4,6 @@ module uet.oop.bomberman {
     requires javafx.media;
     requires java.desktop;
     requires com.google.common;
-    requires javafx.media;
 
     exports uet.oop.bomberman.game;
     opens uet.oop.bomberman.game to javafx.fxml;

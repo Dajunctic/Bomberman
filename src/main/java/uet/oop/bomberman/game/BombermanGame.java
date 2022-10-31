@@ -31,7 +31,7 @@ public class BombermanGame extends Application {
     public static final int FPS = 80;
     public static int currentFrame = 0;
     private GraphicsContext gc;
-    public static Canvas canvas = new Canvas(WIDTH * Sprite.SCALED_SIZE, HEIGHT * Sprite.SCALED_SIZE);;
+    public static Canvas canvas = new Canvas(WIDTH * Sprite.SCALED_SIZE, HEIGHT * Sprite.SCALED_SIZE);
     public static Scene scene;
 
     public static StackPane stackPane;
@@ -40,6 +40,7 @@ public class BombermanGame extends Application {
     private Music music = new Music();
     public static Audio audio = new Audio();
     private TotalScene totalScene = new TotalScene();
+    public static MediaPlayer gamest = Audio.copy(Audio.gamestart);
     public static MediaPlayer menu_bg = Audio.copy(Audio.background_music);
     public static MediaPlayer game_bg = Audio.copy(Audio.gameplay);
     static {
@@ -47,6 +48,7 @@ public class BombermanGame extends Application {
         game_bg.setCycleCount(MediaPlayer.INDEFINITE);
         //game_bg.stop();
         //menu_bg.play();
+        gamest.stop();
     }
     @Override
     public void start(Stage stage) throws IOException {

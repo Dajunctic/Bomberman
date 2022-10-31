@@ -39,6 +39,7 @@ public class Sound {
     public static String _enemy_dead = "/sound/Enemy/dead.mp3";
     public static String _balloon_attack = "/sound/Enemy/balloon_attack.mp3";
 
+    public static String game_start="/sound/Gameplay/1/Stage 1 Starting.mp3";
 
 
     //properties

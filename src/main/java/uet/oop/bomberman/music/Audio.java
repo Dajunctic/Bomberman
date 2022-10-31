@@ -10,6 +10,7 @@ import static uet.oop.bomberman.music.Sound.*;
 
 public class Audio {
     //srcs Media
+    public static Media gamestart;
     public static Media background_music;
     public static Media gameplay;
     public static Media fatal;
@@ -49,6 +50,7 @@ public class Audio {
             flame =  new Media(getClass().getResource(_flame).toURI().toString());
             fire =  new Media(getClass().getResource(_fire).toURI().toString());
             enemy_dead =  new Media(getClass().getResource(_enemy_dead).toURI().toString());
+            gamestart=new Media(getClass().getResource(game_start).toURI().toString());
         } catch (URISyntaxException e) {
             System.err.println("Load sound failed");
         }

@@ -2,12 +2,15 @@ package uet.oop.bomberman.others;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import uet.oop.bomberman.game.BombermanGame;
+import uet.oop.bomberman.graphics.Sprite;
 
 
 import java.net.URISyntaxException;
@@ -15,12 +18,17 @@ import java.net.URISyntaxException;
 public class BaseScene {
     private Scene scene;
     private Group root = new Group();
-
+    protected Canvas canvas_scene = new Canvas(BombermanGame.canvas.getWidth(), BombermanGame.canvas.getHeight());
+    protected GraphicsContext gc_scene;
     private ImageView background_;
     private Image background;
     private ImageView logo;
     public BaseScene() {
         try {
+            gc_scene = canvas_scene.getGraphicsContext2D();
+            this.root.getChildren().add(canvas_scene);
+
+
 
             background=new Image(getClass().getResource("/sprites/menu/bg.png").toURI().toString());
             background_=new ImageView(background);

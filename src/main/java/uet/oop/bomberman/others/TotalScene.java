@@ -1,5 +1,8 @@
 package uet.oop.bomberman.others;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -10,7 +13,13 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 
+import javafx.util.Duration;
 import uet.oop.bomberman.game.BombermanGame;
+import uet.oop.bomberman.music.Music;
+
+import java.util.Stack;
+import java.util.Timer;
+import java.util.TimerTask;
 
 //khoi tao cac sence de thuc hien chuyen scene
 public class TotalScene {
@@ -21,6 +30,8 @@ public class TotalScene {
     private Setting setting ;
     private Highscore highscore ;
     private ChoosePlayer choosePlayer;
+
+//    Stack<String> state=new Stack<>();
 
     public TotalScene() {
 
@@ -39,6 +50,7 @@ public class TotalScene {
             pausebt.setY(100);
             pausebt.toFront();
             BombermanGame.root.getChildren().add(pausebt);
+
             System.out.println("KKKKO");
         }
         catch (Exception e){
@@ -52,20 +64,17 @@ public class TotalScene {
         setscenceplay(stage);
         // set cho menu
         pausebt.setOnMouseClicked(event -> {
-                        stage.setScene(pause.getScene());
-            System.out.println("KKK");
+//            state.add("pause");
+            stage.setScene(pause.getScene());
                     });
         menu.Play.getText().setOnMouseClicked(event -> {
             stage.setScene(choosePlayer.getScene());
-
         });
         menu.Highscore.getText().setOnMouseClicked(event -> {
             stage.setScene(highscore.getScene());
-
         });
         menu.Setting.getText().setOnMouseClicked(event -> {
             stage.setScene(setting.getScene());
-
         });
         menu.Exit.getText().setOnMouseClicked(event -> {
             Platform.exit();
@@ -79,8 +88,10 @@ public class TotalScene {
         });
         //set cho setting
         setting.Back.getText().setOnMouseClicked(event -> {
-            stage.setScene(menu.getScene());
-
+//            if(state.isEmpty())
+            {stage.setScene(menu.getScene());}
+//            else {state.pop();
+//                stage.setScene(BombermanGame.scene);}
         });
         //set cho choose player
         choosePlayer.Back.getText().setOnMouseClicked(event -> {
@@ -88,13 +99,29 @@ public class TotalScene {
 
         });
         choosePlayer.playerBt1.getText().setOnMouseClicked(event -> {
-            stage.setScene(BombermanGame.scene);
-            BombermanGame.startGame();
+            choosePlayer.loadingscreen.toFront();
+            BombermanGame.gamest.play();
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(3), ev -> {
+                choosePlayer.loadingscreen.toBack();
+                BombermanGame.gamest.stop();
+                stage.setScene(BombermanGame.scene);
+                BombermanGame.startGame();
+            }));
+            timeline.play();
+
 
         });
         choosePlayer.playerBt2.getText().setOnMouseClicked(event -> {
-            stage.setScene(BombermanGame.scene);
-            BombermanGame.startGame();
+            choosePlayer.loadingscreen.toFront();
+            BombermanGame.gamest.play();
+            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), ev -> {
+                choosePlayer.loadingscreen.toBack();
+                BombermanGame.gamest.stop();
+                stage.setScene(BombermanGame.scene);
+                BombermanGame.startGame();
+            }));
+            timeline.play();
+
         });
 
         //set cho pause

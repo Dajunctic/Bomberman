@@ -1,13 +1,16 @@
     .button{
     -fx-pref-width:200px;
     -fx-background-color: #f0f8ff;
-    -fx-background-image: url('play8.png');
+    -fx-background-image: url('play10.png');
+    -fx-background-position: left top, center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover, auto;
     -fx-background-color: transparent;
     -fx-text-fill: black;
     -fx-alignment:center;
     }
     .button:hover{
-    -fx-background-image: url('play7.png');
+    -fx-background-image: url('play9.png');
     }
 
 

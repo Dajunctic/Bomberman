@@ -7,7 +7,7 @@ import javafx.scene.media.Media;
 
 
 public class Music {
-        private  static  double volumm_=0;
+        private  static  double volumm_=1;
         public static  MediaPlayer mediaStage;
        public static MediaPlayer start;
        public static MediaPlayer flash;
@@ -26,12 +26,12 @@ public class Music {
             dead=new MediaPlayer(new Media( getClass().getResource("/sound/Background/background.mp3").toURI().toString()));
             flash=new MediaPlayer(new Media(getClass().getResource("/sound/Background/background.mp3").toURI().toString()));
             getitem=new MediaPlayer(new Media(getClass().getResource("/sound/Player/Status/dead.wav").toURI().toString()));
-            start=new MediaPlayer(new Media(getClass().getResource("/sound/Player/Status/dead.wav").toURI().toString()));
+            start=new MediaPlayer(new Media(getClass().getResource("/sound/Gameplay/1/Stage 1 Starting.mp3").toURI().toString()));
             play =new MediaPlayer(new Media(getClass().getResource("/sound/Player/Status/dead.wav").toURI().toString()));
             gameover=new MediaPlayer(new Media(getClass().getResource("/sound/Player/Status/dead.wav").toURI().toString()));
             putbomb=new MediaPlayer(new Media(getClass().getResource("/sound/Player/Status/dead.wav").toURI().toString()));
             //mediaPlayerList.add(mediaStage);
-            Music.setVolumm_(0);
+            Music.setVolumm_(1);
         }
         catch (URISyntaxException e) {
             e.printStackTrace();
