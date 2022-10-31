@@ -1,15 +1,13 @@
     .button{
     -fx-pref-width:200px;
     -fx-background-color: #f0f8ff;
-    -fx-background-image: url('messagebox1.png');
+    -fx-background-image: url('play8.png');
+    -fx-background-color: transparent;
     -fx-text-fill: black;
-     -fx-border-radius: 5;
     -fx-alignment:center;
-
     }
     .button:hover{
-    -fx-text-fill:red;
-
+    -fx-background-image: url('play7.png');
     }
 
 
@@ -27,7 +25,7 @@
         -fx-pref-width:2px ;
         -fx-background-color: #f0f8ff;
         -fx-text-fill: black;
-         -fx-border-radius: 5;
+
         -fx-alignment:center;
 
     }

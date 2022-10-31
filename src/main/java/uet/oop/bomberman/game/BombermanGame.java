@@ -2,6 +2,7 @@ package uet.oop.bomberman.game;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -32,7 +33,9 @@ public class BombermanGame extends Application {
     private GraphicsContext gc;
     public static Canvas canvas = new Canvas(WIDTH * Sprite.SCALED_SIZE, HEIGHT * Sprite.SCALED_SIZE);;
     public static Scene scene;
+
     public static StackPane stackPane;
+    public static Group root=new Group();
     private Gameplay game = new Gameplay();
     private Music music = new Music();
     public static Audio audio = new Audio();
@@ -42,8 +45,8 @@ public class BombermanGame extends Application {
     static {
         menu_bg.setCycleCount(MediaPlayer.INDEFINITE);
         game_bg.setCycleCount(MediaPlayer.INDEFINITE);
-        game_bg.stop();
-        menu_bg.play();
+        //game_bg.stop();
+        //menu_bg.play();
     }
     @Override
     public void start(Stage stage) throws IOException {
@@ -53,9 +56,10 @@ public class BombermanGame extends Application {
         stackPane = new StackPane();
         stackPane.setPrefSize(Sprite.SCALED_SIZE * WIDTH + 200, Sprite.SCALED_SIZE * HEIGHT + 200);
         stackPane.getChildren().add(canvas);
-
+        root.getChildren().add(stackPane);
+        totalScene.update(stage);
         /* * Tạo scene * */
-        scene = new Scene(stackPane);
+        scene = new Scene(root);
 
         /* * Liên kết canvas với kích thước của Pane * */
         canvas.widthProperty().bind(
@@ -64,7 +68,7 @@ public class BombermanGame extends Application {
                 stackPane.heightProperty());
 
         /* * Thêm scene vao stage */
-        stage.setScene(totalScene.getMenu().getScene());
+        stage.setScene(scene);
 
         stage.show();
         stage.setTitle("League of Bomberman");
@@ -94,7 +98,7 @@ public class BombermanGame extends Application {
 
     /** Updating */
     public void update(Stage stage) {
-        totalScene.update(stage);
+        //totalScene.update(stage);
         game.update();
     }
 
