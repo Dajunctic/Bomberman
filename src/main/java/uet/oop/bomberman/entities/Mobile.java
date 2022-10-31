@@ -57,6 +57,7 @@ public class Mobile extends Entity{
     protected int tileY;
 
     protected boolean isAlly = false;
+    protected int margin = 0;
 
     public static List<Mobile> mobiles = new ArrayList<>();
     // inheritance
@@ -162,7 +163,7 @@ public class Mobile extends Entity{
     public void move() {
         double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  + speed * direction.getX()));
         double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed * direction.getY()));
-        if(!checkCollision(ref_x,ref_y,5)) {
+        if(!checkCollision(ref_x,ref_y,margin)) {
             x = ref_x;
             y = ref_y;
             standingTile();
@@ -319,6 +320,10 @@ public class Mobile extends Entity{
     }
 
     public boolean visible(Renderer renderer) {
+        return true;
+    }
+
+    protected boolean vulnerable() {
         return true;
     }
 }

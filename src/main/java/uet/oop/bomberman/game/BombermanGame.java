@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.music.Audio;
-import uet.oop.bomberman.music.Music;
 import uet.oop.bomberman.others.TotalScene;
 
 

@@ -71,4 +71,7 @@ public class Vertex {
         double py = this.y - y;
         return Math.sqrt(px*px + py*py);
     }
+    public static double dis(double x, double y) {
+        return Math.sqrt(x * x + y * y);
+    }
 }

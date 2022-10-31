@@ -447,7 +447,7 @@ public class Bomber extends Mobile {
         double ref_x = Math.max(0,Math.min(width*Sprite.SCALED_SIZE - this.getWidth(),x  +  speed_x * dirX));
         double ref_y = Math.max(0,Math.min(height*Sprite.SCALED_SIZE - this.getHeight(),y  +  speed_y * dirY));
 
-        if(!checkCollision(ref_x,ref_y,5)) {
+        if(!checkCollision(ref_x,ref_y,margin)) {
             x = ref_x;
             y = ref_y;
 

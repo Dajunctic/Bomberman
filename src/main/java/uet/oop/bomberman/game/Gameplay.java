@@ -167,6 +167,7 @@ public class Gameplay {
 
         createMap();
         //testing things
+        enemyStack.add(new Ghost(8 * 48, 46 * 48));
         enemyStack.add(new Mage( 17 * 48, 52 * 48));
         enemyStack.add(new Mage( 13 * 48, 42 * 48));
         enemyStack.add(new Jumper(15 * 48, 42 * 48));

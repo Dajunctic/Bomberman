@@ -86,7 +86,6 @@ public class Sound {
     public void update(Bomber player) {
         balance.set(player.getX() - position.getX(), player.getY() - position.getY());
         if(balance.abs() > threshold ) {
-            System.out.println("Out of range");
             if(isPlaying) {
                 audio.pause();
                 isPlaying = false;
@@ -102,8 +101,6 @@ public class Sound {
         balance.normalize();
         audio.setBalance(-balance.getX() * (dis / threshold));
         audio.setVolume(volume);
-//        System.out.println("Balance: " + audio.getBalance());
-//        if(audio.getCurrentTime().toMillis() == audio.getStopTime().toMillis()) Audio.start(audio);
     }
     public boolean exists() {
         return System.currentTimeMillis() - createTime <= duration;

@@ -3,7 +3,6 @@ package uet.oop.bomberman.others;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import uet.oop.bomberman.game.BombermanGame;
-import uet.oop.bomberman.music.Music;
 
 
 public class Menu extends BaseScene{

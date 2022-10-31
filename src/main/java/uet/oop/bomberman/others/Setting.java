@@ -4,7 +4,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Slider;
 import uet.oop.bomberman.game.BombermanGame;
-import uet.oop.bomberman.music.Music;
 import uet.oop.bomberman.music.Sound;
 
 public class Setting extends BaseScene{

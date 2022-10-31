@@ -27,7 +27,7 @@ public class Jumper extends Balloon{
     private boolean isJumping = false;
     public Jumper(double xPixel, double yPixel) {
         super(xPixel, yPixel);
-        margin = 10;
+        margin = 0;
     }
     @Override
     public void load() {
