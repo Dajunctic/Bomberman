@@ -1,6 +1,7 @@
 module uet.oop.bomberman {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.media;
     requires java.desktop;
     requires com.google.common;
     requires javafx.media;
