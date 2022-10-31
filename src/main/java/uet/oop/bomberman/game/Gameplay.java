@@ -59,8 +59,8 @@ public class Gameplay {
                                             BombermanGame.HEIGHT  * Sprite.SCALED_SIZE , 1);
 
     //enemy
-    public Layer enemyScene = new Layer(0.75, 0.1, BombermanGame.WIDTH * Sprite.SCALED_SIZE / 3,
-                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE / 3, 0.2);
+    public Layer enemyScene = new Layer(0, 0, BombermanGame.WIDTH * Sprite.SCALED_SIZE,
+                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE, 1);
     public static int chosenEnemy = 0;
     public static int bufferMode = 0;
     /** GUI GAME Image */
@@ -495,6 +495,7 @@ public class Gameplay {
                     case F -> player.recover();
                     case TAB -> bufferMode = (bufferMode + 1) % 3;
                     case T -> switchPov();
+                    case P -> enemyScene.switchShadow();
                 }
             }});
     }

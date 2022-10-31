@@ -1,7 +1,7 @@
 package uet.oop.bomberman.generals;
 
 public class Vertex {
-    private double x,y;
+    public double x,y;
 
     public Vertex(double x, double y) {
         this.x = x;

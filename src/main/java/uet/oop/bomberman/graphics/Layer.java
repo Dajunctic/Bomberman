@@ -2,6 +2,7 @@ package uet.oop.bomberman.graphics;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -14,13 +15,15 @@ import java.awt.*;
 public class Layer {
     WritableImage img;
     Canvas canvas;
-    private Renderer renderer;
+    public Renderer renderer;
     GraphicsContext gc;
     private double width;
     private double height;
     private double bufferX;
     private double bufferY;
     private double scale;
+    private LightProbe lighter = null;
+    private boolean shadow = false;
     public Layer(double bufferX, double bufferY, double width, double height, double scale) {
         this.bufferX = bufferX;
         this.bufferY = bufferY;
@@ -35,9 +38,23 @@ public class Layer {
     }
     public void render(Gameplay gameplay) {
         gameplay.render(this.gc, this.renderer);
+        if(lighter != null) {
+//            gc.setGlobalBlendMode(BlendMode.MULTIPLY);
+            lighter.renderLight();
+            renderer.renderImg(this.gc, lighter.getImg(), 0, 0, false);
+
+//            gc.setGlobalBlendMode(BlendMode.SRC_OVER);
+        }
+
     }
     public void setPov(Mobile pov) {
         renderer.setPov(pov);
+        if(lighter == null && pov != null) {
+            lighter = new LightProbe(pov, renderer, canvas.getWidth(), canvas.getHeight(), 8, 200, this);
+        } else {
+            assert lighter != null;
+            lighter.setPov(pov);
+        }
     }
     public Image getImg() {
         return new ImageView(canvas.snapshot(null, img)).getImage();
@@ -45,5 +62,9 @@ public class Layer {
 
     public Triplets details() {
         return new Triplets(bufferX, bufferY, scale);
+    }
+    public void switchShadow() {
+        shadow = !shadow;
+        System.out.println("Shader turned " + shadow);
     }
 }

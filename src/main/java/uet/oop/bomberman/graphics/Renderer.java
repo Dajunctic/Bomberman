@@ -3,6 +3,7 @@ package uet.oop.bomberman.graphics;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.generals.Point;
@@ -222,5 +223,20 @@ public class Renderer {
 
     public Vertex getSpan() {
         return span;
+    }
+    public Vertex getOrigin() {
+        return new Vertex(boundX - translateX + shiftX, boundY - translateY + shiftY);
+    }
+    public void drawTileLine(GraphicsContext gc, Vertex p0, Vertex p1) {
+        gc.setStroke(Color.WHITE);
+        gc.setLineWidth(10);
+        gc.setGlobalAlpha(0.1);
+        double renderX = boundX - translateX + shiftX;
+        double renderY = boundY - translateY + shiftY;
+//        System.out.println(String.format("Line drawn from %.0f, %.0f to %.0f, %.0f", p0.x * Sprite.SCALED_SIZE + renderX, p0.y * Sprite.SCALED_SIZE + renderY,
+//                                                                                    p1.x * Sprite.SCALED_SIZE + renderX, p1.y*Sprite.SCALED_SIZE + renderY));
+        gc.strokeLine(p0.x * Sprite.SCALED_SIZE + renderX, p0.y * Sprite.SCALED_SIZE + renderY,
+                        p1.x * Sprite.SCALED_SIZE + renderX, p1.y*Sprite.SCALED_SIZE + renderY);
+        gc.setGlobalAlpha(1);
     }
 }
