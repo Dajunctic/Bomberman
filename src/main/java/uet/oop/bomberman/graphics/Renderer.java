@@ -3,6 +3,8 @@ package uet.oop.bomberman.graphics;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.Bloom;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -15,6 +17,7 @@ import uet.oop.bomberman.generals.Vertex;
 
 import javax.swing.text.html.HTMLDocument;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import static uet.oop.bomberman.game.BombermanGame.FPS;
@@ -245,18 +248,22 @@ public class Renderer {
                         p1.x * Sprite.SCALED_SIZE + renderX, p1.y*Sprite.SCALED_SIZE + renderY);
         gc.setGlobalAlpha(1);
     }
-    public void drawPolygon(GraphicsContext gc, ArrayList<Vertex> vertices, int radius) {
+    public void drawPolygon(GraphicsContext gc, ArrayList<Vertex> vertices, Effect effect, double radius, double scale) {
         double renderX = boundX - translateX + shiftX;
         double renderY = boundY - translateY + shiftY;
         double[] x = new double[vertices.size()];
         double[] y = new double[vertices.size()];
-        for(int i = 0; i < vertices.size(); i ++)
-        {
-            x[i] = vertices.get(i).x * Sprite.SCALED_SIZE - renderX;
-            y[i] = vertices.get(i).y * Sprite.SCALED_SIZE - renderY;
-//            System.out.println(String.format("Point %d: %.1f %.1f",i, x[i], y[i]));
+        int i = 0;
+        for(Vertex g : vertices) {
+            if(g == null) continue;
+            x[i] = pov.getCenterX() +  (g.x * Sprite.SCALED_SIZE - pov.getCenterX()) * scale + renderX;
+            y[i] = pov.getCenterY() +  (g.y * Sprite.SCALED_SIZE - pov.getCenterY()) * scale + renderY;
+            i++;
         }
-        gc.setFill(Color.WHITE);
-        gc.fillPolygon(x, y, vertices.size());
+        gc.setEffect(effect);
+        gc.setFill(new RadialGradient(0, 0, pov.getCenterX() + renderX, pov.getCenterY() + renderY, radius * Sprite.SCALED_SIZE * scale, false, CycleMethod.NO_CYCLE, gradients));
+        gc.fillPolygon(x, y, i);
+        gc.setEffect(null);
+        gc.setFill(Color.BLACK);
     }
 }

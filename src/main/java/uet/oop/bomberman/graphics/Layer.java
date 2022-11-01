@@ -39,10 +39,10 @@ public class Layer {
     public void render(Gameplay gameplay) {
         gameplay.render(this);
         if(lighter != null) {
-//            gc.setGlobalBlendMode(BlendMode.MULTIPLY);
+            gc.setGlobalBlendMode(BlendMode.MULTIPLY);
             lighter.renderLight();
-            renderer.renderImg(this.gc, lighter.getImg(), 0, 0, false);
-//            gc.setGlobalBlendMode(BlendMode.SRC_OVER);
+            gc.drawImage(lighter.getImg(), 0, 0);
+            gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         }
 
     }
