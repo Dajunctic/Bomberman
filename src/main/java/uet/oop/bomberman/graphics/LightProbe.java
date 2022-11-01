@@ -3,6 +3,8 @@ package uet.oop.bomberman.graphics;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -44,10 +46,11 @@ public class LightProbe {
     public static ArrayList<Integer> tileCodes = new ArrayList();
     public static ArrayList<Stop> gradients = new ArrayList<>();
     static {
-        gradients.add(new Stop(0, Color.TRANSPARENT));
-        gradients.add(new Stop(0.8, Color.rgb(50, 0, 0)));
-        gradients.add(new Stop(1, Color.BLACK));
+        gradients.add(new Stop(0, Color.WHITE));
+        gradients.add(new Stop(0.6, Color.rgb(50, 0, 0)));
+        gradients.add(new Stop(0.8, Color.BLACK));
     }
+    private InnerShadow fade = new InnerShadow();
     private RadialGradient texture;
     public LightProbe(Mobile src, Renderer screen, double width, double height, int radius, double density, Layer parent) {
         this.src = src;
@@ -60,24 +63,33 @@ public class LightProbe {
         subCanvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
         img = new WritableImage((int) width,(int) height);
+
+
+        reset();
+        this.parent = parent;
+    }
+    public void init() {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, width, height);
         gc.setStroke(Color.WHITE);
         gc.setLineWidth(360 / density * 2);
         gc.setGlobalAlpha(1 / density * 1.5);
-        gc.setGlobalBlendMode(BlendMode.SRC_OVER);
-        reset();
-        this.parent = parent;
-    }
 
+        //fading
+        fade.setRadius( Sprite.SCALED_SIZE);
+        fade.setHeight( Sprite.SCALED_SIZE * 4);
+        fade.setBlurType(BlurType.TWO_PASS_BOX);
+        fade.setChoke(1.0);
+        fade.setColor(Color.BLACK);
+    }
     public void renderLight() {
         reset();
         createPolygon();
         Vertex starter = new Vertex(src.getCenterX() / Sprite.SCALED_SIZE,
                                     src.getCenterY() / Sprite.SCALED_SIZE);
 //        screen.drawPolygon(parent.gc, vertexes, radius);
-        for(int i = 0; i < vertexes.size(); i++) screen.drawTileLine(parent.gc, vertexes.get(i), vertexes.get((i+1) % vertexes.size()));
-
+//        for(int i = 0; i < vertexes.size(); i++) screen.drawTileLine(parent.gc, vertexes.get(i), vertexes.get((i+1) % vertexes.size()));
+        screen.drawPolygon(gc, vertexes, fade, radius, 1.5);
     }
 
     public void createPolygon() {
