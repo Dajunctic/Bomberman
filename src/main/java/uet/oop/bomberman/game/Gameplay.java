@@ -4,19 +4,18 @@ import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.generals.Triplets;
+import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Layer;
-import uet.oop.bomberman.graphics.LightProbe;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.AreaMap;
 import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.maps.Minimap;
-import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.Sound;
 import uet.oop.bomberman.others.SkillFrame;
 import com.google.common.collect.Multimap;
@@ -41,7 +40,7 @@ public class Gameplay {
     public static List<Point> killTask = new ArrayList<>();
     public static Bomber player;
     protected List<Enemy> enemies = new ArrayList<>();
-    protected List<Stack<Enemy>> enemyStack = new ArrayList<>();
+    protected Stack<Enemy> enemyStack = new Stack<>();
     /** Map tổng quan*/
     protected BufferedReader sourceMap;
     public static Entity[][] background;
@@ -49,76 +48,51 @@ public class Gameplay {
 
     public static char[][] tile_map;
     public static boolean[][] checker;
-    public double translate_x = 0;
-    public double translate_y = 0;
-
-    public boolean lose = false;
-    public boolean returnMenu = false;
-    public boolean loading = false;
+    public  double translate_x = 0;
+    public  double translate_y = 0;
 
     /** Canvas Offset - Chỉnh map cân bằng khi phóng to hay thu nhỏ */
     public double offsetX = 0;
     public double offsetY = 0;
     /** Renderer - Trung gian render lên canvas */
     //Renderer chính
-    public Renderer wholeScene = new Renderer(0.5, 0.5, 0, 0, 0, 0,
+    public static Renderer wholeScene = new Renderer(0.5, 0.5, 0, 0, 0, 0,
                                                 BombermanGame.WIDTH* Sprite.SCALED_SIZE,
-                                            BombermanGame.HEIGHT  * Sprite.SCALED_SIZE , 0.95);
-    LightProbe playerPov;
-
+                                            BombermanGame.HEIGHT  * Sprite.SCALED_SIZE , 1);
+    //player
+    public Layer playerScene = new Layer(0, 0,  9* Sprite.SCALED_SIZE , 9 * Sprite.SCALED_SIZE,  1);
     //enemy
-    public static Layer playerScene = new Layer(0, 0, BombermanGame.WIDTH * Sprite.SCALED_SIZE,
-                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE, 1, true);
-    public static Layer enemyScene = new Layer(0.75, 0.1, BombermanGame.WIDTH * Sprite.SCALED_SIZE / 2.0,
-                                        BombermanGame.HEIGHT * Sprite.SCALED_SIZE / 2.0, 0.2, true);
+    public Layer enemyScene = new Layer(0.75, 0.2, BombermanGame.WIDTH * Sprite.SCALED_SIZE,
+                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE, 0.2);
     public static int chosenEnemy = 0;
     public static int bufferMode = 0;
     /** GUI GAME Image */
     Image gameFrame = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/frame.png")));
     Image enemyFrame = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/enemy_frame.png")));
-    Image badEnding = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/bg/bad.png")));
-    Image loadingImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/loading.png")));
+    Image gameBg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/bg.png")));
 
     /** Minimap cho màn chơi */
     public Minimap minimap;
     public GameMap gameMap;
-    public boolean openMinimap = false;
 
     /** Map khu vực **/
     public static ArrayList<AreaMap> areaMaps = new ArrayList<>();
     public static int currentArea = 0;
-    public static int wonArea = -1;
-    public static boolean checkWon = true;
 
     /** Các tập hợp entity khác */
     public static ArrayList<Fence> fences = new ArrayList<>(); /* * Hàng rào giữa các màn chơi */
-    public static HashMap<Integer, Fire>  fires = new HashMap<>(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
+    public static Multimap<Integer, Pair<Integer, Boolean>>  fires = ArrayListMultimap.create(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
     public static SkillFrame skillFrame = new SkillFrame();
 
     public static Map<Integer, Buff> buffs = new HashMap<>();
-    /** Âm thanh */
+    /** Tiếng */
     public static ArrayList<Sound> sounds = new ArrayList<>();
 
-    /** Ending */
-    public Ending ending;
-
-    public static MediaPlayer openFence = Audio.copy(Audio.open_fence);
-    public static MediaPlayer closeFence = Audio.copy(Audio.close_fence);
-
-    boolean reset = false;
-
     public Gameplay() {
-        for (int i = 0 ; i < 5; i++) {
-            Stack<Enemy> stack = new Stack<>();
-            enemyStack.add(stack);
-        }
-
-        ending = new Ending();
     }
 
     /** Load map from file */
     public void importing (String generalMap, String areaMap) throws IOException {
-
         /* Map rộng */
         try {
             // reading files
@@ -136,8 +110,8 @@ public class Gameplay {
             checker = new boolean[height][width];
             //init
             for(int i = 0;i < height; i++ )
-                map[i] = sourceMap.readLine();
-            String ref = sourceMap.readLine();
+                map[i] = new String(sourceMap.readLine());
+            String ref = new String(sourceMap.readLine());
 
             String[] info = ref.split(" ");
             switch (info[0]) {
@@ -194,15 +168,21 @@ public class Gameplay {
         }
 
         createMap();
-
-//        createTestEnemy();
-        createEnemy();
-
-
+        //testing things
+        enemyStack.add(new Ghost(8 * 48, 46 * 48));
+        enemyStack.add(new Mage( 17 * 48, 52 * 48));
+        enemyStack.add(new Mage( 13 * 48, 42 * 48));
+        enemyStack.add(new Jumper(15 * 48, 42 * 48));
+        enemyStack.add(new Jumper(15 * 48, 40 * 48));
+        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+        enemyStack.add(new Balloon(12 * 48, 48 * 48));
+        buffs.put(tileCode(9,48), new Buff(9, 48, 1));
+        System.out.println(enemies);
         wholeScene.setPov(player);
         enemyScene.setPov(player);
         playerScene.setPov(player);
-        playerPov = new LightProbe(player, 5, 50);
     }
 
     /** Tạo map hoàn chỉnh */
@@ -217,28 +197,26 @@ public class Gameplay {
 
         }
         /* * Minimap */
-//        if (!reset) {
-        minimap = new Minimap(800, 300);
+        minimap = new Minimap(800, 20 );
         gameMap = new GameMap();
-//        }
 
         /* *****  Fence ***** */
 
         // West
-        fences.add(new Fence(22, 45, Fence.VERTICAL, 1)); // 0
-        fences.add(new Fence(45, 45, Fence.VERTICAL, 2)); // 1
+        fences.add(new Fence(22, 45, Fence.VERTICAL));
+        fences.add(new Fence(45, 45, Fence.VERTICAL));
         // North
-        fences.add(new Fence(54, 35, Fence.HORIZONTAL, 2)); // 2
-        fences.add(new Fence(54, 14, Fence.HORIZONTAL, 0)); // 3
+        fences.add(new Fence(54, 35, Fence.HORIZONTAL));
+        fences.add(new Fence(54, 14, Fence.HORIZONTAL));
         // East
-        fences.add(new Fence(69, 45, Fence.VERTICAL, 2)); // 4
-        fences.add(new Fence(95, 45, Fence.VERTICAL,3)); // 5
+        fences.add(new Fence(69, 45, Fence.VERTICAL));
+        fences.add(new Fence(95, 45, Fence.VERTICAL));
         // South
-        fences.add(new Fence(54, 59, Fence.HORIZONTAL, 2)); // 6
-        fences.add(new Fence(54, 82, Fence.HORIZONTAL, 3)); // 7
+        fences.add(new Fence(54, 59, Fence.HORIZONTAL));
+        fences.add(new Fence(54, 82, Fence.HORIZONTAL));
         // Portal
-        fences.add(new Fence(67, 89, Fence.VERTICAL, 0)); // 8
-//        fences.add(new Fence(101, 89, Fence.VERTICAL)); // 9
+        fences.add(new Fence(67, 89, Fence.VERTICAL));
+        fences.add(new Fence(101, 89, Fence.VERTICAL));
 
         // Mặc định là hàng rào chặn lại các màn
         for (Fence fence: fences) {
@@ -246,188 +224,21 @@ public class Gameplay {
         }
     }
 
-    public void createTestEnemy() {
-        /* * Area 0 */
-        int areaX = areaMaps.get(0).getPosX();
-        int areaY = areaMaps.get(0).getPosY();
-
-//        enemyStack.get(0).add(new Ghost(8 * 48, 46 * 48));
-        enemyStack.get(0).add(new Mage( 17 * 48, 52 * 48));
-//        enemyStack.get(0).add(new Mage( 13 * 48, 42 * 48));
-//        enemyStack.get(0).add(new Jumper(15 * 48, 42 * 48));
-//        enemyStack.get(0).add(new Jumper(15 * 48, 40 * 48));
-//        enemyStack.get(0).add(new Suicider(15 * 48, 52 * 48));
-//        enemyStack.get(0).add(new Suicider(15 * 48, 52 * 48));
-//        enemyStack.get(0).add(new Suicider(15 * 48, 52 * 48));
-//        enemyStack.get(0).add(new Balloon(12 * 48, 48 * 48));
-
-        buffs.put(tileCode(9,48), new Buff(9, 48, 1));
-
-        /* * Area 1 */
-        areaX = areaMaps.get(1).getPosX();
-        areaY = areaMaps.get(1).getPosY();
-
-        enemyStack.get(1).add(new Mage( (2 + areaX) * 48, (2 + areaY) * 48));
-
-        /* * Area 2 */
-        areaX = areaMaps.get(2).getPosX();
-        areaY = areaMaps.get(2).getPosY();
-
-        enemyStack.get(2).add(new Mage( (2 + areaX) * 48, (2 + areaY) * 48));
-
-        /* * Area 3 */
-        areaX = areaMaps.get(3).getPosX();
-        areaY = areaMaps.get(3).getPosY();
-
-        enemyStack.get(3).add(new Mage( (2 + areaX) * 48, (2 + areaY) * 48));
-
-        /* * Area 4 */
-        areaX = areaMaps.get(4).getPosX();
-        areaY = areaMaps.get(4).getPosY();
-
-        enemyStack.get(4).add(new Mage( (2 + areaX) * 48, (2 + areaY) * 48));
-    }
-
-    public void createEnemy() {
-        /* * Area 0 */
-        int areaX = areaMaps.get(0).getPosX();
-        int areaY = areaMaps.get(0).getPosY();
-
-        enemyStack.get(0).add(new Ghost( (14 + areaX) * 48, (9 + areaY) * 48));
-        enemyStack.get(0).add(new Jumper( (14 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(0).add(new Mage( (14 + areaX) * 48, (4 + areaY) * 48));
-        enemyStack.get(0).add(new Jumper( (10 + areaX) * 48, (9 + areaY) * 48));
-        enemyStack.get(0).add(new Jumper( (10 + areaX) * 48, (7 + areaY) * 48));
-        enemyStack.get(0).add(new Jumper( (2 + areaX) * 48, (14 + areaY) * 48));
-        enemyStack.get(0).add(new Jumper( (14 + areaX) * 48, (0 + areaY) * 48));
-        enemyStack.get(0).add(new Suicider( (9 + areaX) * 48, (0 + areaY) * 48));
-        enemyStack.get(0).add(new Suicider( (9 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(0).add(new Ghost( (10 + areaX) * 48, (14 + areaY) * 48));
-        enemyStack.get(0).add(new Balloon( (2 + areaX) * 48, (3 + areaY) * 48));
-        enemyStack.get(0).add(new Balloon( (14 + areaX) * 48, (2 + areaY) * 48));
-        enemyStack.get(0).add(new Suicider( (4 + areaX) * 48, (0 + areaY) * 48));
-        enemyStack.get(0).add(new Mage( (4 + areaX) * 48, (9 + areaY) * 48));
-        enemyStack.get(0).add(new Suicider( (7 + areaX) * 48, (14 + areaY) * 48));
-
-        buffs.put(tileCode(9,48), new Buff(9, 48, 1));
-
-        /* * Area 1 */
-        areaX = areaMaps.get(1).getPosX();
-        areaY = areaMaps.get(1).getPosY();
-
-        enemyStack.get(1).add(new Jumper( (16 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(1).add(new Ghost( (21 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (12 + areaX) * 48, (21 + areaY) * 48));
-        enemyStack.get(1).add(new Ghost( (22 + areaX) * 48, (14 + areaY) * 48));
-        enemyStack.get(1).add(new Suicider( (18 + areaX) * 48, (22 + areaY) * 48));
-        enemyStack.get(1).add(new Mage( (10 + areaX) * 48, (17 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (18 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (12 + areaX) * 48, (7 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (22 + areaX) * 48, (2 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (8 + areaX) * 48, (1 + areaY) * 48));
-        enemyStack.get(1).add(new Balloon( (15 + areaX) * 48, (18 + areaY) * 48));
-        enemyStack.get(1).add(new Balloon( (10 + areaX) * 48, (0 + areaY) * 48));
-        enemyStack.get(1).add(new Mage( (20 + areaX) * 48, (2 + areaY) * 48));
-        enemyStack.get(1).add(new Balloon( (17 + areaX) * 48, (20 + areaY) * 48));
-        enemyStack.get(1).add(new Mage( (5 + areaX) * 48, (12 + areaY) * 48));
-
-
-        /* * Area 2 */
-        areaX = areaMaps.get(2).getPosX();
-        areaY = areaMaps.get(2).getPosY();
-
-        enemyStack.get(2).add(new Mage( (11 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(2).add(new Ghost( (11 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(2).add(new Suicider( (10 + areaX) * 48, (20 + areaY) * 48));
-        enemyStack.get(2).add(new Suicider( (8 + areaX) * 48, (10 + areaY) * 48));
-        enemyStack.get(2).add(new Ghost( (8 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(2).add(new Mage( (12 + areaX) * 48, (1 + areaY) * 48));
-        enemyStack.get(2).add(new Jumper( (10 + areaX) * 48, (14 + areaY) * 48));
-        enemyStack.get(2).add(new Ghost( (12 + areaX) * 48, (20 + areaY) * 48));
-        enemyStack.get(2).add(new Ghost( (7 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(2).add(new Balloon( (8 + areaX) * 48, (16 + areaY) * 48));
-        enemyStack.get(2).add(new Balloon( (1 + areaX) * 48, (2 + areaY) * 48));
-        enemyStack.get(2).add(new Jumper( (10 + areaX) * 48, (18 + areaY) * 48));
-        enemyStack.get(2).add(new Suicider( (2 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(2).add(new Suicider( (2 + areaX) * 48, (19 + areaY) * 48));
-        enemyStack.get(2).add(new Ghost( (6 + areaX) * 48, (4 + areaY) * 48));
-
-
-        /* * Area 3 */
-        areaX = areaMaps.get(3).getPosX();
-        areaY = areaMaps.get(3).getPosY();
-
-        enemyStack.get(3).add(new Mage( (11 + areaX) * 48, (10 + areaY) * 48));
-        enemyStack.get(3).add(new Mage( (11 + areaX) * 48, (4 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (14 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(3).add(new Balloon( (8 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (8 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(3).add(new Balloon( (12 + areaX) * 48, (2 + areaY) * 48));
-        enemyStack.get(3).add(new Mage( (10 + areaX) * 48, (15 + areaY) * 48));
-        enemyStack.get(3).add(new Balloon( (13 + areaX) * 48, (14 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (7 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(3).add(new Balloon( (8 + areaX) * 48, (16 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (13 + areaX) * 48, (18 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (10 + areaX) * 48, (17 + areaY) * 48));
-        enemyStack.get(3).add(new Ghost( (2 + areaX) * 48, (10 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (2 + areaX) * 48, (19 + areaY) * 48));
-        enemyStack.get(3).add(new Jumper( (6 + areaX) * 48, (2 + areaY) * 48));
-
-        /* * Area 4 */
-        areaX = areaMaps.get(4).getPosX();
-        areaY = areaMaps.get(4).getPosY();
-
-        enemyStack.get(4).add(new Balloon( (16 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(4).add(new Jumper( (10 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(4).add(new Ghost( (12 + areaX) * 48, (19 + areaY) * 48));
-        enemyStack.get(4).add(new Ghost( (7 + areaX) * 48, (22 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (7 + areaX) * 48, (18 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (10 + areaX) * 48, (21 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (14 + areaX) * 48, (17 + areaY) * 48));
-        enemyStack.get(4).add(new Jumper( (12 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(4).add(new Balloon( (14 + areaX) * 48, (22 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (8 + areaX) * 48, (4 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (16 + areaX) * 48, (0 + areaY) * 48));
-        enemyStack.get(4).add(new Ghost( (10 + areaX) * 48, (4 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (2 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (16 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(4).add(new Ghost( (5 + areaX) * 48, (10 + areaY) * 48));
-
-    }
-
     /** update */
     public void update(){
-
-        if((currentFrame % FPS == 0 || enemies.isEmpty())
-                && !enemyStack.get(currentArea).isEmpty()) {
-            enemies.add(enemyStack.get(currentArea).pop());
-        }
-
-        /* * interaction */
+        if(currentFrame % FPS == 0 && !enemyStack.isEmpty()) enemies.add(enemyStack.pop());
+        //interaction
         interaction();
-
-        /* * update renderer */
+        //update
+        //update renderer
         wholeScene.setOffSet(canvas);
         wholeScene.update();
-
+        //other
+        player.update(this);
+        skillFrame.update(player);
 
         /* * Cập nhật map khu vực hiện tại * */
         updateAreaMaps();
-
-        /* * other */
-        player.update(this);
-        ending.update(player);
-
-        if (player.getCurrentHP() == 0) {
-            lose = true;
-        }
-
-        if (ending.getStatus() > Ending.NORMAL) return;
-
-        skillFrame.update(player);
-        for (Fence fence: fences) fence.update();
-
-
 
         for(int i = 0; i < entities.size(); i++) {
             entities.get(i).update();
@@ -446,15 +257,17 @@ public class Gameplay {
             }
         }
 
-        /* * Sound **/
+        /** Sound **/
         if(BombermanGame.currentFrame % (FPS / 5) == 0) {
             for (int i = 0; i < sounds.size(); i++) {
                 sounds.get(i).update(player);
                 if (!sounds.get(i).exists()) {
-                    sounds.get(i).free();
+                    sounds.get(i).stop();
                     sounds.remove(i);
                     i--;
+//                    System.out.println(sounds);
                 }
+//                System.out.println("Sound update");
             }
         }
 
@@ -472,19 +285,16 @@ public class Gameplay {
             }
         }
         kill();
-        playerScene.update();
-
-        if (bufferMode == 1) {
-            enemyScene.update();
+        switch (bufferMode) {
+            default -> {}
+            case 1 -> enemyScene.update();
+            case 2 -> minimap.update(player);
         }
-
-        minimap.update(player);
     }
-    /* * Render objects.
+    /** Render objects.
      * Thứ tự render/ layering:
      * Tiles -> Buffs -> Mobile -> Bomb/Items -> Player -> Nuke -> Fx images */
 
-    /** Render theo viewport*/
     public void render(GraphicsContext gc, Renderer renderer) {
         int low_x =(int) Math.floor(renderer.getTranslateX() / Sprite.SCALED_SIZE);
         int low_y = (int) Math.floor(renderer.getTranslateY() / Sprite.SCALED_SIZE);
@@ -513,6 +323,8 @@ public class Gameplay {
 
         entities.forEach(g -> g.render(gc, renderer));
 
+
+
         /* * Player * */
         player.render(gc, renderer);
 
@@ -523,117 +335,32 @@ public class Gameplay {
         nukes.forEach(g -> g.render(gc,renderer));
     }
 
-    /** Render theo layer có ảnh hưởng của shader*/
-    public void render(Layer layer) {
-        if(layer.lighter == null){
-            render(layer.gc, layer.renderer);
-            return;
-        }
-        GraphicsContext gc = layer.gc;
-        Renderer renderer = layer.renderer;
-        //Render >:D
-        gc.fillRect(0,0, layer.canvas.getWidth(), layer.canvas.getHeight());
-        int low_x =(int) Math.floor(renderer.getTranslateX() / Sprite.SCALED_SIZE);
-        int low_y = (int) Math.floor(renderer.getTranslateY() / Sprite.SCALED_SIZE);
-        int bound_x = (int) Math.round(renderer.getWidth() / Sprite.SCALED_SIZE);
-        int bound_y = (int) Math.round(renderer.getHeight() / Sprite.SCALED_SIZE);
-        for(int i = low_y; i <= Math.min(height - 1,low_y + bound_y); i ++) {
-            for (int j = low_x; j <= Math.min(width - 1,low_x + bound_x); j++){
-                background[i][j].render(layer);
-            }
-        }
-
-        /* * Render map khu vực * */
-        for (AreaMap areaMap: areaMaps) {
-            areaMap.render(layer);
-        }
-
-        /* * Hàng rào * */
-        fences.forEach(fence -> fence.render(layer));
-
-        /* * Buffs * */
-        for(Buff i : buffs.values()) {
-            i.render(layer);
-        }
-
-        entities.forEach(g -> g.render(layer));
-        /* * Player * */
-        player.render(layer);
-
-        /* * Enemies * */
-        enemies.forEach(g -> g.render(layer));
-
-        /* * Shader * */
-        layer.shade();
-
-
-        /* ****** Not affected by shader **/
-        /* * Nukes * */
-        nukes.forEach(g -> g.render(layer));
-
-
-        /* * Ending Renderer */
-        ending.render(layer);
-    }
-
-    /** Render tổng và ghi lên cửa sổ game*/
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
 
         offsetX = Math.max(0, (canvasWidth - BombermanGame.WIDTH * Sprite.SCALED_SIZE) / 2);
         offsetY = Math.max(0, (canvasHeight - BombermanGame.HEIGHT * Sprite.SCALED_SIZE) / 2);
-
-        if (loading) {
-            gc.drawImage(loadingImg, 0, 0);
-
-            if (!returnMenu) {
-                try {
-                    reset();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            return;
-        }
-
-        if (lose) {
-
-            gc.drawImage(badEnding, 0, 0);
-            return;
-        }
-
-
         /* Game Background */
-        playerScene.render(this);
-        renderLayer(gc, playerScene, gameFrame, 10, 10);
-
-
-        /* **/
-        ending.render(gc);
-
-        if (ending.getStatus() > Ending.NORMAL) return;
-
+        gc.setFill(Color.GRAY);
+        gc.fillRect(0, 0, canvasWidth, canvasHeight);
+        render(gc, wholeScene);
 
         /* * Buffer * */
-        if (bufferMode == 1) {
-            enemyScene.render(this);
-            renderLayer(gc, enemyScene, enemyFrame, 8, 13);
+        switch (bufferMode) {
+            default -> {}
+            case 1 -> {
+                enemyScene.render(this);
+                renderStaticLayer(gc, enemyScene, enemyFrame, 8, 13);
+            }
+            case 2 -> minimap.render(gc, minimap.getX() + offsetX, minimap.getY() + offsetY);
         }
-
-        /* * Map * */
-        if (openMinimap) {
-            minimap.render(gc, WIDTH * Sprite.SCALED_SIZE * 0.8 + offsetX, HEIGHT * Sprite.SCALED_SIZE * 0.5 + offsetY);
-        }
-
         /* * Khung Skill * */
         skillFrame.render(gc, this, player);
-
-
     }
 
     /** Destroy tiles */
     public void kill() {
-        while(!killTask.isEmpty()) {
+        while(!killTask.isEmpty())
+        {
 
             Point ref = killTask.get(0);
             //handle
@@ -689,89 +416,24 @@ public class Gameplay {
     }
 
     void updateAreaMaps() {
-
-        if (enemies.isEmpty() && checkWon) {
-            wonArea ++;
-            checkWon = false;
-            openFence();
-        }
-
-
         for (int i = 0; i < areaMaps.size(); i++) {
-            int p0X = (int) Math.floor((player.getX() + player.getHeight() / 4) / Sprite.SCALED_SIZE );
-            int p0Y = (int) Math.floor(player.getY()/ Sprite.SCALED_SIZE );
-            int p1X = (int) Math.floor((player.getX() + player.getWidth()) / Sprite.SCALED_SIZE );
-            int p1Y = (int) Math.floor((player.getY() + player.getHeight()) / Sprite.SCALED_SIZE );
+            int pX = (int) Math.floor(player.getCenterX() / Sprite.SCALED_SIZE );
+            int pY = (int) Math.floor(player.getCenterY() / Sprite.SCALED_SIZE );
 
-            if (areaMaps.get(i).checkInArea(p0X, p0Y) && areaMaps.get(i).checkInArea(p1X, p1Y)) {
+            if (areaMaps.get(i).checkInArea(pX, pY)) {
 
                 if (i != currentArea) {
                     currentArea = i;
-
-                    /* To play new area*/
-                    if (currentArea > wonArea) {
-                        closeFence();
-                        checkWon = true;
-                    }
-
                     break;
                 }
             }
         }
     }
-
-
-    public void openFence() {
-
-        Audio.start(openFence);
-
-        if (wonArea == 0) {
-            fences.get(0).setStatus(Fence.DOWN);
-            fences.get(1).setStatus(Fence.DOWN);
-        } else if (wonArea == 1) {
-            fences.get(1).setStatus(Fence.DOWN);
-            fences.get(2).setStatus(Fence.DOWN);
-            fences.get(3).setStatus(Fence.DOWN);
-        } else if (wonArea == 2) {
-            fences.get(3).setStatus(Fence.DOWN);
-            fences.get(4).setStatus(Fence.DOWN);
-            fences.get(5).setStatus(Fence.DOWN);
-        } else if (wonArea == 3) {
-            fences.get(5).setStatus(Fence.DOWN);
-            fences.get(6).setStatus(Fence.DOWN);
-            fences.get(7).setStatus(Fence.DOWN);
-        } else if (wonArea == 4) {
-            fences.get(7).setStatus(Fence.DOWN);
-            fences.get(8).setStatus(Fence.DOWN);
-        }
-
-    }
-
-    public void closeFence() {
-        Audio.start(closeFence);
-
-        if (currentArea == 1) {
-            fences.get(1).setStatus(Fence.UP);
-        } else if (currentArea == 2) {
-            fences.get(3).setStatus(Fence.UP);
-        } else if (currentArea == 3) {
-            fences.get(5).setStatus(Fence.UP);
-        } else if (currentArea == 4) {
-            fences.get(7).setStatus(Fence.UP);
-        }
-    }
-
-    /** Trả về hash code cho ô */
     public static Integer tileCode(int x, int y) {
         if(width >= height) return y * width + x;
         else return x * height + y;
     }
-    /** Trả về tọa độ từ hash code*/
-    public static Point decodeTile(int tileCode) {
-        if(width >= height) return new Point(tileCode % width, tileCode / width);
-            else return new Point(tileCode / height, tileCode % height);
-    }
-    /** Đổi góc nhìn của màn hình nhỏ*/
+
     public void switchPov() {
         if(enemies.size() == 0) {
             enemyScene.setPov(player);
@@ -815,58 +477,32 @@ public class Gameplay {
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                if (!lose) {
-                    switch (keyEvent.getCode()) {
-                        case UP -> {
-                            player.stopMoving(Bomber.UP);
-                        }
-                        case DOWN -> {
-                            player.stopMoving(Bomber.DOWN);
-                        }
-                        case LEFT -> {
-                            player.stopMoving(Bomber.LEFT);
-                        }
-                        case RIGHT -> {
-                            player.stopMoving(Bomber.RIGHT);
-                        }
-                        case Q -> player.placeBomb();
-                        case W -> player.shootFireball();
-                        case E -> player.goInvisible(5);
-                        case R -> player.placeNuke();
-                        case D -> player.setDodge();
-                        case F -> player.recover();
-                        case TAB -> bufferMode = (bufferMode + 1) % 2;
-                        case T -> switchPov();
-                        case P -> enemyScene.turnShader();
-                        case M -> openMinimap = !openMinimap;
-
-
-                        /* * Hack game */
-                        case END -> {
-//                        wonArea ++;
-//                        openFence();
-                            enemies.clear();
-                            enemyStack.get(currentArea).clear();
-                        }
+                switch (keyEvent.getCode()) {
+                    case UP -> {
+                        player.stopMoving(Bomber.UP);
                     }
-                } else {
-                    switch (keyEvent.getCode()) {
-                        case SPACE -> {
-                            returnMenu = true;
-                            loading = true;
-                        }
-                        case ENTER -> {
-//                          reset();
-                            loading = true;
-
-                        }
-
+                    case DOWN -> {
+                        player.stopMoving(Bomber.DOWN);
                     }
+                    case LEFT -> {
+                        player.stopMoving(Bomber.LEFT);
+                    }
+                    case RIGHT -> {
+                        player.stopMoving(Bomber.RIGHT);
+                    }
+                    case Q -> player.placeBomb();
+                    case W -> player.shootFireball();
+                    case E -> player.goInvisible(5);
+                    case R -> player.placeNuke();
+                    case D -> player.setDodge();
+                    case F -> player.recover();
+                    case TAB -> bufferMode = (bufferMode + 1) % 3;
+                    case T -> switchPov();
+//                    case P -> playerScene.switchShadow();
                 }
-
             }});
     }
-    public void renderLayer(GraphicsContext gc, Layer input, Image cover, double coverThicknessX, double coverThicknessY){
+    public void renderStaticLayer(GraphicsContext gc, Layer input, Image cover, double coverThicknessX, double coverThicknessY){
         Triplets v = input.details();
         gc.drawImage(input.getImg(),wholeScene.getWidth() * v.v1, wholeScene.getHeight() * v.v2
                 , wholeScene.getWidth() * v.v3, wholeScene.getHeight() * v.v3);
@@ -874,60 +510,5 @@ public class Gameplay {
             gc.drawImage(cover,wholeScene.getWidth() * v.v1 - coverThicknessX, wholeScene.getHeight() * v.v2 - coverThicknessY
                     , wholeScene.getWidth() * v.v3 + coverThicknessX * 2, wholeScene.getHeight() * v.v3 + coverThicknessY * 2);
         }
-    }
-
-    public void reset() throws IOException {
-        enemyStack.clear();
-        for (int i = 0 ; i < 5; i++) {
-            Stack<Enemy> stack = new Stack<>();
-            enemyStack.add(stack);
-        }
-
-        areaMaps.clear();
-        enemies.clear();
-        fires.clear();
-        fences.clear();
-        skillFrame = new SkillFrame();
-        buffs.clear();
-
-        resetSound();
-
-        entities.clear();
-        nukes.clear();
-
-        killTask.clear();
-
-        reset = true;
-        currentArea = 0;
-        wonArea = -1;
-        checkWon = true;
-        openMinimap = false;
-        chosenEnemy = 0;
-        bufferMode = 0;
-        lose = false;
-        returnMenu = false;
-        loading = false;
-
-        importing("src/main/resources/maps/map.txt", "src/main/resources/maps/area.txt");
-
-        reset = false;
-    }
-
-    public static void resetSound() {
-        for (Sound sound : sounds) {
-            sound.stop();
-            sound.free();
-        }
-
-        sounds.clear();
-    }
-    public static void sqawnFire(double xUnit, double yUnit, double duration, int damage, boolean friendly, boolean special, boolean mixed) {
-        int tileCode = tileCode((int) xUnit, (int) yUnit);
-        if(fires.containsKey(tileCode)) fires.get(tileCode).addDamage(damage * (friendly ? 1: -1));
-            else entities.add(new Fire(xUnit, yUnit, duration, damage * (friendly ? 1: -1), mixed,  special));
-    }
-
-    public void addEnemy(Enemy enemy) {
-        enemyStack.get(currentArea).add(enemy);
     }
 }
