@@ -3,12 +3,13 @@ package uet.oop.bomberman.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.graphics.*;
+import uet.oop.bomberman.graphics.Renderer;
+import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.Objects;
 
 import static uet.oop.bomberman.game.Gameplay.tileCode;
-
+import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
 
 public class Fence extends Entity {
 
@@ -29,9 +30,7 @@ public class Fence extends Entity {
     /** up is 1, down is 0 */
     private boolean status;
 
-    private Anim fire;
-
-    public Fence(int xUnit, int yUnit, int type, int fire_type) {
+    public Fence(int xUnit, int yUnit, int type) {
         super(xUnit, yUnit);
         this.tileX = xUnit;
         this.tileY = yUnit;
@@ -40,8 +39,6 @@ public class Fence extends Entity {
 
         this.type = type;
         this.status = true;
-
-        fire = new Anim(SpriteSheet.firePillar.get(fire_type), 4);
     }
 
     public void setStatus(boolean status) {
@@ -50,7 +47,7 @@ public class Fence extends Entity {
         char tile;
 
         if (status == UP) {
-            tile = '~';
+            tile = '@';
         } else {
             tile = '.';
         }
@@ -70,7 +67,7 @@ public class Fence extends Entity {
 
     @Override
     public void update() {
-        fire.update();
+
     }
 
     @Override
@@ -99,30 +96,15 @@ public class Fence extends Entity {
 
     @Override
     public void render(GraphicsContext gc, Renderer renderer) {
-
+        if(!tileCodes.isEmpty()) {
+            if(!tileCodes.contains(tileCode(tileX, tileY))) return;
+        }
         if(type == HORIZONTAL) {
             renderer.renderImg(gc, (status == UP ? horizontalUp : horizontalDown),
-                    posX + shiftX,
-                    posY + shiftY , false);
-
-            renderer.renderImg(gc, fire.getImage(),
-                    posX + shiftX - 48,
-                    posY + shiftY - 10 , false);
-            renderer.renderImg(gc, fire.getImage(),
-                    posX + shiftX + 48 * 5,
-                    posY + shiftY - 10 , false);
-
+                                        posX + shiftX, posY + shiftY - 40, false);
         } else if ( type == VERTICAL) {
             renderer.renderImg(gc, (status == UP ? verticalUp : verticalDown),
-                    posX + shiftX,
-                    posY + shiftY, false);
-
-            renderer.renderImg(gc, fire.getImage(),
-                    posX + shiftX ,
-                    posY + shiftY - 10 - 48, false);
-            renderer.renderImg(gc, fire.getImage(),
-                    posX + shiftX ,
-                    posY + shiftY - 10 + 48 * 5, false);
+                                        posX + shiftX, posY + shiftY - 30, false);
         }
     }
 }

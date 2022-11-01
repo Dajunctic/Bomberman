@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import uet.oop.bomberman.graphics.*;
 
 import static uet.oop.bomberman.game.Gameplay.tileCode;
+import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
 
 public class Ghost extends Balloon{
     private static SpriteSheet ghost = new SpriteSheet("/sprites/enemy/Ghost/move.png", 12);
@@ -23,7 +24,13 @@ public class Ghost extends Balloon{
         margin = 5;
     }
     public void render(GraphicsContext gc, Renderer renderer) {
+        if(!tileCodes.isEmpty()) {
+            if(!tileCodes.contains(tileCode(tileX, tileY))) return;
+        }
         if(!visible(renderer)) return;
+        if(!tileCodes.isEmpty()) {
+            if(!tileCodes.contains(tileCode(tileX, tileY))) return;
+        }
         super.render(gc, renderer);
     }
     public boolean visible(Renderer renderer) {

@@ -17,6 +17,7 @@ import java.util.*;
 import static uet.oop.bomberman.game.BombermanGame.FPS;
 import static uet.oop.bomberman.game.BombermanGame.currentFrame;
 import static uet.oop.bomberman.game.Gameplay.*;
+import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
 import static uet.oop.bomberman.graphics.Sprite.spot;
 import static uet.oop.bomberman.others.Basic.inf;
 
@@ -236,7 +237,9 @@ public abstract class Enemy extends Mobile{
 
     @Override
     public void render(GraphicsContext gc, Renderer renderer) {
-
+        if(!tileCodes.isEmpty()) {
+            if(!tileCodes.contains(tileCode(tileX, tileY))) return;
+        }
         /* * Hiển thị máu */
         renderHP(gc, renderer);
 
@@ -258,10 +261,7 @@ public abstract class Enemy extends Mobile{
         if(isAttacking || !appear.isDead()) return;
         if(distanceCheck <= 2 * Sprite.SCALED_SIZE) {
                 stuckTime++;
-
-
-
-
+                System.out.println("Stucked in " + stuckTime);
                 if (stuckTime >= 5) escape();
         }
         else stuckTime = 0;

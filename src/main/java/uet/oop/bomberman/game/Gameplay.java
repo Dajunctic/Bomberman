@@ -23,6 +23,7 @@ import com.google.common.collect.ArrayListMultimap;
 import java.io.*;
 import java.util.*;
 
+//import static com.sun.javafx.util.Utils.contains;
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.BombermanGame.scene;
 
@@ -334,7 +335,53 @@ public class Gameplay {
         /* * Nukes * */
         nukes.forEach(g -> g.render(gc,renderer));
     }
+    public void render(Layer layer) {
+        if(layer.lighter == null){
+            render(layer.gc, layer.renderer);
+            return;
+        }
+        //Initialize
+        ArrayList<Integer> opCode = layer.lighter.tileCodes;
+        GraphicsContext gc = layer.gc;
+        Renderer renderer = layer.renderer;
 
+        //Render >:D
+        gc.fillRect(0,0, layer.canvas.getWidth(), layer.canvas.getHeight());
+        int low_x =(int) Math.floor(renderer.getTranslateX() / Sprite.SCALED_SIZE);
+        int low_y = (int) Math.floor(renderer.getTranslateY() / Sprite.SCALED_SIZE);
+        int bound_x = (int) Math.round(renderer.getWidth() / Sprite.SCALED_SIZE);
+        int bound_y = (int) Math.round(renderer.getHeight() / Sprite.SCALED_SIZE);
+        for(int i = low_y; i <= Math.min(height - 1,low_y + bound_y); i ++) {
+            for (int j = low_x; j <= Math.min(width - 1,low_x + bound_x); j++){
+                if(opCode.contains(tileCode(j, i))) background[i][j].render(gc, renderer);
+            }
+        }
+
+
+        /* * Render map khu vực * */
+        for (AreaMap areaMap: areaMaps) {
+            areaMap.render(gc, renderer);
+        }
+
+        /* * Hàng rào * */
+        for (Fence fence: fences) {
+            fence.render(gc, renderer);
+        }
+        /* * Buffs * */
+        for(Buff i : buffs.values()) {
+            i.render(gc, renderer);
+        }
+
+        entities.forEach(g -> g.render(gc, renderer));
+        /* * Player * */
+        player.render(gc, renderer);
+
+        /* * Enemies * */
+        enemies.forEach(g -> g.render(gc,renderer));
+
+        /* * Nukes * */
+        nukes.forEach(g -> g.render(gc,renderer));
+    }
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
 
         offsetX = Math.max(0, (canvasWidth - BombermanGame.WIDTH * Sprite.SCALED_SIZE) / 2);
