@@ -170,15 +170,15 @@ public class Gameplay {
 
         createMap();
         //testing things
-        enemyStack.add(new Ghost(8 * 48, 46 * 48));
-        enemyStack.add(new Mage( 17 * 48, 52 * 48));
-        enemyStack.add(new Mage( 13 * 48, 42 * 48));
-        enemyStack.add(new Jumper(15 * 48, 42 * 48));
-        enemyStack.add(new Jumper(15 * 48, 40 * 48));
-        enemyStack.add(new Suicider(15 * 48, 52 * 48));
-        enemyStack.add(new Suicider(15 * 48, 52 * 48));
-        enemyStack.add(new Suicider(15 * 48, 52 * 48));
-        enemyStack.add(new Balloon(12 * 48, 48 * 48));
+//        enemyStack.add(new Ghost(8 * 48, 46 * 48));
+//        enemyStack.add(new Mage( 17 * 48, 52 * 48));
+//        enemyStack.add(new Mage( 13 * 48, 42 * 48));
+//        enemyStack.add(new Jumper(15 * 48, 42 * 48));
+//        enemyStack.add(new Jumper(15 * 48, 40 * 48));
+//        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+//        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+//        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+//        enemyStack.add(new Balloon(12 * 48, 48 * 48));
         buffs.put(tileCode(9,48), new Buff(9, 48, 1));
         System.out.println(enemies);
         wholeScene.setPov(player);
