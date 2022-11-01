@@ -9,6 +9,9 @@ import uet.oop.bomberman.graphics.Sprite;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uet.oop.bomberman.game.Gameplay.tileCode;
+import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
+
 //Buff placing, haven't implemented interface and renderer
 public class Buff extends Entity{
 
@@ -34,14 +37,16 @@ public class Buff extends Entity{
         imgs.add(new Sprite("/sprites/Buffs/staff.png", Sprite.NORMAL));
     }
     private int type;
-    private int tilex;
-    private int tiley;
+    private int tileX;
+    private int tileY;
     private final double sizeX = (double) Sprite.SCALED_SIZE / 2;
     private final double sizeY = (double) Sprite.SCALED_SIZE / 2;
 
     /** initializing */
     public Buff(double xUnit, double yUnit, int type) {
         super(xUnit, yUnit);
+        this.tileX = (int) x;
+        this.tileY = (int) y;
         this.x *= Sprite.SCALED_SIZE;
         this.y *= Sprite.SCALED_SIZE;
         this.x += sizeX;
@@ -61,6 +66,9 @@ public class Buff extends Entity{
         renderCenter(gc, gameplay);
     }
     public void renderCenter(GraphicsContext gc, Gameplay gameplay) {
+        if(!tileCodes.isEmpty()) {
+            if(!tileCodes.contains(tileCode(tileX, tileY))) return;
+        }
         gc.setEffect(effect);
          double renderX = x - sizeX / 2;
          double renderY = y - sizeY / 2 + floating;

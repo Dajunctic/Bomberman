@@ -12,6 +12,7 @@ import uet.oop.bomberman.music.LargeSound;
 import uet.oop.bomberman.music.Sound;
 
 import static uet.oop.bomberman.game.Gameplay.*;
+import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
 
 //The nuke
 public class Nuke extends Entity{
@@ -119,6 +120,9 @@ public class Nuke extends Entity{
     }
     @Override
     public void render(GraphicsContext gc, Renderer renderer) {
+        if(!tileCodes.isEmpty()) {
+            if(!tileCodes.contains(tileCode(tileX, tileY)) && !nuke.isDead()) return;
+        }
         gc.setEffect(effect);
         renderer.renderDirectImg(gc, getImg(), x + shiftX, y + shiftY, false);
         gc.setEffect(null);

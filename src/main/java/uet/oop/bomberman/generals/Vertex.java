@@ -1,5 +1,7 @@
 package uet.oop.bomberman.generals;
 
+import static java.lang.Math.PI;
+
 public class Vertex {
     public double x,y;
 
@@ -73,5 +75,11 @@ public class Vertex {
     }
     public static double dis(double x, double y) {
         return Math.sqrt(x * x + y * y);
+    }
+    public double angleToOrigin(Vertex origin) {
+        double x = this.x - origin.x;
+        double y = this.y - origin.y;
+        double bound = (x < 0 ? PI : 0) + (y < 0 && x < 0 ? PI : 0);
+        return bound + Math.atan(x / y);
     }
 }

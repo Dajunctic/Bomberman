@@ -7,6 +7,8 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.ArrayList;
+
 abstract public class Basic {
     public static double inf = 1e9 + 7;
     public static void drawRectangle(GraphicsContext gc, Rectangle rect){
@@ -36,6 +38,7 @@ abstract public class Basic {
         }
         return false;
     }
+
 
     public static double distance(double x1, double y1, double x2, double y2){
         return Math.sqrt((x1 - x2)*(x1 - x2) + (y1 - y2) * (y1 - y2));
