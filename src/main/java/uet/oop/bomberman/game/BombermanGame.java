@@ -7,6 +7,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.graphics.Sprite;
@@ -49,7 +50,8 @@ public class BombermanGame extends Application {
     public void start(Stage stage) throws IOException {
         /* * Tạo canvas */
         gc = canvas.getGraphicsContext2D();
-
+        //Background của game
+        gc.setFill(Color.BLACK);
         stackPane = new StackPane();
         stackPane.setPrefSize(Sprite.SCALED_SIZE * WIDTH + 200, Sprite.SCALED_SIZE * HEIGHT + 200);
         stackPane.getChildren().add(canvas);

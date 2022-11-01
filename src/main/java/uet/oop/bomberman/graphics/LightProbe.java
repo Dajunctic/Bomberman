@@ -6,71 +6,82 @@ import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.*;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.maps.GameMap;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.Math.PI;
 import static uet.oop.bomberman.game.Gameplay.*;
+import static uet.oop.bomberman.others.Basic.mapping;
 
 public class LightProbe {
-    private Canvas canvas;
-    private Canvas subCanvas;
     private GraphicsContext gc;
-    private WritableImage img;
-    private Mobile src;
+    public static List<Stop> gradients = new ArrayList<>();
+    static {
+        gradients.add(new Stop(0, Color.WHITE));
+        gradients.add(new Stop(1, Color.BLACK));
+    }
+    private Entity src;
     private double width;
     private double height;
     private int radius;
     private double density;
+    private double dense;
     private Vertex center;
     private Renderer screen;
     private Layer parent;
     private boolean turned = false;
-    public LightProbe(Mobile src, Renderer screen, double width, double height, int radius, double density, Layer parent) {
+    private Vertex[] checkPoint;
+    public LightProbe(Entity src, Renderer screen, int radius, double density, double dense, Layer parent, GraphicsContext gc) {
         this.src = src;
         this.screen = screen;
-        this.width = width;
-        this.height = height;
         this.radius = radius;
         this.density = density;
-        canvas = new Canvas(width, height);
-        subCanvas = new Canvas(width, height);
-        gc = canvas.getGraphicsContext2D();
-        img = new WritableImage((int) width,(int) height);
+        this.gc = gc;
+        this.dense = dense;
+        this.parent = parent;
+        checkPoint = new Vertex[(int) density];
+        init();
+    }
+
+    //initialize graphics preferences
+    public void init() {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, width, height);
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(360 / density * 2);
-        gc.setGlobalAlpha(1 / density * 1.5);
-        gc.setGlobalBlendMode(BlendMode.SRC_OVER);
+        gc.setLineWidth(360 / density * radius);
+        gc.setGlobalAlpha(dense / density);
         reset();
-        this.parent = parent;
     }
 
+    // Render lighting
     public void renderLight() {
         reset();
-        double div = 360 / density;
-        Vertex screenBound = screen.getOrigin();
+        ArrayList<Double> x = new ArrayList<>();
+        ArrayList<Double> y = new ArrayList<>();
+        Vertex origin = screen.getOrigin();
         Vertex starter = new Vertex(src.getCenterX() / Sprite.SCALED_SIZE, src.getCenterY() / Sprite.SCALED_SIZE);
-        for(double step = 0; step < 360; step += div) {
-            double angle = Math.toRadians(step);
-            Vertex end = checkPoint(starter, new Vertex(Math.cos(angle), Math.sin(angle)));
-            screen.drawTileLine(parent.gc, starter, end);
-            screen.drawTileLine(gc, starter, end);
+        gc.setStroke(new RadialGradient(0, 0.1, src.getCenterX() + origin.x,
+                                        src.getCenterY() + origin.y, radius * Sprite.SCALED_SIZE,
+                                        false, CycleMethod.NO_CYCLE, gradients));
+        for(int i = 0; i < density; i++) {
+            double angle = 2 * PI * i / density;
+            if(checkPoint[i] == null) checkPoint[i] = new Vertex(0, 0);
+            checkPoint(starter, new Vertex(Math.cos(angle), Math.sin(angle)), checkPoint[i]);
+            screen.drawTileLine(parent.gc, starter, checkPoint[i]);
+//            screen.drawTileLine(gc, starter, checkPoint[i]);
+            //gc.strokeLine(canvas.getWidth() / 2, canvas.getHeight() / 2, lightRay.x * Sprite.SCALED_SIZE, lightRay.y * Sprite.SCALED_SIZE);
         }
     }
 
-
-    public Vertex checkPoint(Vertex starter, Vertex dir) {
-        double boundX;
-        double boundY;
-        if(Math.abs(dir.getX()) <= 0.0005) {
-            boundX = 0;
-            boundY = 1;
-        }
+    // Find collision
+    public void checkPoint(Vertex starter, Vertex dir, Vertex output) {
         Vertex rayUnitStepSize =  new Vertex(Math.sqrt(1 + (dir.getY() / dir.getX()) * (dir.getY() / dir.getX()))
                                             , Math.sqrt(1 + (dir.getX() / dir.getY()) * (dir.getX() / dir.getY())));
         Point tileCheck = new Point((int) Math.floor(starter.getX()), (int) Math.floor(starter.getY()));
@@ -89,6 +100,7 @@ public class LightProbe {
         boolean stopped = false;
         double distance = 0;
         while(!stopped && distance < radius) {
+            //check out of bound
 //            if(areaMaps.get(currentArea).checkInArea(tileCheck.x, tileCheck.y) || !screen.onScreen(tileCheck.x * Sprite.SCALED_SIZE, tileCheck.y * Sprite.SCALED_SIZE)){
 //                stopped = true;
 //                break;
@@ -109,10 +121,7 @@ public class LightProbe {
                 break;
             }
         }
-        return new Vertex(starter.x + dir.x * distance, starter.y + dir.y * distance);
-    }
-    public Image getImg() {
-        return new ImageView(canvas.snapshot(null, img)).getImage();
+        output.set(starter.x + dir.x * distance, starter.y + dir.y * distance);
     }
     public void reset() {
         gc.fillRect(0,0, width, height);

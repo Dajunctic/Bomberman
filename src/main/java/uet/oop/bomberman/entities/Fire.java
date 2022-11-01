@@ -71,7 +71,7 @@ public class Fire extends Entity{
         if(special){
             ignite = new DeadAnim(explosion, 5, 1);
             ignite.setScaleFactor(1);
-            if(!friendly) sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1, 5 * Sprite.SCALED_SIZE));
+//            if(!friendly) sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1, 5 * Sprite.SCALED_SIZE));
         }
 //        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
 //        System.out.println("________________________________________________");
