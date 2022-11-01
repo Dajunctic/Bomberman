@@ -2,8 +2,11 @@ package uet.oop.bomberman.graphics;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.generals.Point;
@@ -12,8 +15,11 @@ import uet.oop.bomberman.generals.Vertex;
 
 import javax.swing.text.html.HTMLDocument;
 
+import java.util.ArrayList;
+
 import static uet.oop.bomberman.game.BombermanGame.FPS;
 import static uet.oop.bomberman.game.BombermanGame.stackPane;
+import static uet.oop.bomberman.graphics.LightProbe.gradients;
 
 public class Renderer {
     //canvas overall
@@ -228,9 +234,9 @@ public class Renderer {
         return new Vertex(boundX - translateX + shiftX, boundY - translateY + shiftY);
     }
     public void drawTileLine(GraphicsContext gc, Vertex p0, Vertex p1) {
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(10);
-        gc.setGlobalAlpha(0.1);
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(2);
+        gc.setGlobalAlpha(1);
         double renderX = boundX - translateX + shiftX;
         double renderY = boundY - translateY + shiftY;
 //        System.out.println(String.format("Line drawn from %.0f, %.0f to %.0f, %.0f", p0.x * Sprite.SCALED_SIZE + renderX, p0.y * Sprite.SCALED_SIZE + renderY,
@@ -238,5 +244,19 @@ public class Renderer {
         gc.strokeLine(p0.x * Sprite.SCALED_SIZE + renderX, p0.y * Sprite.SCALED_SIZE + renderY,
                         p1.x * Sprite.SCALED_SIZE + renderX, p1.y*Sprite.SCALED_SIZE + renderY);
         gc.setGlobalAlpha(1);
+    }
+    public void drawPolygon(GraphicsContext gc, ArrayList<Vertex> vertices, int radius) {
+        double renderX = boundX - translateX + shiftX;
+        double renderY = boundY - translateY + shiftY;
+        double[] x = new double[vertices.size()];
+        double[] y = new double[vertices.size()];
+        for(int i = 0; i < vertices.size(); i ++)
+        {
+            x[i] = vertices.get(i).x * Sprite.SCALED_SIZE - renderX;
+            y[i] = vertices.get(i).y * Sprite.SCALED_SIZE - renderY;
+//            System.out.println(String.format("Point %d: %.1f %.1f",i, x[i], y[i]));
+        }
+        gc.setFill(Color.WHITE);
+        gc.fillPolygon(x, y, vertices.size());
     }
 }

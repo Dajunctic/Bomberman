@@ -5,6 +5,9 @@ import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Renderer;
 
+import static uet.oop.bomberman.game.Gameplay.tileCode;
+import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
+
 /** Map này là máp chính thức mỗi khu vực trong GameMap
  * Map gồm brick và wall mỗi màn (dùng mảng 2 chiều)
  * Xử lí AI các thứ trong map này.
@@ -44,7 +47,10 @@ public class AreaMap {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
 
-                if (tiles[i][j] != '.') {
+                if (tiles[i][j] != '.' ) {
+                    if(!tileCodes.isEmpty()) {
+                        if(!tileCodes.contains(tileCode(j + posX, i + posY))) continue;
+                    }
                     obstacles[i][j].render(gc, gp);
                 }
             }
@@ -54,7 +60,9 @@ public class AreaMap {
     public void render(GraphicsContext gc, Renderer renderer) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-
+                if(!tileCodes.isEmpty()) {
+                    if(!tileCodes.contains(tileCode(j + posX, i + posY))) continue;
+                }
                 if (tiles[i][j] != '.') {
                     obstacles[i][j].render(gc, renderer);
                 }

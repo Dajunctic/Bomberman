@@ -7,13 +7,24 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.RadialGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Polygon;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.maps.GameMap;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import static java.lang.Math.PI;
 import static uet.oop.bomberman.game.Gameplay.*;
+import static uet.oop.bomberman.others.Basic.inf;
 
 public class LightProbe {
     private Canvas canvas;
@@ -29,6 +40,15 @@ public class LightProbe {
     private Renderer screen;
     private Layer parent;
     private boolean turned = false;
+    private ArrayList<Vertex> vertexes = new ArrayList<>();
+    public static ArrayList<Integer> tileCodes = new ArrayList();
+    public static ArrayList<Stop> gradients = new ArrayList<>();
+    static {
+        gradients.add(new Stop(0, Color.TRANSPARENT));
+        gradients.add(new Stop(0.8, Color.rgb(50, 0, 0)));
+        gradients.add(new Stop(1, Color.BLACK));
+    }
+    private RadialGradient texture;
     public LightProbe(Mobile src, Renderer screen, double width, double height, int radius, double density, Layer parent) {
         this.src = src;
         this.screen = screen;
@@ -52,30 +72,39 @@ public class LightProbe {
 
     public void renderLight() {
         reset();
-        double div = 360 / density;
-        Vertex screenBound = screen.getOrigin();
-        Vertex starter = new Vertex(src.getCenterX() / Sprite.SCALED_SIZE, src.getCenterY() / Sprite.SCALED_SIZE);
-        for(double step = 0; step < 360; step += div) {
-            double angle = Math.toRadians(step);
-            Vertex end = checkPoint(starter, new Vertex(Math.cos(angle), Math.sin(angle)));
-            screen.drawTileLine(parent.gc, starter, end);
-            screen.drawTileLine(gc, starter, end);
-        }
+        createPolygon();
+        Vertex starter = new Vertex(src.getCenterX() / Sprite.SCALED_SIZE,
+                                    src.getCenterY() / Sprite.SCALED_SIZE);
+//        screen.drawPolygon(parent.gc, vertexes, radius);
+        for(int i = 0; i < vertexes.size(); i++) screen.drawTileLine(parent.gc, vertexes.get(i), vertexes.get((i+1) % vertexes.size()));
+
     }
 
-
-    public Vertex checkPoint(Vertex starter, Vertex dir) {
-        double boundX;
-        double boundY;
-        if(Math.abs(dir.getX()) <= 0.0005) {
-            boundX = 0;
-            boundY = 1;
+    public void createPolygon() {
+        tileCodes.clear();
+        vertexes.clear();
+        double div = 2 * PI / density;
+//        System.out.println("Spin step " + div);
+        Vertex starter = new Vertex(src.getCenterX() / Sprite.SCALED_SIZE, src.getCenterY() / Sprite.SCALED_SIZE);
+        double angle = 0;
+        Vertex tempDir = new Vertex(inf,inf);
+        while (angle  <= 2 * PI){
+            Vertex dir = new Vertex(Math.cos(angle), Math.sin(angle));
+            dir.normalize();
+            addCheckPoint(starter, dir, tempDir);
+            angle += div;
+//            System.out.println("Angle: " + angle);
         }
+//        System.out.println(tileCodes);
+    }
+
+    public void addCheckPoint(Vertex starter, Vertex dir, Vertex verDir) {
         Vertex rayUnitStepSize =  new Vertex(Math.sqrt(1 + (dir.getY() / dir.getX()) * (dir.getY() / dir.getX()))
                                             , Math.sqrt(1 + (dir.getX() / dir.getY()) * (dir.getX() / dir.getY())));
         Point tileCheck = new Point((int) Math.floor(starter.getX()), (int) Math.floor(starter.getY()));
         Vertex rayLength = new Vertex(0, 0);
         Point stepDir = new Point(1, 1);
+        tileCodes.add(tileCode(tileCheck.x, tileCheck.y));
         if(dir.getX() < 0) {
             stepDir.setX(-1);
             rayLength.x = (starter.x - tileCheck.x) * rayUnitStepSize.x;
@@ -85,9 +114,9 @@ public class LightProbe {
             stepDir.setY(-1);
             rayLength.y = (starter.y - tileCheck.y) * rayUnitStepSize.y;
         } else rayLength.y = -(starter.y - (tileCheck.y + 1)) * rayUnitStepSize.y;
-
         boolean stopped = false;
         double distance = 0;
+        boolean type = false;
         while(!stopped && distance < radius) {
 //            if(areaMaps.get(currentArea).checkInArea(tileCheck.x, tileCheck.y) || !screen.onScreen(tileCheck.x * Sprite.SCALED_SIZE, tileCheck.y * Sprite.SCALED_SIZE)){
 //                stopped = true;
@@ -97,19 +126,41 @@ public class LightProbe {
             if(rayLength.x < rayLength.y) {
                 tileCheck.x += stepDir.x;
                 distance = rayLength.x;
+                type = false;
                 rayLength.x += rayUnitStepSize.x;
             } else {
                 tileCheck.y += stepDir.y;
                 distance = rayLength.y;
+                type = true;
                 rayLength.y += rayUnitStepSize.y;
             }
-
+            int tileCode = Gameplay.tileCode(tileCheck.x, tileCheck.y);
+            if(!tileCodes.contains(tileCode)) tileCodes.add(tileCode);
+            if(distance >= radius) break;
             if(Gameplay.get(tile_map[tileCheck.y][tileCheck.x], tileCheck.x, tileCheck.y) != GameMap.FLOOR){
                 stopped = true;
                 break;
             }
         }
-        return new Vertex(starter.x + dir.x * distance, starter.y + dir.y * distance);
+        double tileX;
+        double tileY;
+        if(stopped) {
+            tileX = starter.x + distance * dir.x;
+            tileY = starter.y + distance * dir.y;
+        } else {
+            tileX = starter.x + radius * dir.x;
+            tileY = starter.y + radius * dir.y;
+        }
+        if(vertexes.isEmpty()) {
+            vertexes.add(new Vertex(tileX, tileY));
+        } else {
+            Vertex temp = vertexes.get(vertexes.size() - 1);
+            double tempDir = (tileX - temp.x) * verDir.y - (tileY - temp.y) * verDir.x;
+            if(Math.abs(tempDir) > 0.0015) {
+                vertexes.add(new Vertex(tileX, tileY));
+                verDir.set(tileX - temp.x, tileY - temp.y);
+            }
+        }
     }
     public Image getImg() {
         return new ImageView(canvas.snapshot(null, img)).getImage();
@@ -119,5 +170,6 @@ public class LightProbe {
     }
     public void setPov(Mobile src) {
         this.src = src;
+//        texture = new RadialGradient(0, 0.1, src.getCenterX(), src.getCenterY(), radius, false, CycleMethod.NO_CYCLE, gradients);
     }
 }
