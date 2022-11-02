@@ -264,6 +264,7 @@ public class Gameplay {
                 sounds.get(i).update(player);
                 if (!sounds.get(i).exists()) {
                     sounds.get(i).stop();
+                    sounds.get(i).free();
                     sounds.remove(i);
                     i--;
 //                    System.out.println(sounds);

@@ -22,7 +22,7 @@ import static uet.oop.bomberman.others.Basic.inf;
 
 public abstract class Enemy extends Mobile{
 
-    protected SpriteSheet enemy_appear = new SpriteSheet("/sprites/enemy/appear.png", 9);
+    protected static SpriteSheet enemy_appear = new SpriteSheet("/sprites/enemy/appear.png", 9);
     protected Anim enemy;
     protected DeadAnim appear = new DeadAnim(enemy_appear, 3, 1);
     protected DeadAnim killed;
@@ -59,7 +59,6 @@ public abstract class Enemy extends Mobile{
     protected long lastCheck = 0;
     public int stuckTime = 0;
     private double distanceCheck = 0;
-    protected List<Integer> blocked = new ArrayList<>();
     public Enemy(double xPixel, double yPixel) {
         super(xPixel, yPixel);
         load();
@@ -304,4 +303,14 @@ public abstract class Enemy extends Mobile{
             }
         }
     }
+    public void free() {
+        enemy = null;
+        killed = null;
+        appear = null;
+        attack = null;
+        focus = null;
+        distance = null;
+        destination = null;
+    }
+
 }

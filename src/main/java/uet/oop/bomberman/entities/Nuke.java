@@ -86,6 +86,7 @@ public class Nuke extends Entity{
     public void deadAct(Gameplay gameplay) {
         //destroy all tiles including walls
         //implement method to find areaMap grid for bordering
+        super.deadAct(gameplay);
     }
 
     public void explode() {
@@ -129,5 +130,9 @@ public class Nuke extends Entity{
             if(!layer.lighter.tileCodes.contains(tileCode(tileX, tileY))) return;
         }
         render(layer.gc, layer.renderer);
+    }
+    public void free() {
+        nuke = null;
+        explosion = null;
     }
 }

@@ -83,6 +83,7 @@ public class BombermanGame extends Application {
                     render();
                     lastUpdate = l;
                     currentFrame++;
+                    System.gc();
                 }
             }
         };

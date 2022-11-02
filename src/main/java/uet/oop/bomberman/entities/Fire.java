@@ -102,11 +102,20 @@ public class Fire extends Entity{
         Gameplay.fires.get(index).remove(effector);
         Gameplay.kill(tileX, tileY);
         Gameplay.darken(tileX, tileY, SHADE_NORMAL);
+        super.deadAct(gameplay);
     }
 
     @Override
     public void kill() {
         Gameplay.killTask.add(new Point(tileX,tileY));
     }
+
     //re-apply effects
+    public void free() {
+        ignite = null;
+        fade = null;
+        burn = null;
+        index = null;
+        effector = null;
+    }
 }

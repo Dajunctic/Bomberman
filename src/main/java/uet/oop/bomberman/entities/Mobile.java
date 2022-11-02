@@ -54,8 +54,6 @@ public class Mobile extends Entity{
 
     long lastTime = 0;
     //fire properties
-
-
     protected boolean isAlly = false;
     protected int margin = 0;
 
@@ -326,6 +324,14 @@ public class Mobile extends Entity{
 
     public boolean vulnerable() {
         return true;
+    }
+    public void free() {
+        img = null;
+        HPBar.free();
+        HPBar = null;
+        manaBar.free();
+        manaBar = null;
+        direction = null;
     }
 
 }

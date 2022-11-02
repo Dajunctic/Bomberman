@@ -99,4 +99,8 @@ public class ShockWave extends Entity{
     public void render(Layer layer) {
         render(layer.gc, layer.renderer);
     }
+    public void free() {
+        shockwave = null;
+    }
+
 }

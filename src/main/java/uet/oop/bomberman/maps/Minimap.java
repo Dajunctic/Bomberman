@@ -141,4 +141,9 @@ public class Minimap extends Entity {
 
         return output;
     }
+
+    @Override
+    public void free() {
+
+    }
 }

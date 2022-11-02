@@ -100,6 +100,7 @@ public class Bomb extends Entity{
         gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0, 1, 5, duration, damage, friendly));
         gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0,-1, 5, duration, damage, friendly));
         gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, -1,0, 5, duration, damage, friendly));
+        super.deadAct(gameplay);
     }
 
     public void explode() {
@@ -121,4 +122,10 @@ public class Bomb extends Entity{
         return bomb.getImage().getHeight();
     }
 
+    public void free() {
+        explosion = null;
+        bomb = null;
+        audio.free();
+        audio = null;
+    }
 }

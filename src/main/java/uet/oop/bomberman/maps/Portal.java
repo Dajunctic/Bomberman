@@ -12,4 +12,8 @@ public class Portal extends Entity{
     public void update() {
 
     }
+
+    public void free() {
+
+    }
 }
