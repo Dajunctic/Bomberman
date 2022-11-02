@@ -122,7 +122,6 @@ public abstract class Enemy extends Mobile{
             distanceCheck += Vertex.dis(ref_x - x, ref_y - y);
             x = ref_x;
             y = ref_y;
-            if((currentFrame / 2) % FPS == 0) checkStuck();
             //check standing tile
             standingTile();
             //check if it reached its destination

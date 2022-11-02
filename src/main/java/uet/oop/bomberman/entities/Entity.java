@@ -45,7 +45,6 @@ public abstract class Entity {
         this.x = xPixel;
         this.y = yPixel;
         this.existed = true;
-        System.out.println("Entity sqawn " + this.getClass());
     }
 
     /** Dành cho thực thể bình thường như các Tiles hoặc Effect,v.v. */
@@ -56,7 +55,6 @@ public abstract class Entity {
         this.y = yUnit * Sprite.SCALED_SIZE;
         this.img = img;
         this.existed = true;
-        System.out.println("Entity sqawn " + this.getClass());
     }
 
     /** Kiểm tra thực thể có nằm trong khoảng hiện trên màn hình không */

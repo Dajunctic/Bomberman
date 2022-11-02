@@ -40,12 +40,10 @@ public class Layer {
     public boolean shade = false;
     public boolean lookAtPlayer = false;
     /** Canvas của shader, nhưng vì chậm vãi beep nên sẽ không dùng*/
-    public Canvas shader;
-    public GraphicsContext shaderGc;
+
     /** chuyển đổi trạng thái*/
     public LightProbe lighter = null;
     private int radius = 5;
-    private ArrayList<Integer> staticLightSource = new ArrayList<>();
     private GaussianBlur blur = new GaussianBlur(Sprite.SCALED_SIZE / 3);
     public Layer(double bufferX, double bufferY, double width, double height, double scale, boolean shaderEnable) {
         this.bufferX = bufferX;
@@ -53,14 +51,8 @@ public class Layer {
         this.scale = scale;
         canvas = new Canvas(width, height);
         gc = canvas.getGraphicsContext2D();
-
+        gc.setFill(Color.GRAY);
         this.shaderEnable = shaderEnable;
-        if(shaderEnable) {
-            shader = new Canvas(width, height);
-            shaderGc = shader.getGraphicsContext2D();
-            shaderGc.setFill(Color.BLACK);
-            shaderGc.setEffect(blur);
-        }
 
         img = new WritableImage((int) width, (int) height);
         renderer = new Renderer(0.5, 0.5, 0, 0, 0, 0, width, height, 1);
@@ -69,10 +61,8 @@ public class Layer {
         renderer.update();
     }
     public void render(Gameplay gameplay) {
-        gc.clearRect(0, 0, width, height);
-        shaderGc.fillRect(0, 0, width, height);
+        gc.fillRect(0, 0, width, height);
         gameplay.render(this);
-
     }
     public void setPov(Mobile pov) {
         if(pov instanceof Bomber) lookAtPlayer = true;
@@ -86,31 +76,21 @@ public class Layer {
     public Image getImg() {
         return new ImageView(canvas.snapshot(null, img)).getImage();
     }
-    public Image getShade() {
-        return new ImageView(shader.snapshot(null, img)).getImage();
-    }
 
     public Triplets details() {
         return new Triplets(bufferX, bufferY, scale);
     }
     /** Shade từ điểm sáng*/
     public void shadeDynamic() {
-//        shaderGc.setFill(Color.BLACK);
-//        shaderGc.fillRect(0, 0, shader.getWidth(), shader.getWidth());
-        //bake polygon
         lighter.renderLight();
         gc.setEffect(blur);
         gc.setGlobalBlendMode(BlendMode.MULTIPLY);
         Vertex origin = renderer.getPov().getCenter();
-//        origin.shift(-lighter.center.x, -lighter.center.y);
-        renderer.renderCenterImg(gc, lighter.getImg(), origin.x, origin.y, false, 1);
+        renderer.renderCenterImg(gc, lighter.getImg(), origin.x, origin.y, false, 1.2);
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         gc.setEffect(null);
     }
-    /** Thêm ngoại lệ render*/
-    public void shadeStatic() {
-        lighter.tileCodes.addAll(staticLightSource);
-    }
+
     /** Đổ bóng */
     public void shade() {
 
@@ -118,7 +98,6 @@ public class Layer {
                 (shaderEnable && !lookAtPlayer && shade)) {
             shade = true;
             shadeDynamic();
-            shadeStatic();
         }   else shade = false;
 
 
@@ -128,12 +107,4 @@ public class Layer {
     }
 
     /** Thêm ngoại lệ vào phơi sáng, nhưng không dùng vì chậm, và không vượt qua được layering protocol*/
-    public void illuminate(int tileX, int tileY, int mode) {
-        int tileCode = tileCode(tileX, tileY) * mode;
-        if(!staticLightSource.contains(tileCode)) staticLightSource.add(tileCode);
-    }
-    public void darken(int tileX, int tileY, int mode) {
-        Integer tileCode = tileCode(tileX, tileY) * mode;
-        if(staticLightSource.contains(tileCode)) staticLightSource.remove(tileCode);
-    }
 }
