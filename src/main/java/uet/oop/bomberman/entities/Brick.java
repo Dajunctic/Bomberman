@@ -93,9 +93,14 @@ public class Brick extends  Entity{
         if( brick == null) return ;
         brick = null;
         Gameplay.set('.', tileX, tileY, true);
+        free();
     }
     public void render(Layer layer) {
         super.render(layer);
         update();
+    }
+    public void free() {
+        brick = null;
+        passive = null;
     }
 }

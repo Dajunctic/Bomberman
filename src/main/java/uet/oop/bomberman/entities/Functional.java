@@ -22,4 +22,7 @@ public class Functional extends Entity{
     public void update() {
     }
 
+    public void free() {
+
+    }
 }

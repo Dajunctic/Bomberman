@@ -40,7 +40,10 @@ public class Balloon extends Enemy{
     @Override
     public void deadAct(Gameplay gameplay){
         killTask.add(new Point(tileX, tileY));
+        super.deadAct(gameplay);
     }
+
+
 
     @Override
     public boolean isExisted() {
