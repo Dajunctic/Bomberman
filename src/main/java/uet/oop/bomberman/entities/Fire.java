@@ -74,7 +74,6 @@ public class Fire extends Entity{
             ignite.setScaleFactor(1);
 //            if(!friendly) sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1, 5 * Sprite.SCALED_SIZE));
         }
-        Gameplay.illuminate(tileX, tileY, SHADE_NORMAL);
 //        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
 //        System.out.println("________________________________________________");
     }
@@ -101,7 +100,6 @@ public class Fire extends Entity{
     public void deadAct(Gameplay gameplay) {
         Gameplay.fires.get(index).remove(effector);
         Gameplay.kill(tileX, tileY);
-        Gameplay.darken(tileX, tileY, SHADE_NORMAL);
         super.deadAct(gameplay);
     }
 

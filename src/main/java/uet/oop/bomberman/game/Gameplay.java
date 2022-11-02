@@ -572,10 +572,4 @@ public class Gameplay {
                     , wholeScene.getWidth() * v.v3 + coverThicknessX * 2, wholeScene.getHeight() * v.v3 + coverThicknessY * 2);
         }
     }
-    public static void illuminate(int tileX, int tileY, int mode) {
-        enemyScene.illuminate(tileX, tileY, mode);
-    }
-    public static void darken(int tileX, int tileY,int mode) {
-        enemyScene.darken(tileX, tileY, mode);
-    }
 }
