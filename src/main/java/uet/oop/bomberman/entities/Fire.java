@@ -13,7 +13,6 @@ import uet.oop.bomberman.music.Sound;
 
 import static uet.oop.bomberman.game.Gameplay.sounds;
 import static uet.oop.bomberman.game.Gameplay.tileCode;
-import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
 import static uet.oop.bomberman.graphics.SpriteSheet.explosion;
 
 public class Fire extends Entity{
@@ -81,9 +80,7 @@ public class Fire extends Entity{
 
     @Override
     public void update() {
-        if(!tileCodes.isEmpty()) {
-            if(!tileCodes.contains(tileCode(tileX, tileY))) tileCodes.add(tileCode(tileX, tileY));
-        }
+
         if(!ignite.isDead()) ignite.update();
             else if(!burn.isDead()) burn.update();
                 else fade.update();

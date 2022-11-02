@@ -61,7 +61,7 @@ public class Gameplay {
 
     //enemy
     public Layer enemyScene = new Layer(0, 0, BombermanGame.WIDTH * Sprite.SCALED_SIZE,
-                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE, 1);
+                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE, 1, true);
     public static int chosenEnemy = 0;
     public static int bufferMode = 0;
     /** GUI GAME Image */
@@ -350,34 +350,33 @@ public class Gameplay {
         int bound_y = (int) Math.round(renderer.getHeight() / Sprite.SCALED_SIZE);
         for(int i = low_y; i <= Math.min(height - 1,low_y + bound_y); i ++) {
             for (int j = low_x; j <= Math.min(width - 1,low_x + bound_x); j++){
-                if(opCode.contains(tileCode(j, i))) background[i][j].render(gc, renderer);
+                background[i][j].render(layer);
             }
         }
 
-
         /* * Render map khu vực * */
         for (AreaMap areaMap: areaMaps) {
-            areaMap.render(gc, renderer);
+            areaMap.render(layer);
         }
 
         /* * Hàng rào * */
         for (Fence fence: fences) {
-            fence.render(gc, renderer);
+            fence.render(layer);
         }
         /* * Buffs * */
         for(Buff i : buffs.values()) {
-            i.render(gc, renderer);
+            i.render(layer);
         }
 
-        entities.forEach(g -> g.render(gc, renderer));
+        entities.forEach(g -> g.render(layer));
         /* * Player * */
-        player.render(gc, renderer);
+        player.render(layer);
 
         /* * Enemies * */
-        enemies.forEach(g -> g.render(gc,renderer));
+        enemies.forEach(g -> g.render(layer));
 
         /* * Nukes * */
-        nukes.forEach(g -> g.render(gc,renderer));
+        nukes.forEach(g -> g.render(layer));
     }
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
 
@@ -477,6 +476,10 @@ public class Gameplay {
         if(width >= height) return y * width + x;
         else return x * height + y;
     }
+    public static Point decodeTile(int tileCode) {
+        if(width >= height) return new Point(tileCode % width, tileCode / width);
+            else return new Point(tileCode / height, tileCode % height);
+    }
 
     public void switchPov() {
         if(enemies.size() == 0) {
@@ -542,7 +545,7 @@ public class Gameplay {
                     case F -> player.recover();
                     case TAB -> bufferMode = (bufferMode + 1) % 3;
                     case T -> switchPov();
-                    case P -> enemyScene.switchShadow();
+                    case P -> enemyScene.turnShader();
                 }
             }});
     }

@@ -13,7 +13,6 @@ import javax.swing.text.html.HTMLDocument;
 
 import static java.lang.Math.PI;
 import static uet.oop.bomberman.game.Gameplay.*;
-import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
 import static uet.oop.bomberman.graphics.Sprite.spot;
 import static uet.oop.bomberman.others.Basic.inf;
 import static uet.oop.bomberman.others.Basic.mapping;
@@ -112,9 +111,7 @@ public class Mage extends Enemy{
 
     @Override
     public void render(GraphicsContext gc, Renderer renderer) {
-        if(!tileCodes.isEmpty()) {
-            if(!tileCodes.contains(tileCode(tileX, tileY))) return;
-        }
+
         /* * Hiển thị máu */
         renderHP(gc, renderer);
         if(charging) gc.setEffect(effect);

@@ -9,7 +9,7 @@ import uet.oop.bomberman.graphics.Sprite;
 import java.util.Objects;
 
 import static uet.oop.bomberman.game.Gameplay.tileCode;
-import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
+
 
 public class Fence extends Entity {
 
@@ -96,9 +96,7 @@ public class Fence extends Entity {
 
     @Override
     public void render(GraphicsContext gc, Renderer renderer) {
-        if(!tileCodes.isEmpty()) {
-            if(!tileCodes.contains(tileCode(tileX, tileY))) return;
-        }
+
         if(type == HORIZONTAL) {
             renderer.renderImg(gc, (status == UP ? horizontalUp : horizontalDown),
                                         posX + shiftX, posY + shiftY - 40, false);
