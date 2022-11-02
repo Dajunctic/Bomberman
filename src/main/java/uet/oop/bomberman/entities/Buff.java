@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static uet.oop.bomberman.game.Gameplay.tileCode;
-import static uet.oop.bomberman.graphics.LightProbe.tileCodes;
 
 //Buff placing, haven't implemented interface and renderer
 public class Buff extends Entity{
@@ -66,9 +65,6 @@ public class Buff extends Entity{
         renderCenter(gc, gameplay);
     }
     public void renderCenter(GraphicsContext gc, Gameplay gameplay) {
-        if(!tileCodes.isEmpty()) {
-            if(!tileCodes.contains(tileCode(tileX, tileY))) return;
-        }
         gc.setEffect(effect);
          double renderX = x - sizeX / 2;
          double renderY = y - sizeY / 2 + floating;

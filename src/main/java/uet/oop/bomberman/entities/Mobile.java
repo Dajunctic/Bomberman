@@ -7,6 +7,7 @@ import javafx.util.Pair;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
+import uet.oop.bomberman.graphics.Layer;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.GameMap;
@@ -53,8 +54,7 @@ public class Mobile extends Entity{
 
     long lastTime = 0;
     //fire properties
-    protected int tileX;
-    protected int tileY;
+
 
     protected boolean isAlly = false;
     protected int margin = 0;
@@ -315,6 +315,7 @@ public class Mobile extends Entity{
                 Gameplay.height * Sprite.SCALED_SIZE - dH ));
         return new Vertex(translate_x, translate_y);
     }
+
     public boolean isAlly() {
         return isAlly;
     }
@@ -326,4 +327,5 @@ public class Mobile extends Entity{
     protected boolean vulnerable() {
         return true;
     }
+
 }

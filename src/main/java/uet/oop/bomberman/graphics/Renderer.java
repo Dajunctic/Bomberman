@@ -261,9 +261,37 @@ public class Renderer {
             i++;
         }
         gc.setEffect(effect);
-        gc.setFill(new RadialGradient(0, 0, pov.getCenterX() + renderX, pov.getCenterY() + renderY, radius * Sprite.SCALED_SIZE * scale, false, CycleMethod.NO_CYCLE, gradients));
+        gc.setFill(new RadialGradient(0, 0, pov.getCenterX() + renderX, pov.getCenterY() + renderY, radius * Sprite.SCALED_SIZE, false, CycleMethod.NO_CYCLE, gradients));
         gc.fillPolygon(x, y, i);
         gc.setEffect(null);
         gc.setFill(Color.BLACK);
+    }
+
+    public void drawPolygon(GraphicsContext gc, double[] xPoints, double[] yPoints, int nPoints, Effect effect, double radius, double scale) {
+        double renderX = boundX - translateX + shiftX;
+        double renderY = boundY - translateY + shiftY;
+        double[] x = new double[nPoints];
+        double[] y = new double[nPoints];
+        for(int i = 0;i < nPoints;i ++) {
+            x[i] = pov.getCenterX() +  (xPoints[i] * Sprite.SCALED_SIZE - pov.getCenterX()) * scale + renderX;
+            y[i] = pov.getCenterY() +  (yPoints[i] * Sprite.SCALED_SIZE - pov.getCenterY()) * scale + renderY;
+            i++;
+        }
+        gc.setFill(new RadialGradient(0, 0, pov.getCenterX() + renderX, pov.getCenterY() + renderY, radius * Sprite.SCALED_SIZE, false, CycleMethod.NO_CYCLE, gradients));
+        gc.fillPolygon(x, y, nPoints);
+        gc.setFill(Color.BLACK);
+    }
+    public void renderPolygonPreset(GraphicsContext gc, double[] x, double[] y, int nPoints, double radius, double scale) {
+        double renderX = boundX - translateX + shiftX;
+        double renderY = boundY - translateY + shiftY;
+        gc.setFill(new RadialGradient(0, 0, pov.getCenterX() + renderX, pov.getCenterY() + renderY, radius * Sprite.SCALED_SIZE, false, CycleMethod.NO_CYCLE, gradients));
+        gc.fillPolygon(x, y, nPoints);
+        gc.setFill(Color.BLACK);
+    }
+    public void clearTile(GraphicsContext gc, Point tile, double w, double h, boolean isCenter) {
+        if(!onScreen(tile.x * Sprite.SCALED_SIZE, tile.y * Sprite.SCALED_SIZE)) return;
+        double renderX = boundX - translateX + shiftX + tile.x * Sprite.SCALED_SIZE - (isCenter ? w * Sprite.SCALED_SIZE : 0);
+        double renderY = boundY - translateY + shiftY + tile.y * Sprite.SCALED_SIZE - (isCenter ? h * Sprite.SCALED_SIZE : 0);
+        gc.clearRect(renderX, renderY, w * Sprite.SCALED_SIZE, h * Sprite.SCALED_SIZE);
     }
 }

@@ -6,11 +6,15 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.generals.Vertex;
+import uet.oop.bomberman.graphics.Layer;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.others.Physics;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.stream.IntStream;
 
 import static uet.oop.bomberman.game.Gameplay.tileCode;
@@ -32,6 +36,9 @@ public abstract class Entity {
     protected double shiftX = 0;
     protected double shiftY = 0;
 
+    protected int tileX;
+    protected int tileY;
+
     /** Dành cho thực thể chuyển động theo tọa độ Pixel như Bomber, Enemy */
     public Entity(double xPixel, double yPixel) {
         this.x = xPixel;
@@ -41,6 +48,8 @@ public abstract class Entity {
 
     /** Dành cho thực thể bình thường như các Tiles hoặc Effect,v.v. */
     public Entity(double xUnit, double yUnit, Image img) {
+        this.tileX =(int) xUnit;
+        this.tileY =(int) yUnit;
         this.x = xUnit * Sprite.SCALED_SIZE;
         this.y = yUnit * Sprite.SCALED_SIZE;
         this.img = img;
@@ -150,5 +159,13 @@ public abstract class Entity {
     public void kill(){
 
     }
-
+    public Vertex getCenter() {
+        return new Vertex(getCenterX(), getCenterY());
+    }
+    public void render(Layer layer) {
+        if(layer.shaderEnable && layer.shade){
+            if(!layer.lighter.tileCodes.contains(tileCode(tileX, tileY))) return;
+        }
+        render(layer.gc, layer.renderer);
+    }
 }

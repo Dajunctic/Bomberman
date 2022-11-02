@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 
 import static uet.oop.bomberman.music.Sound.*;
 
-public class Audio {
+public class Audio implements Runnable {
     //srcs Media
     public static Media background_music;
     public static Media button;
@@ -66,5 +66,10 @@ public class Audio {
                 inp.setVolume(ratio);
                 inp.seek(Duration.millis(100));
                 inp.play();
+    }
+
+    @Override
+    public void run() {
+
     }
 }

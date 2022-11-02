@@ -82,4 +82,8 @@ public class Vertex {
         double bound = (x < 0 ? PI : 0) + (y < 0 && x < 0 ? PI : 0);
         return bound + Math.atan(x / y);
     }
+    public void shift(double shiftX, double shiftY) {
+        x += shiftX;
+        y += shiftY;
+    }
 }
