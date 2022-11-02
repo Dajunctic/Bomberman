@@ -4,12 +4,10 @@ import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.generals.Triplets;
-import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Layer;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
@@ -60,11 +58,10 @@ public class Gameplay {
     public static Renderer wholeScene = new Renderer(0.5, 0.5, 0, 0, 0, 0,
                                                 BombermanGame.WIDTH* Sprite.SCALED_SIZE,
                                             BombermanGame.HEIGHT  * Sprite.SCALED_SIZE , 1);
-    //player
-    public Layer playerScene = new Layer(0, 0,  9* Sprite.SCALED_SIZE , 9 * Sprite.SCALED_SIZE,  1);
+
     //enemy
-    public Layer enemyScene = new Layer(0.75, 0.2, BombermanGame.WIDTH * Sprite.SCALED_SIZE,
-                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE, 0.2);
+    public Layer enemyScene = new Layer(0, 0, BombermanGame.WIDTH * Sprite.SCALED_SIZE,
+                                                BombermanGame.HEIGHT * Sprite.SCALED_SIZE, 1, true);
     public static int chosenEnemy = 0;
     public static int bufferMode = 0;
     /** GUI GAME Image */
@@ -94,6 +91,7 @@ public class Gameplay {
 
     /** Load map from file */
     public void importing (String generalMap, String areaMap) throws IOException {
+
         /* Map rộng */
         try {
             // reading files
@@ -183,7 +181,6 @@ public class Gameplay {
         System.out.println(enemies);
         wholeScene.setPov(player);
         enemyScene.setPov(player);
-        playerScene.setPov(player);
     }
 
     /** Tạo map hoàn chỉnh */
@@ -230,7 +227,7 @@ public class Gameplay {
         if(currentFrame % FPS == 0 && !enemyStack.isEmpty()) enemies.add(enemyStack.pop());
         //interaction
         interaction();
-        //update
+
         //update renderer
         wholeScene.setOffSet(canvas);
         wholeScene.update();
@@ -353,42 +350,41 @@ public class Gameplay {
         int bound_y = (int) Math.round(renderer.getHeight() / Sprite.SCALED_SIZE);
         for(int i = low_y; i <= Math.min(height - 1,low_y + bound_y); i ++) {
             for (int j = low_x; j <= Math.min(width - 1,low_x + bound_x); j++){
-                if(opCode.contains(tileCode(j, i))) background[i][j].render(gc, renderer);
+                background[i][j].render(layer);
             }
         }
 
-
         /* * Render map khu vực * */
         for (AreaMap areaMap: areaMaps) {
-            areaMap.render(gc, renderer);
+            areaMap.render(layer);
         }
 
         /* * Hàng rào * */
         for (Fence fence: fences) {
-            fence.render(gc, renderer);
+            fence.render(layer);
         }
         /* * Buffs * */
         for(Buff i : buffs.values()) {
-            i.render(gc, renderer);
+            i.render(layer);
         }
 
-        entities.forEach(g -> g.render(gc, renderer));
+        entities.forEach(g -> g.render(layer));
         /* * Player * */
-        player.render(gc, renderer);
+        player.render(layer);
 
         /* * Enemies * */
-        enemies.forEach(g -> g.render(gc,renderer));
+        enemies.forEach(g -> g.render(layer));
 
         /* * Nukes * */
-        nukes.forEach(g -> g.render(gc,renderer));
+        nukes.forEach(g -> g.render(layer));
     }
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
 
         offsetX = Math.max(0, (canvasWidth - BombermanGame.WIDTH * Sprite.SCALED_SIZE) / 2);
         offsetY = Math.max(0, (canvasHeight - BombermanGame.HEIGHT * Sprite.SCALED_SIZE) / 2);
         /* Game Background */
-        gc.setFill(Color.GRAY);
-        gc.fillRect(0, 0, canvasWidth, canvasHeight);
+        gc.drawImage(gameBg, 0, 0);
+
         render(gc, wholeScene);
 
         /* * Buffer * */
@@ -396,7 +392,7 @@ public class Gameplay {
             default -> {}
             case 1 -> {
                 enemyScene.render(this);
-                renderStaticLayer(gc, enemyScene, enemyFrame, 8, 13);
+                renderLayer(gc, enemyScene, enemyFrame, 8, 13);
             }
             case 2 -> minimap.render(gc, minimap.getX() + offsetX, minimap.getY() + offsetY);
         }
@@ -480,6 +476,10 @@ public class Gameplay {
         if(width >= height) return y * width + x;
         else return x * height + y;
     }
+    public static Point decodeTile(int tileCode) {
+        if(width >= height) return new Point(tileCode % width, tileCode / width);
+            else return new Point(tileCode / height, tileCode % height);
+    }
 
     public void switchPov() {
         if(enemies.size() == 0) {
@@ -545,11 +545,11 @@ public class Gameplay {
                     case F -> player.recover();
                     case TAB -> bufferMode = (bufferMode + 1) % 3;
                     case T -> switchPov();
-//                    case P -> playerScene.switchShadow();
+                    case P -> enemyScene.turnShader();
                 }
             }});
     }
-    public void renderStaticLayer(GraphicsContext gc, Layer input, Image cover, double coverThicknessX, double coverThicknessY){
+    public void renderLayer(GraphicsContext gc, Layer input, Image cover, double coverThicknessX, double coverThicknessY){
         Triplets v = input.details();
         gc.drawImage(input.getImg(),wholeScene.getWidth() * v.v1, wholeScene.getHeight() * v.v2
                 , wholeScene.getWidth() * v.v3, wholeScene.getHeight() * v.v3);

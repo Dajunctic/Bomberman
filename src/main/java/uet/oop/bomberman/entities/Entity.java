@@ -6,7 +6,6 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.game.BombermanGame;
 import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Layer;
 import uet.oop.bomberman.graphics.Renderer;
@@ -100,14 +99,6 @@ public abstract class Entity {
 
     public double getY() {
         return y;
-    }
-
-    public int getTileX() {
-        return tileX;
-    }
-
-    public int getTileY() {
-        return tileY;
     }
 
     /** Không sửa this.getImg thành img hoặc this.img

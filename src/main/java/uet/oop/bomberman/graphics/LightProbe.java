@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.BlurType;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,87 +31,73 @@ import static uet.oop.bomberman.others.Basic.inf;
 
 public class LightProbe {
     private Canvas canvas;
-    private Canvas subCanvas;
     private GraphicsContext gc;
     private WritableImage img;
     private Mobile src;
-    private double width;
-    private double height;
     private int radius;
     private double density;
-    private Vertex center;
-    private Renderer screen;
     private Layer parent;
-    private boolean turned = false;
-    private ArrayList<Vertex> vertexes = new ArrayList<>();
-    public static ArrayList<Integer> tileCodes = new ArrayList();
+    private double[] xPoints = new double[50];
+    private double[] yPoints = new double[50];
+    private int nPoints = 0;
+    public ArrayList<Integer> tileCodes = new ArrayList();
     public static ArrayList<Stop> gradients = new ArrayList<>();
     static {
         gradients.add(new Stop(0, Color.WHITE));
-        gradients.add(new Stop(0.6, Color.rgb(50, 0, 0)));
-        gradients.add(new Stop(0.8, Color.BLACK));
+        gradients.add(new Stop(0.7, Color.rgb(30, 30, 133)));
+        gradients.add(new Stop(0.9, Color.BLACK));
     }
-    private InnerShadow fade = new InnerShadow();
+    public Vertex center;
     private RadialGradient texture;
-    public LightProbe(Mobile src, Renderer screen, double width, double height, int radius, double density, Layer parent) {
+    private GaussianBlur blur;
+    public LightProbe(Mobile src, int radius, double density, Layer parent) {
         this.src = src;
-        this.screen = screen;
-        this.width = width;
-        this.height = height;
         this.radius = radius;
         this.density = density;
-        canvas = new Canvas(width, height);
-        subCanvas = new Canvas(width, height);
+        canvas = new Canvas(radius * Sprite.SCALED_SIZE * 2, radius * Sprite.SCALED_SIZE * 2);
         gc = canvas.getGraphicsContext2D();
-        img = new WritableImage((int) width,(int) height);
-
-
+        img = new WritableImage((int) canvas.getWidth(),(int) canvas.getHeight());
+        center = new Vertex(canvas.getWidth() / 2, canvas.getHeight() / 2);
         reset();
+        init();
         this.parent = parent;
     }
     public void init() {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, width, height);
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(360 / density * 2);
-        gc.setGlobalAlpha(1 / density * 1.5);
-
         //fading
-        fade.setRadius( Sprite.SCALED_SIZE);
-        fade.setHeight( Sprite.SCALED_SIZE * 4);
-        fade.setBlurType(BlurType.TWO_PASS_BOX);
-        fade.setChoke(1.0);
-        fade.setColor(Color.BLACK);
+        texture = new RadialGradient(0, 0, center.x, center.y, radius * Sprite.SCALED_SIZE,
+                                    false, CycleMethod.NO_CYCLE, gradients);
+        blur = new GaussianBlur((double) radius * Sprite.SCALED_SIZE / 10);
+        gc.setEffect(blur);
     }
     public void renderLight() {
         reset();
         createPolygon();
-        Vertex starter = new Vertex(src.getCenterX() / Sprite.SCALED_SIZE,
-                                    src.getCenterY() / Sprite.SCALED_SIZE);
-//        screen.drawPolygon(parent.gc, vertexes, radius);
-//        for(int i = 0; i < vertexes.size(); i++) screen.drawTileLine(parent.gc, vertexes.get(i), vertexes.get((i+1) % vertexes.size()));
-        screen.drawPolygon(gc, vertexes, fade, radius, 1.5);
+        drawPolygon(1.1);
     }
 
     public void createPolygon() {
         tileCodes.clear();
-        vertexes.clear();
+        nPoints = 0;
         double div = 2 * PI / density;
 //        System.out.println("Spin step " + div);
         Vertex starter = new Vertex(src.getCenterX() / Sprite.SCALED_SIZE, src.getCenterY() / Sprite.SCALED_SIZE);
         double angle = 0;
         Vertex tempDir = new Vertex(inf,inf);
+        Vertex temp = new Vertex(-1, -1);
         while (angle  <= 2 * PI){
             Vertex dir = new Vertex(Math.cos(angle), Math.sin(angle));
             dir.normalize();
-            addCheckPoint(starter, dir, tempDir);
+            addCheckPoint(starter, dir, temp, tempDir);
             angle += div;
 //            System.out.println("Angle: " + angle);
         }
+        addPoint(temp);
 //        System.out.println(tileCodes);
     }
 
-    public void addCheckPoint(Vertex starter, Vertex dir, Vertex verDir) {
+    public void addCheckPoint(Vertex starter, Vertex dir, Vertex temp, Vertex verDir) {
         Vertex rayUnitStepSize =  new Vertex(Math.sqrt(1 + (dir.getY() / dir.getX()) * (dir.getY() / dir.getX()))
                                             , Math.sqrt(1 + (dir.getX() / dir.getY()) * (dir.getX() / dir.getY())));
         Point tileCheck = new Point((int) Math.floor(starter.getX()), (int) Math.floor(starter.getY()));
@@ -163,14 +150,18 @@ public class LightProbe {
             tileX = starter.x + radius * dir.x;
             tileY = starter.y + radius * dir.y;
         }
-        if(vertexes.isEmpty()) {
-            vertexes.add(new Vertex(tileX, tileY));
+
+        if(temp.x == -1) {
+            temp.set(tileX, tileY);
         } else {
-            Vertex temp = vertexes.get(vertexes.size() - 1);
-            double tempDir = (tileX - temp.x) * verDir.y - (tileY - temp.y) * verDir.x;
+           double tempDir = (tileX - temp.x) * verDir.y - (tileY - temp.y) * verDir.x;
             if(Math.abs(tempDir) > 0.0015) {
-                vertexes.add(new Vertex(tileX, tileY));
+                addPoint(temp);
                 verDir.set(tileX - temp.x, tileY - temp.y);
+                verDir.normalize();
+                temp.set(tileX, tileY);
+            }   else {
+                temp.set(tileX, tileY);
             }
         }
     }
@@ -178,10 +169,35 @@ public class LightProbe {
         return new ImageView(canvas.snapshot(null, img)).getImage();
     }
     public void reset() {
-        gc.fillRect(0,0, width, height);
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
     }
     public void setPov(Mobile src) {
         this.src = src;
 //        texture = new RadialGradient(0, 0.1, src.getCenterX(), src.getCenterY(), radius, false, CycleMethod.NO_CYCLE, gradients);
+    }
+    private void addPoint(Vertex temp) {
+        xPoints[nPoints] = temp.x;
+        yPoints[nPoints] = temp.y;
+        nPoints = (nPoints + 1) % 200;
+    }
+    private void normalizeArray(double scale) {
+        double avgX = 0;
+        Vertex pov = src.getCenter();
+        for(int i = 0; i < nPoints; i++) {
+            xPoints[i] = (xPoints[i] * Sprite.SCALED_SIZE - pov.x) * scale + center.x;
+            yPoints[i] = (yPoints[i] * Sprite.SCALED_SIZE - pov.y) * scale + center.y;
+            avgX += xPoints[i];
+        }
+        avgX /= nPoints;
+        System.out.println("Average x coordinates: " + avgX);
+    }
+    private void drawPolygon(double scale) {
+        normalizeArray(scale);
+//        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        reset();
+        gc.setFill(texture);
+        gc.fillPolygon(xPoints, yPoints, nPoints);
+//        gc.setEffect(null);
     }
 }
