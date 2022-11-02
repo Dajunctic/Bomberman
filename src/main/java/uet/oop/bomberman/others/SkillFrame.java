@@ -51,7 +51,7 @@ public class SkillFrame {
     Image mana;
 
     /** Vị trí thanh skill dựa trên cửa sổ game*/
-    final double xRatio = 0.15;
+    final double xRatio = 0.1;
     final double yRatio = 0.7;
     public SkillFrame() {
         for (int i = 0 ; i < healthPixels.length; i ++) {
