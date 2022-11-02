@@ -567,7 +567,7 @@ public class Bomber extends Mobile {
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
 
-        bombs.add(new Bomb(i, j, timer, radius, bombDuration, damage, true));
+        entities.add(new Bomb(i, j, timer, radius, bombDuration, damage, true));
         subtractMana(Q_MANA_CONSUMING);
         lastQ = System.currentTimeMillis();
         Audio.start(Qaudio);

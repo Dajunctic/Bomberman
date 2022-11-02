@@ -3,10 +3,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.*;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.graphics.DeadAnim;
-import uet.oop.bomberman.graphics.Renderer;
-import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.LargeSound;
 import uet.oop.bomberman.music.Sound;
@@ -20,8 +17,6 @@ public class Nuke extends Entity{
     private double nukeThreshold = 0.01;
     private DeadAnim explosion = new DeadAnim(SpriteSheet.nuke_explosion, 5, 1);
     private double expThreshold = 0.01;
-    private int tileX;
-    private int tileY;
     private int radius = 3;
     private boolean exploded = false;
     private boolean friendly = true;
@@ -96,7 +91,7 @@ public class Nuke extends Entity{
     public void explode() {
         if(exploded) return;
         exploded = true;
-        entities.add(new ShockWave(x, y, friendly, radius, damage, duration, true));
+        nukes.add(new ShockWave(x, y, friendly, radius, damage, duration, true));
         sounds.add(new Sound(x ,y, Audio.copy(Audio.fire), duration, radius * 3));
         Gameplay.sounds.add(new LargeSound(this.x + shiftX, this.y + shiftY, Audio.copy(Audio.nuke_explosion), -1));
     }
@@ -126,5 +121,13 @@ public class Nuke extends Entity{
 
     public void setEffect(Effect effect) {
         this.effect = effect;
+    }
+
+    @Override
+    public void render(Layer layer) {
+        if(layer.shaderEnable && layer.shade && !exploded){
+            if(!layer.lighter.tileCodes.contains(tileCode(tileX, tileY))) return;
+        }
+        render(layer.gc, layer.renderer);
     }
 }

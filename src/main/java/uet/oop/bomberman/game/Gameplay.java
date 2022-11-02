@@ -57,11 +57,13 @@ public class Gameplay {
     //Renderer chính
     public static Renderer wholeScene = new Renderer(0.5, 0.5, 0, 0, 0, 0,
                                                 BombermanGame.WIDTH* Sprite.SCALED_SIZE,
-                                            BombermanGame.HEIGHT  * Sprite.SCALED_SIZE , 1);
+                                            BombermanGame.HEIGHT  * Sprite.SCALED_SIZE , 0.95);
 
     //enemy
-    public Layer enemyScene = new Layer(0, 0, BombermanGame.WIDTH * Sprite.SCALED_SIZE,
+    public static Layer playerScene = new Layer(0, 0, BombermanGame.WIDTH * Sprite.SCALED_SIZE,
                                                 BombermanGame.HEIGHT * Sprite.SCALED_SIZE, 1, true);
+    public static Layer enemyScene = new Layer(0.75, 0.2, BombermanGame.WIDTH * Sprite.SCALED_SIZE / 2,
+                                        BombermanGame.HEIGHT * Sprite.SCALED_SIZE / 2, 0.2, true);
     public static int chosenEnemy = 0;
     public static int bufferMode = 0;
     /** GUI GAME Image */
@@ -168,19 +170,20 @@ public class Gameplay {
 
         createMap();
         //testing things
-//        enemyStack.add(new Ghost(8 * 48, 46 * 48));
-//        enemyStack.add(new Mage( 17 * 48, 52 * 48));
-//        enemyStack.add(new Mage( 13 * 48, 42 * 48));
-//        enemyStack.add(new Jumper(15 * 48, 42 * 48));
-//        enemyStack.add(new Jumper(15 * 48, 40 * 48));
-//        enemyStack.add(new Suicider(15 * 48, 52 * 48));
-//        enemyStack.add(new Suicider(15 * 48, 52 * 48));
-//        enemyStack.add(new Suicider(15 * 48, 52 * 48));
-//        enemyStack.add(new Balloon(12 * 48, 48 * 48));
+        enemyStack.add(new Ghost(8 * 48, 46 * 48));
+        enemyStack.add(new Mage( 17 * 48, 52 * 48));
+        enemyStack.add(new Mage( 13 * 48, 42 * 48));
+        enemyStack.add(new Jumper(15 * 48, 42 * 48));
+        enemyStack.add(new Jumper(15 * 48, 40 * 48));
+        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+        enemyStack.add(new Suicider(15 * 48, 52 * 48));
+        enemyStack.add(new Balloon(12 * 48, 48 * 48));
         buffs.put(tileCode(9,48), new Buff(9, 48, 1));
         System.out.println(enemies);
         wholeScene.setPov(player);
         enemyScene.setPov(player);
+        playerScene.setPov(player);
     }
 
     /** Tạo map hoàn chỉnh */
@@ -283,6 +286,7 @@ public class Gameplay {
             }
         }
         kill();
+        playerScene.update();
         switch (bufferMode) {
             default -> {}
             case 1 -> enemyScene.update();
@@ -293,6 +297,7 @@ public class Gameplay {
      * Thứ tự render/ layering:
      * Tiles -> Buffs -> Mobile -> Bomb/Items -> Player -> Nuke -> Fx images */
 
+    /** Render theo viewport*/
     public void render(GraphicsContext gc, Renderer renderer) {
         int low_x =(int) Math.floor(renderer.getTranslateX() / Sprite.SCALED_SIZE);
         int low_y = (int) Math.floor(renderer.getTranslateY() / Sprite.SCALED_SIZE);
@@ -332,6 +337,7 @@ public class Gameplay {
         /* * Nukes * */
         nukes.forEach(g -> g.render(gc,renderer));
     }
+    /** Render theo layer có ảnh hưởng của shader*/
     public void render(Layer layer) {
         if(layer.lighter == null){
             render(layer.gc, layer.renderer);
@@ -374,19 +380,24 @@ public class Gameplay {
 
         /* * Enemies * */
         enemies.forEach(g -> g.render(layer));
-
+        /* * Shader * */
+        layer.shade();
+        //Not affected by shader
         /* * Nukes * */
         nukes.forEach(g -> g.render(layer));
     }
+
+
+    /** Render tổng và ghi lên cửa sổ game*/
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
 
         offsetX = Math.max(0, (canvasWidth - BombermanGame.WIDTH * Sprite.SCALED_SIZE) / 2);
         offsetY = Math.max(0, (canvasHeight - BombermanGame.HEIGHT * Sprite.SCALED_SIZE) / 2);
         /* Game Background */
         gc.drawImage(gameBg, 0, 0);
-
-        render(gc, wholeScene);
-
+//        render(gc, wholeScene);
+        playerScene.render(this);
+        renderLayer(gc, playerScene, gameFrame, 10, 10);
         /* * Buffer * */
         switch (bufferMode) {
             default -> {}
@@ -472,15 +483,17 @@ public class Gameplay {
             }
         }
     }
+    /** Trả về hash code cho ô */
     public static Integer tileCode(int x, int y) {
         if(width >= height) return y * width + x;
         else return x * height + y;
     }
+    /** Trả về tọa độ từ hash code*/
     public static Point decodeTile(int tileCode) {
         if(width >= height) return new Point(tileCode % width, tileCode / width);
             else return new Point(tileCode / height, tileCode % height);
     }
-
+    /** Đổi góc nhìn của màn hình nhỏ*/
     public void switchPov() {
         if(enemies.size() == 0) {
             enemyScene.setPov(player);
@@ -557,5 +570,11 @@ public class Gameplay {
             gc.drawImage(cover,wholeScene.getWidth() * v.v1 - coverThicknessX, wholeScene.getHeight() * v.v2 - coverThicknessY
                     , wholeScene.getWidth() * v.v3 + coverThicknessX * 2, wholeScene.getHeight() * v.v3 + coverThicknessY * 2);
         }
+    }
+    public static void illuminate(int tileX, int tileY, int mode) {
+        enemyScene.illuminate(tileX, tileY, mode);
+    }
+    public static void darken(int tileX, int tileY,int mode) {
+        enemyScene.darken(tileX, tileY, mode);
     }
 }

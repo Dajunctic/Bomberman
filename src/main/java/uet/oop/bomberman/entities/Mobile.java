@@ -324,7 +324,7 @@ public class Mobile extends Entity{
         return true;
     }
 
-    protected boolean vulnerable() {
+    public boolean vulnerable() {
         return true;
     }
 

@@ -2,8 +2,6 @@ package uet.oop.bomberman.graphics;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.Bloom;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -15,13 +13,9 @@ import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Triplets;
 import uet.oop.bomberman.generals.Vertex;
 
-import javax.swing.text.html.HTMLDocument;
-
-import java.awt.*;
 import java.util.ArrayList;
 
 import static uet.oop.bomberman.game.BombermanGame.FPS;
-import static uet.oop.bomberman.game.BombermanGame.stackPane;
 import static uet.oop.bomberman.graphics.LightProbe.gradients;
 
 public class Renderer {
@@ -104,6 +98,7 @@ public class Renderer {
         return translateY;
     }
 
+    /** Loại trừ ảnh ngoài khung hình*/
     //check on screen
     public boolean onScreen(double x, double y) {
         return (Math.abs(x - translateX - width / 2) <= width / 2 + Sprite.SCALED_SIZE * 2)
@@ -118,6 +113,7 @@ public class Renderer {
                  img.getWidth() * (reverse ? -1 : 1),  img.getHeight());
         return true;
     }
+    /** Render ảnh trực tiếp không qua loại trừ*/
     public void renderDirectImg(GraphicsContext gc, Image img, double x, double y, boolean reverse) {
 
         double renderX = boundX - translateX + shiftX + (x + (reverse ? img.getWidth(): 0)) * scale;
@@ -126,6 +122,7 @@ public class Renderer {
                 scale * img.getWidth() * (reverse ? -1 : 1), scale * img.getHeight());
     }
     //move camera to somewhere
+    /** Cài đặt điểm đến của camera */
     public void setGoal(double x, double y) {
         if(Math.abs(translateX - goal.getX()) <= margin &&
                 Math.abs(translateY - goal.getY()) <= margin) {
@@ -136,6 +133,7 @@ public class Renderer {
         stable = false;
     }
 
+    /** Render ảnh */
     public void renderImg(GraphicsContext gc, Image img, double x, double y, boolean reverse, double scale) {
         if(!onScreen(x, y)) return;
         double offX = img.getWidth() * (1 - scale);
@@ -147,6 +145,7 @@ public class Renderer {
                     , scale * img.getHeight());
     }
 
+    /** Render ảnh tại trung tâm */
     public void renderCenterImg(GraphicsContext gc, Image img, double x, double y, boolean reverse, double scale) {
         if(!onScreen(x, y)) return;
         double offX = img.getWidth() * scale / 2;
@@ -158,6 +157,7 @@ public class Renderer {
                 , scale * img.getHeight());
     }
 
+    /** Render một layer*/
     public void renderLayer(GraphicsContext gc, Image img, Triplets details, boolean reverse) {
         double x = details.v1 * width;
         double y = details.v2 * height;
@@ -174,6 +174,7 @@ public class Renderer {
     }
 
     //update camera positions
+    /** Fitting vị trí cùng khung cha*/
     public void update() {
         if(pov != null){
             Vertex trans = pov.translation(width, height);
@@ -187,6 +188,8 @@ public class Renderer {
                 stable = true;
         }
     }
+
+    /** Thay đổi thông số lần lượt: vị trí, độ lệch so với gốc khung hình cha hoặc canvas tổng, zoom*/
     //directly set camera positions
     public void setTranslate(double x, double y) {
         if(translateX == x && translateY == y) return;
@@ -236,6 +239,7 @@ public class Renderer {
     public Vertex getOrigin() {
         return new Vertex(boundX - translateX + shiftX, boundY - translateY + shiftY);
     }
+    /** Vẽ đường thẳng*/
     public void drawTileLine(GraphicsContext gc, Vertex p0, Vertex p1) {
         gc.setStroke(Color.RED);
         gc.setLineWidth(2);
@@ -248,6 +252,8 @@ public class Renderer {
                         p1.x * Sprite.SCALED_SIZE + renderX, p1.y*Sprite.SCALED_SIZE + renderY);
         gc.setGlobalAlpha(1);
     }
+
+    /** Vẽ polygon từ tập */
     public void drawPolygon(GraphicsContext gc, ArrayList<Vertex> vertices, Effect effect, double radius, double scale) {
         double renderX = boundX - translateX + shiftX;
         double renderY = boundY - translateY + shiftY;
@@ -266,7 +272,7 @@ public class Renderer {
         gc.setEffect(null);
         gc.setFill(Color.BLACK);
     }
-
+    /** Vẽ polygon */
     public void drawPolygon(GraphicsContext gc, double[] xPoints, double[] yPoints, int nPoints, Effect effect, double radius, double scale) {
         double renderX = boundX - translateX + shiftX;
         double renderY = boundY - translateY + shiftY;
@@ -281,6 +287,7 @@ public class Renderer {
         gc.fillPolygon(x, y, nPoints);
         gc.setFill(Color.BLACK);
     }
+    /** Vẽ polygon từ tập điểm sau chuân hóa*/
     public void renderPolygonPreset(GraphicsContext gc, double[] x, double[] y, int nPoints, double radius, double scale) {
         double renderX = boundX - translateX + shiftX;
         double renderY = boundY - translateY + shiftY;
@@ -288,10 +295,13 @@ public class Renderer {
         gc.fillPolygon(x, y, nPoints);
         gc.setFill(Color.BLACK);
     }
-    public void clearTile(GraphicsContext gc, Point tile, double w, double h, boolean isCenter) {
+    /** Vẽ tile trên màn hình */
+    public void fillTile(GraphicsContext gc, Point tile, double w, double h, boolean isCenter) {
         if(!onScreen(tile.x * Sprite.SCALED_SIZE, tile.y * Sprite.SCALED_SIZE)) return;
-        double renderX = boundX - translateX + shiftX + tile.x * Sprite.SCALED_SIZE - (isCenter ? w * Sprite.SCALED_SIZE : 0);
-        double renderY = boundY - translateY + shiftY + tile.y * Sprite.SCALED_SIZE - (isCenter ? h * Sprite.SCALED_SIZE : 0);
-        gc.clearRect(renderX, renderY, w * Sprite.SCALED_SIZE, h * Sprite.SCALED_SIZE);
+        double renderX = boundX - translateX + shiftX + tile.x * Sprite.SCALED_SIZE - (isCenter ? w * Sprite.SCALED_SIZE / 2 : 0);
+        double renderY = boundY - translateY + shiftY + tile.y * Sprite.SCALED_SIZE - (isCenter ? h * Sprite.SCALED_SIZE / 2: 0);
+        gc.setFill(Color.WHITE);
+        gc.fillRect(renderX, renderY, w * Sprite.SCALED_SIZE, h * Sprite.SCALED_SIZE);
+        gc.setFill(Color.BLACK);
     }
 }

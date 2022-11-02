@@ -3,16 +3,13 @@ package uet.oop.bomberman.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.graphics.DeadAnim;
-import uet.oop.bomberman.graphics.Renderer;
-import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.graphics.SpriteSheet;
+import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.maps.GameMap;
 
 import static java.lang.Math.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.others.Basic.mapping;
-
+/** Nổ theo hình tròn và ignore obstacles */
 public class ShockWave extends Entity{
     private static SpriteSheet shock_wave = new SpriteSheet("/sprites/Player/Abilities/shockwave.png", 10);
     private int tileX;
@@ -43,6 +40,7 @@ public class ShockWave extends Entity{
         this.destructive = destructive;
     }
 
+    /** Tăng bán kính vành đai */
     @Override
     public void update() {
         span += speed;
@@ -54,6 +52,7 @@ public class ShockWave extends Entity{
         shockwave.update();
     }
 
+    /** Ảnh hưởng vành đai lên các tile */
     public void impact() {
         double R = stage * Sprite.SCALED_SIZE;
         int div = (int) Math.round(2 * PI * R);
@@ -94,5 +93,10 @@ public class ShockWave extends Entity{
     public void render(GraphicsContext gc, Renderer renderer) {
         double scale = mapping(0, radius * Sprite.SCALED_SIZE, 0.5, radius, span);
         renderer.renderCenterImg(gc, this.getImg(), x, y, false, scale);
+    }
+
+    @Override
+    public void render(Layer layer) {
+        render(layer.gc, layer.renderer);
     }
 }

@@ -34,6 +34,7 @@ public class LightProbe {
     private GraphicsContext gc;
     private WritableImage img;
     private Mobile src;
+    private Point srcTile = new Point(-1,-1);
     private int radius;
     private double density;
     private Layer parent;
@@ -44,12 +45,11 @@ public class LightProbe {
     public static ArrayList<Stop> gradients = new ArrayList<>();
     static {
         gradients.add(new Stop(0, Color.WHITE));
-        gradients.add(new Stop(0.7, Color.rgb(30, 30, 133)));
+        gradients.add(new Stop(0.7, Color.rgb(90, 90, 200)));
         gradients.add(new Stop(0.9, Color.BLACK));
     }
     public Vertex center;
     private RadialGradient texture;
-    private GaussianBlur blur;
     public LightProbe(Mobile src, int radius, double density, Layer parent) {
         this.src = src;
         this.radius = radius;
@@ -62,29 +62,31 @@ public class LightProbe {
         init();
         this.parent = parent;
     }
+    /** Cài đặt hiệu ứng */
     public void init() {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, width, height);
         //fading
         texture = new RadialGradient(0, 0, center.x, center.y, radius * Sprite.SCALED_SIZE,
                                     false, CycleMethod.NO_CYCLE, gradients);
-        blur = new GaussianBlur((double) radius * Sprite.SCALED_SIZE / 10);
-        gc.setEffect(blur);
     }
+    /** Vẽ vùng chiếu sáng lên local canvas*/
     public void renderLight() {
         reset();
         createPolygon();
         drawPolygon(1.1);
     }
-
+    /** Khởi tạo vùng chiếu sáng*/
     public void createPolygon() {
         tileCodes.clear();
         nPoints = 0;
         double div = 2 * PI / density;
+        srcTile.set(src.getTileX(), src.getTileY());
 //        System.out.println("Spin step " + div);
         Vertex starter = new Vertex(src.getCenterX() / Sprite.SCALED_SIZE, src.getCenterY() / Sprite.SCALED_SIZE);
         double angle = 0;
         Vertex tempDir = new Vertex(inf,inf);
+        /** Vector trung gian*/
         Vertex temp = new Vertex(-1, -1);
         while (angle  <= 2 * PI){
             Vertex dir = new Vertex(Math.cos(angle), Math.sin(angle));
@@ -97,7 +99,9 @@ public class LightProbe {
 //        System.out.println(tileCodes);
     }
 
+    /** Lưu điểm dừng */
     public void addCheckPoint(Vertex starter, Vertex dir, Vertex temp, Vertex verDir) {
+        /** Thuật toán DDA cơ bản*/
         Vertex rayUnitStepSize =  new Vertex(Math.sqrt(1 + (dir.getY() / dir.getX()) * (dir.getY() / dir.getX()))
                                             , Math.sqrt(1 + (dir.getX() / dir.getY()) * (dir.getX() / dir.getY())));
         Point tileCheck = new Point((int) Math.floor(starter.getX()), (int) Math.floor(starter.getY()));
@@ -134,13 +138,16 @@ public class LightProbe {
                 rayLength.y += rayUnitStepSize.y;
             }
             int tileCode = Gameplay.tileCode(tileCheck.x, tileCheck.y);
-            if(!tileCodes.contains(tileCode)) tileCodes.add(tileCode);
+            if(!tileCodes.contains(tileCode) &&
+                    Math.abs(tileCheck.x - srcTile.x) <= radius &&
+                    Math.abs(tileCheck.y - srcTile.y) <= radius ) tileCodes.add(tileCode);
             if(distance >= radius) break;
             if(Gameplay.get(tile_map[tileCheck.y][tileCheck.x], tileCheck.x, tileCheck.y) != GameMap.FLOOR){
                 stopped = true;
                 break;
             }
         }
+        /** Tuyển chọn điểm dừng */
         double tileX;
         double tileY;
         if(stopped) {
@@ -155,6 +162,7 @@ public class LightProbe {
             temp.set(tileX, tileY);
         } else {
            double tempDir = (tileX - temp.x) * verDir.y - (tileY - temp.y) * verDir.x;
+            /** Tham số tuyên chọn*/
             if(Math.abs(tempDir) > 0.0015) {
                 addPoint(temp);
                 verDir.set(tileX - temp.x, tileY - temp.y);
@@ -165,22 +173,27 @@ public class LightProbe {
             }
         }
     }
+    /** Xuất ảnh phơi sáng */
     public Image getImg() {
         return new ImageView(canvas.snapshot(null, img)).getImage();
     }
+    /** Đặt lại local canvas*/
     public void reset() {
         gc.setFill(Color.BLACK);
         gc.fillRect(0,0, canvas.getWidth(), canvas.getHeight());
     }
+    /** Đặt điểm sáng */
     public void setPov(Mobile src) {
         this.src = src;
 //        texture = new RadialGradient(0, 0.1, src.getCenterX(), src.getCenterY(), radius, false, CycleMethod.NO_CYCLE, gradients);
     }
+    /** Thêm điểm vào vùng sáng*/
     private void addPoint(Vertex temp) {
         xPoints[nPoints] = temp.x;
         yPoints[nPoints] = temp.y;
         nPoints = (nPoints + 1) % 200;
     }
+    /** Chuyển đổi tọa độ tile thành tọa độ Descartes nhìn vào điểm sáng*/
     private void normalizeArray(double scale) {
         double avgX = 0;
         Vertex pov = src.getCenter();
@@ -192,6 +205,7 @@ public class LightProbe {
         avgX /= nPoints;
         System.out.println("Average x coordinates: " + avgX);
     }
+    /** Render vùng sáng lên local canvas*/
     private void drawPolygon(double scale) {
         normalizeArray(scale);
 //        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -200,4 +214,5 @@ public class LightProbe {
         gc.fillPolygon(xPoints, yPoints, nPoints);
 //        gc.setEffect(null);
     }
+
 }
