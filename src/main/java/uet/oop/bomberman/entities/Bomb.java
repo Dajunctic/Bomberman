@@ -49,6 +49,8 @@ public class Bomb extends Entity{
 
     public Bomb(double xPixel, double yPixel, double timer, int radius, double duration,int damage, boolean friendly) {
         super(xPixel, yPixel);
+        tileX =(int) xPixel;
+        tileY =(int) yPixel;
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
         x += (double) Sprite.SCALED_SIZE / 2;

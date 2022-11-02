@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
+import uet.oop.bomberman.graphics.Layer;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.SpriteSheet;
 
@@ -34,13 +35,18 @@ public class Brick extends  Entity{
 
     @Override
     public void update() {
+        if(isDead) {
+            if(brick != null) {
+                if(exists()) brick.update();
+                    else deadAct();
+            }
+        }
     }
 
     @Override
     public void render(GraphicsContext gc, Gameplay gameplay) {
         double renderX = x - gameplay.translate_x + gameplay.offsetX;
         double renderY = y - gameplay.translate_y + gameplay.offsetY;
-
 
         if(!isDead) gc.drawImage(img,renderX, renderY);
         else {
@@ -66,12 +72,10 @@ public class Brick extends  Entity{
             renderer.renderImg(gc, passive, x + shiftX, y + shiftY, false);
             //death trigger
             if(brick != null){
-                if(exists()) {
+                if(exists()){
                     renderer.renderImg(gc, brick.getImage(), x + shiftX, y + shiftY, false);
                     brick.update();
-                } else {
-                    deadAct();
-                }
+                } else deadAct();
             }
         }
     }
@@ -89,5 +93,9 @@ public class Brick extends  Entity{
         if( brick == null) return ;
         brick = null;
         Gameplay.set('.', tileX, tileY, true);
+    }
+    public void render(Layer layer) {
+        super.render(layer);
+        update();
     }
 }

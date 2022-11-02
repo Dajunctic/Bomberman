@@ -13,6 +13,7 @@ import uet.oop.bomberman.music.Sound;
 
 import static uet.oop.bomberman.game.Gameplay.sounds;
 import static uet.oop.bomberman.game.Gameplay.tileCode;
+import static uet.oop.bomberman.graphics.Layer.SHADE_NORMAL;
 import static uet.oop.bomberman.graphics.SpriteSheet.explosion;
 
 public class Fire extends Entity{
@@ -21,7 +22,6 @@ public class Fire extends Entity{
     protected DeadAnim fade = new DeadAnim(SpriteSheet.fire_fade, 3, 1);
     protected DeadAnim burn;
     boolean friendly;
-    int tileX ,tileY;
     Point firePoint;
     static ColorAdjust fireEffect = new ColorAdjust(0.3, 1, 0, 0);
     private Integer index = 0;
@@ -74,13 +74,13 @@ public class Fire extends Entity{
             ignite.setScaleFactor(1);
             if(!friendly) sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1, 5 * Sprite.SCALED_SIZE));
         }
+        Gameplay.illuminate(tileX, tileY, SHADE_NORMAL);
 //        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
 //        System.out.println("________________________________________________");
     }
 
     @Override
     public void update() {
-
         if(!ignite.isDead()) ignite.update();
             else if(!burn.isDead()) burn.update();
                 else fade.update();
@@ -101,6 +101,7 @@ public class Fire extends Entity{
     public void deadAct(Gameplay gameplay) {
         Gameplay.fires.get(index).remove(effector);
         Gameplay.kill(tileX, tileY);
+        Gameplay.darken(tileX, tileY, SHADE_NORMAL);
     }
 
     @Override
