@@ -195,15 +195,11 @@ public class LightProbe {
     }
     /** Chuyển đổi tọa độ tile thành tọa độ Descartes nhìn vào điểm sáng*/
     private void normalizeArray(double scale) {
-        double avgX = 0;
         Vertex pov = src.getCenter();
         for(int i = 0; i < nPoints; i++) {
             xPoints[i] = (xPoints[i] * Sprite.SCALED_SIZE - pov.x) * scale + center.x;
             yPoints[i] = (yPoints[i] * Sprite.SCALED_SIZE - pov.y) * scale + center.y;
-            avgX += xPoints[i];
         }
-        avgX /= nPoints;
-        System.out.println("Average x coordinates: " + avgX);
     }
     /** Render vùng sáng lên local canvas*/
     private void drawPolygon(double scale) {

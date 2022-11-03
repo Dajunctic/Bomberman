@@ -741,4 +741,5 @@ public class Bomber extends Mobile {
         buffs.remove(index);
     }
 
+
 }

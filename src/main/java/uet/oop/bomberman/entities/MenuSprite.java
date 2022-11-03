@@ -22,4 +22,7 @@ public class MenuSprite extends Entity {
     public Rectangle getRect(){
         return this.rect;
     }
+    public void free() {
+
+    }
 }

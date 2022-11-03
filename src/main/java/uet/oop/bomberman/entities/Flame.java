@@ -133,7 +133,6 @@ public class Flame extends Mobile{
             flame.setDead();
             if(audio != null) {
                 audio.stop();
-                audio = null;
             }
 
         }
@@ -142,7 +141,6 @@ public class Flame extends Mobile{
         if(flame.isDead()) {
             if(audio != null) {
                 audio.stop();
-                audio = null;
             }
         }
         if(player != null && audio != null) {
@@ -234,5 +232,13 @@ public class Flame extends Mobile{
         }
 
         return false;
+    }
+
+    public void free() {
+        audio.free();
+        audio = null;
+        flame = null;
+        floors.clear();
+        floors = null;
     }
 }

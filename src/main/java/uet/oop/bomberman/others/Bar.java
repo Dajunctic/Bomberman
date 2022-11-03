@@ -55,6 +55,9 @@ public class Bar extends Entity {
         }
     }
 
+
+
+
     public void setCurrentImg(int point) {
         int n = point * 40 / maxValue;
 
@@ -123,5 +126,13 @@ public class Bar extends Entity {
         }
 
         return new ImageView(wr).getImage();
+    }
+
+    public void free() {
+        HP_BAR = null;
+        MANA_BAR = null;
+        currentBoard = null;
+        currentImg = null;
+        tempImg = null;
     }
 }

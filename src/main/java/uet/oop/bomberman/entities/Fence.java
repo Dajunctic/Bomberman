@@ -105,4 +105,7 @@ public class Fence extends Entity {
                                         posX + shiftX, posY + shiftY - 30, false);
         }
     }
+    public void free() {
+
+    }
 }

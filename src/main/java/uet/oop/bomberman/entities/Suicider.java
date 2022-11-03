@@ -108,7 +108,7 @@ public class Suicider extends Enemy{
 
     @Override
     public void deadAct(Gameplay gameplay) {
-
+        super.deadAct(gameplay);
     }
     public boolean isExisted() {
         return !killed.isDead();
@@ -116,4 +116,8 @@ public class Suicider extends Enemy{
     @Override
     public void attack(Bomber player) {
     }
+    public void free() {
+
+    }
+
 }

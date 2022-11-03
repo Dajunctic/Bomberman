@@ -65,4 +65,8 @@ public class Floor extends Entity {
     public void update() {
 
     }
+
+    public void free() {
+
+    }
 }

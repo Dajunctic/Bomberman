@@ -135,5 +135,7 @@ public class Mage extends Enemy{
             int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
             buffs.put(tileCode(i, j), new Buff(i, j, Buff.ITEM_STAFF));
         }
+        super.deadAct(gameplay);
     }
+
 }

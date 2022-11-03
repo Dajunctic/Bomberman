@@ -145,7 +145,7 @@ public abstract class Entity {
         this.img = img;
     }
     public void deadAct(Gameplay gameplay) {
-        return ;
+        free();
     }
     public void setMode(int mode) {
         this.mode = mode;
@@ -177,4 +177,5 @@ public abstract class Entity {
         }
         render(layer.gc, layer.renderer);
     }
+    public abstract void free();
 }
