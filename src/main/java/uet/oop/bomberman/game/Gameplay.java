@@ -81,7 +81,7 @@ public class Gameplay {
 
     /** Các tập hợp entity khác */
     public static ArrayList<Fence> fences = new ArrayList<>(); /* * Hàng rào giữa các màn chơi */
-    public static Multimap<Integer, Pair<Integer, Boolean>>  fires = ArrayListMultimap.create(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
+    public static HashMap<Integer, Fire>  fires = new HashMap<>(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
     public static SkillFrame skillFrame = new SkillFrame();
 
     public static Map<Integer, Buff> buffs = new HashMap<>();
@@ -264,6 +264,7 @@ public class Gameplay {
                 sounds.get(i).update(player);
                 if (!sounds.get(i).exists()) {
                     sounds.get(i).stop();
+                    sounds.get(i).free();
                     sounds.remove(i);
                     i--;
 //                    System.out.println(sounds);
@@ -576,5 +577,10 @@ public class Gameplay {
     }
     public static void darken(int tileX, int tileY,int mode) {
         enemyScene.darken(tileX, tileY, mode);
+    }
+    public static void sqawnFire(double xUnit, double yUnit, double duration, int damage, boolean friendly, boolean special, boolean mixed) {
+        int tileCode = tileCode((int) xUnit, (int) yUnit);
+        if(fires.containsKey(tileCode)) fires.get(tileCode).addDamage(damage * (friendly ? 1: -1));
+            else entities.add(new Fire(xUnit, yUnit, duration, damage * (friendly ? 1: -1), mixed,  special));
     }
 }
