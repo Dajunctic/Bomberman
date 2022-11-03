@@ -225,7 +225,7 @@ public class Flame extends Mobile{
 
                         if (!floors.contains(i * 200 + j)) {
                             floors.add(i * 200 + j);
-                            entities.add(new Fire(i, j, Math.max(0.5, duration), damage, friendly, special));
+                            Gameplay.sqawnFire(i, j, Math.max(0.5, duration), damage, friendly, special, true);
                         }
                     }
                 }

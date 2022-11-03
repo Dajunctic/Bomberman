@@ -100,19 +100,12 @@ public class Mobile extends Entity{
         //extract hashcode
         standingTile();
         Integer tileCode = Gameplay.tileCode(tileX, tileY);
-        //processor
-        int subtractHP = 0;
         /* *********** FIRE ************ */
         if(!fires.containsKey(tileCode)) return 0;
-//        System.out.println(getClass() + ", Caught fire in:" + tileX + " " + tileY + ", " + tileCode + " " + fires.get(tileCode) );
-        for(Pair<Integer, Boolean> fire : fires.get(tileCode)) {
-            //friendly fire
-            if(fire.getValue() == isAlly) continue;
-            //damaging
-            subtractHP += fire.getKey();
-//            System.out.println(String.format("-%d HP", fire.getKey()) );
-        }
-        return subtractHP;
+//        System.out.println(getClass() + ", Caught fire in:" + tileX + " " + tileY + ", " + tileCode + " " + fires.get(tileCode) )
+        int subtractHP = fires.get(tileCode).getDamage() * (isAlly ? -1 : 1);
+        if(!fires.get(tileCode).isFriendly()) subtractHP = Math.abs(subtractHP);
+        return Math.max(0, subtractHP);
     }
 
     //extension

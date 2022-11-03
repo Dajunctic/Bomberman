@@ -116,4 +116,7 @@ public class Sound {
     public void start() {
         Audio.start(audio);
     }
+    public void free() {
+        audio.dispose();
+    }
 }

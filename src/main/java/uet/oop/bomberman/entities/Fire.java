@@ -24,6 +24,7 @@ public class Fire extends Entity{
     boolean friendly;
     Point firePoint;
     static ColorAdjust fireEffect = new ColorAdjust(0.3, 1, 0, 0);
+    static ColorAdjust mixedFire = new ColorAdjust(-0.3, 1, 0, 0);
     private Integer index = 0;
     private int damage = 3;
     private Pair<Integer, Boolean> effector;
@@ -42,13 +43,14 @@ public class Fire extends Entity{
         burn = new DeadAnim(SpriteSheet.fire, 8, duration);
         this.friendly = friendly;
         if(!friendly) {
-            super.effect = fireEffect;
-        }
+            super.effect = mixedFire;
+        }   else if(damage < 0) super.effect = fireEffect;
+
         index = Gameplay.tileCode(tileX, tileY);
         this.damage = damage;
         effector = new Pair<>(damage, friendly);
 
-        Gameplay.fires.put(index, effector);
+        Gameplay.fires.put(index, this);
 //        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
 //        System.out.println("________________________________________________");
     }
@@ -62,19 +64,19 @@ public class Fire extends Entity{
         burn = new DeadAnim(SpriteSheet.fire, 8, duration);
         this.friendly = friendly;
         if(!friendly) {
-            super.effect = fireEffect;
-        }
+            super.effect = mixedFire;
+        }   else if(damage < 0) super.effect = fireEffect;
+
         index = Gameplay.tileCode(tileX, tileY);
         this.damage = damage;
         effector = new Pair<>(damage, friendly);
 
-        Gameplay.fires.put(index, effector);
+        Gameplay.fires.put(index, this);
         if(special){
             ignite = new DeadAnim(explosion, 5, 1);
             ignite.setScaleFactor(1);
 //            if(!friendly) sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1, 5 * Sprite.SCALED_SIZE));
         }
-        Gameplay.illuminate(tileX, tileY, SHADE_NORMAL);
 //        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
 //        System.out.println("________________________________________________");
     }
@@ -99,9 +101,12 @@ public class Fire extends Entity{
     }
     @Override
     public void deadAct(Gameplay gameplay) {
-        Gameplay.fires.get(index).remove(effector);
+        super.effect = null;
+        burn.free();
+        ignite.free();
+        fade.free();
+        Gameplay.fires.remove(index);
         Gameplay.kill(tileX, tileY);
-        Gameplay.darken(tileX, tileY, SHADE_NORMAL);
     }
 
     @Override
@@ -109,4 +114,24 @@ public class Fire extends Entity{
         Gameplay.killTask.add(new Point(tileX,tileY));
     }
     //re-apply effects
+
+    public  void addDamage(int bonus) {
+        if(!friendly) {
+            damage += Math.abs(bonus);
+            return;
+        }
+        if(damage * bonus <= 0) {
+            damage = Math.abs(damage + bonus);
+            friendly = false;
+            super.effect = mixedFire;
+        }
+        else damage += bonus;
+
+    }
+    public int getDamage() {
+        return  damage;
+    }
+    public boolean isFriendly() {
+        return friendly;
+    }
 }

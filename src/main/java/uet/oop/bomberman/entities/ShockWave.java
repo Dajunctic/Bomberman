@@ -67,15 +67,13 @@ public class ShockWave extends Entity{
                 System.out.println("Out of bound");
                 continue;
             }
-            if(!fires.get(tileCode(tileX, tileY)).isEmpty()) continue;
-
             //destroy
             if(destructive) {
                 Gameplay.set('.', tileX, tileY, true);
-                entities.add(new Fire(tileX, tileY, duration, damage, friendly));
+                Gameplay.sqawnFire(tileX, tileY, duration, damage, friendly, true, false);
             } else if (Gameplay.get(tile_map[tileY][tileX], tileX, tileY) != GameMap.WALL) {
                 Gameplay.set('.', tileX, tileY, true);
-                entities.add(new Fire(tileX, tileY, duration, damage, friendly));
+                Gameplay.sqawnFire(tileX, tileY, duration, damage, friendly, true, true);
             }
 
         }

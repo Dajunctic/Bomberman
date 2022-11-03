@@ -103,7 +103,7 @@ public class Layer {
         gc.setGlobalBlendMode(BlendMode.MULTIPLY);
         Vertex origin = renderer.getPov().getCenter();
 //        origin.shift(-lighter.center.x, -lighter.center.y);
-        renderer.renderCenterImg(gc, lighter.getImg(), origin.x, origin.y, false, 1.2);
+        renderer.renderCenterImg(gc, lighter.getImg(), origin.x, origin.y, false, 1);
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         gc.setEffect(null);
     }

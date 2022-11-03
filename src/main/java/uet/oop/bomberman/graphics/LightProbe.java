@@ -139,8 +139,8 @@ public class LightProbe {
             }
             int tileCode = Gameplay.tileCode(tileCheck.x, tileCheck.y);
             if(!tileCodes.contains(tileCode) &&
-                    Math.abs(tileCheck.x - srcTile.x) <= radius &&
-                    Math.abs(tileCheck.y - srcTile.y) <= radius ) tileCodes.add(tileCode);
+                    Math.abs(tileCheck.x - srcTile.x) < radius &&
+                    Math.abs(tileCheck.y - srcTile.y) < radius ) tileCodes.add(tileCode);
             if(distance >= radius) break;
             if(Gameplay.get(tile_map[tileCheck.y][tileCheck.x], tileCheck.x, tileCheck.y) != GameMap.FLOOR){
                 stopped = true;

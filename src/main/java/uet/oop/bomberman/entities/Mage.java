@@ -21,7 +21,7 @@ public class Mage extends Enemy{
     private static SpriteSheet mage = new SpriteSheet("/sprites/enemy/Mage/move.png", 2);
     private static SpriteSheet mage_dead = new SpriteSheet("/sprites/enemy/Mage/dead.png", 12);
     public static SpriteSheet mage_staff = new SpriteSheet("/sprites/enemy/Mage/staff.png", 13);
-    private int damage;
+    private int damage = 10;
     private long cooldown = 2000;
     private final long chargeTime = 2000;
     private long chargeBegin = 0;
