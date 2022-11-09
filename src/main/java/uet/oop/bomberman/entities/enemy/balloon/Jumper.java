@@ -1,8 +1,8 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.enemy.balloon;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
@@ -10,10 +10,9 @@ import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.others.Physics;
 import static uet.oop.bomberman.game.Gameplay.*;
-import static uet.oop.bomberman.graphics.Sprite.spot;
 import static uet.oop.bomberman.others.Basic.inf;
 
-public class Jumper extends Balloon{
+public class Jumper extends Balloon {
 
     private static Sprite jump = new Sprite("/sprites/enemy/Jumper/jump.png", Sprite.NORMAL);
     private static SpriteSheet jumper = new SpriteSheet("/sprites/enemy/Jumper/move.png", 12);
@@ -131,7 +130,7 @@ public class Jumper extends Balloon{
                 move();
                 offSetY = Math.max(0, Math.min(jumpThreshold, offSetY + jumpSpeed * (isJumping ? 1 : -1)));
                 shiftY = -offSetY;
-                if(player.vulnerable()) distance.set(player.x - x, player.y - y);
+                if(player.vulnerable()) distance.set(player.getPosition().x - x, player.getPosition().y - y);
                 else distance.set(inf, inf);
                 enemy.update();
 

@@ -1,13 +1,11 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.entities.background;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Bloom;
-import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.maps.GameMap;
 
 /** Class cho các thực thể đi xuyên qua được và không ảnh hưởng các thực thể khác.
  * VD: Floor, Effect

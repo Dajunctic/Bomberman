@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
-import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.game.Gameplay;
 

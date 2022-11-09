@@ -2,7 +2,7 @@ package uet.oop.bomberman.music;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.others.Basic;

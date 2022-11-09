@@ -1,6 +1,11 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.enemy.special;
 
 import javafx.scene.canvas.GraphicsContext;
+import uet.oop.bomberman.entities.enemy.Enemy;
+import uet.oop.bomberman.entities.functional.Buff;
+import uet.oop.bomberman.entities.player.Bomber;
+import uet.oop.bomberman.explosive.Flame;
+import uet.oop.bomberman.explosive.special.ShockWave;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
@@ -10,7 +15,7 @@ import uet.oop.bomberman.music.Sound;
 import static java.lang.Math.PI;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.others.Basic.inf;
-public class Mage extends Enemy{
+public class Mage extends Enemy {
     private static SpriteSheet mage = new SpriteSheet("/sprites/enemy/Mage/move.png", 2);
     private static SpriteSheet mage_dead = new SpriteSheet("/sprites/enemy/Mage/dead.png", 12);
     public static SpriteSheet mage_staff = new SpriteSheet("/sprites/enemy/Mage/staff.png", 13);
@@ -56,7 +61,7 @@ public class Mage extends Enemy{
                 else {
                     if(System.currentTimeMillis() - chargeBegin >= chargeTime) isAttacking = true;
                 }
-                if(player.vulnerable()) distance.set(player.x - x, player.y - y);
+                if(player.vulnerable()) distance.set(player.getPosition().x - x, player.getPosition().y - y);
                     else distance.set(inf, inf);
                 enemy.update();
 
@@ -76,7 +81,7 @@ public class Mage extends Enemy{
 
         if(!player.vulnerable()) return;
         if(System.currentTimeMillis() - lastAttack <= cooldown) return;
-        Vertex line = new Vertex(player.x - x, player.y - y);
+        Vertex line = new Vertex(player.getPosition().x - x, player.getPosition().y - y);
         if(Math.abs(direction.angle(line)) <= sight_angle
                 &&  line.abs() <= sight_depth * Sprite.SCALED_SIZE && !charging){
             charging = true;

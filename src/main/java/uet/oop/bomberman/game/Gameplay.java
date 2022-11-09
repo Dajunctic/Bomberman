@@ -5,7 +5,16 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.MediaPlayer;
-import javafx.util.Pair;
+import uet.oop.bomberman.entities.enemy.Enemy;
+import uet.oop.bomberman.entities.enemy.balloon.Balloon;
+import uet.oop.bomberman.entities.enemy.balloon.Ghost;
+import uet.oop.bomberman.entities.enemy.balloon.Jumper;
+import uet.oop.bomberman.entities.enemy.special.Mage;
+import uet.oop.bomberman.entities.enemy.special.Suicider;
+import uet.oop.bomberman.entities.entities.background.Fence;
+import uet.oop.bomberman.entities.functional.Buff;
+import uet.oop.bomberman.entities.player.Bomber;
+import uet.oop.bomberman.explosive.Fire;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.generals.Triplets;
@@ -19,8 +28,7 @@ import uet.oop.bomberman.maps.Minimap;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.Sound;
 import uet.oop.bomberman.others.SkillFrame;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.ArrayListMultimap;
+
 import java.io.*;
 import java.util.*;
 
@@ -853,6 +861,7 @@ public class Gameplay {
                     switch (keyEvent.getCode()) {
                         case SPACE -> {
                             returnMenu = true;
+                            game_bg.stop();
                             loading = true;
                         }
                         case ENTER -> {

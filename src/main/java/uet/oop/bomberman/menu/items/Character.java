@@ -4,12 +4,10 @@ import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.graphics.Anim;
-import uet.oop.bomberman.graphics.SpriteSheet;
 import uet.oop.bomberman.menu.Menu;
 import uet.oop.bomberman.menu.MenuItemPage;
-import uet.oop.bomberman.music.Sound;
 
 import java.util.Objects;
 

@@ -1,8 +1,8 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.explosive;
 
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
-import javafx.util.Pair;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
@@ -10,7 +10,7 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import static uet.oop.bomberman.graphics.SpriteSheet.explosion;
 
-public class Fire extends Entity{
+public class Fire extends Entity {
 
     protected DeadAnim ignite = new DeadAnim(SpriteSheet.ignite, 3, 1);
     protected DeadAnim fade = new DeadAnim(SpriteSheet.fire_fade, 3, 1);

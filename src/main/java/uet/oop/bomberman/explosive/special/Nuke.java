@@ -1,7 +1,8 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.explosive.special;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.*;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.music.Audio;
@@ -11,7 +12,7 @@ import uet.oop.bomberman.music.Sound;
 import static uet.oop.bomberman.game.Gameplay.*;
 
 //The nuke
-public class Nuke extends Entity{
+public class Nuke extends Entity {
 
     public DeadAnim nuke;
     private double nukeThreshold = 0.01;

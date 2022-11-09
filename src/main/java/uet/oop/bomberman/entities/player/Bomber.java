@@ -1,4 +1,4 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.player;
 
 import java.util.*;
 
@@ -9,13 +9,17 @@ import javafx.scene.image.Image;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import uet.oop.bomberman.explosive.bomb.Bomb;
+import uet.oop.bomberman.explosive.Flame;
+import uet.oop.bomberman.entities.Mobile;
+import uet.oop.bomberman.explosive.special.Nuke;
 import uet.oop.bomberman.game.Ending;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.music.Audio;
 
-import static uet.oop.bomberman.entities.Mage.mage_staff;
+import static uet.oop.bomberman.entities.enemy.special.Mage.mage_staff;
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 
@@ -90,7 +94,7 @@ public class Bomber extends Mobile {
 
     //toggle attacking in future
     private Vertex facing = new Vertex(0,0);
-
+    private Vertex position = new Vertex(0, 0);
 
     /**
      * Đường dẫn đến folder của Model thôi không cần ảnh.
@@ -447,7 +451,7 @@ public class Bomber extends Mobile {
     public void render(GraphicsContext gc, Renderer renderer) {
         if (Ending.status >= Ending.PORTAL) return;
 
-        if(renderer.getPov().isAlly != isAlly && invisible) return;
+        if(renderer.getPov().isAlly() != isAlly && invisible) return;
         /* * Render bombs */
         bombs.forEach(g -> g.render(gc, renderer));
         gc.setEffect(effect);
@@ -488,7 +492,7 @@ public class Bomber extends Mobile {
         if(!checkCollision(ref_x,ref_y,margin)) {
             x = ref_x;
             y = ref_y;
-
+            position.set(x, y);
             //update tiles
             standingTile();
             checkBuff();
@@ -795,4 +799,7 @@ public class Bomber extends Mobile {
         for (Bomb bomb: bombs) bomb.stopSound();
     }
 
+    public Vertex getPosition() {
+        return position;
+    }
 }

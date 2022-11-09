@@ -9,9 +9,8 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
-import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.Renderer;
@@ -23,7 +22,6 @@ import java.util.Objects;
 
 import static uet.oop.bomberman.game.BombermanGame.game_bg;
 import static uet.oop.bomberman.game.BombermanGame.scene;
-import static uet.oop.bomberman.game.Gameplay.resetSound;
 
 public class Ending extends Entity {
 

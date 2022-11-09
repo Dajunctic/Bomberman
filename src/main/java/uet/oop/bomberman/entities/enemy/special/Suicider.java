@@ -1,6 +1,9 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.enemy.special;
 
 import javafx.scene.image.Image;
+import uet.oop.bomberman.entities.player.Bomber;
+import uet.oop.bomberman.entities.enemy.Enemy;
+import uet.oop.bomberman.explosive.special.ShockWave;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.DeadAnim;
@@ -13,7 +16,7 @@ import static java.lang.Math.PI;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.graphics.SpriteSheet.explosion;
 
-public class Suicider extends Enemy{
+public class Suicider extends Enemy {
     private static final SpriteSheet suicider = new SpriteSheet("/sprites/enemy/Suicider/move.png", 12);
     private static final SpriteSheet suicider_attack = new SpriteSheet("/sprites/enemy/Suicider/attack.png", 6);
     private static final double acceleration = 0.25;
@@ -66,7 +69,7 @@ public class Suicider extends Enemy{
                 } else enemy.update();
                 move();
                 if(player.vulnerable()) {
-                    distance.set(player.x - x, player.y - y);
+                    distance.set(player.getPosition().x - x, player.getPosition().y - y);
 
                     if( distance.abs() <= 60 * speed + 3600 * acceleration && !isAttacking && status == SERIOUS) {
                         isAttacking = true;
