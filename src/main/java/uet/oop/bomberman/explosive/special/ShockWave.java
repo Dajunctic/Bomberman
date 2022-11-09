@@ -68,8 +68,8 @@ public class ShockWave extends Entity {
                 System.out.println("Out of bound");
                 continue;
             }
-            if(fires.containsKey(tileCode(tileX, tileY))) continue;
 
+            if(fires.containsKey(tileCode(tileX, tileY))) continue;
             //destroy
             if(destructive) {
                 Gameplay.set('.', tileX, tileY, true);
