@@ -118,4 +118,8 @@ public class Buff extends Entity{
         }
         System.out.println("Buff applied");
     }
+
+    public void free() {
+
+    }
 }

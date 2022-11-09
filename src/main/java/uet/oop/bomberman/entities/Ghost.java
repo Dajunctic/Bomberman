@@ -30,4 +30,8 @@ public class Ghost extends Balloon{
         if((isDead || isAttacking) || (!appear.isDead()) || (renderer.getPov().isAlly == isAlly) || !renderer.getPov().vulnerable()) return  true;
         return false;
     }
+
+    public void free() {
+
+    }
 }
