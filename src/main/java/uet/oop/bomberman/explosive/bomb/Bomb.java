@@ -92,10 +92,10 @@ public class Bomb extends Entity {
     public void deadAct(Gameplay gameplay) {
         if(exploded) return;
         exploded = true;
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 1,0, 5, duration, damage, friendly));
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0, 1, 5, duration, damage, friendly));
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0,-1, 5, duration, damage, friendly));
-        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, -1,0, 5, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 1,0, 1, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0, 1, 1, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, 0,-1, 1, duration, damage, friendly));
+        gameplay.generate(new Flame(x, y, radius * Sprite.SCALED_SIZE, -1,0, 1, duration, damage, friendly));
     }
 
     public void explode() {

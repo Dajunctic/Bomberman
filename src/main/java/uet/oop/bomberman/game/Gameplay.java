@@ -49,7 +49,7 @@ public class Gameplay {
     public static List<Point> killTask = new ArrayList<>();
     public static Bomber player;
     protected List<Enemy> enemies = new ArrayList<>();
-    protected List<Stack<Enemy>> enemyStack = new ArrayList<>();
+    protected static List<Stack<Enemy>> enemyStack = new ArrayList<>();
     /** Map tổng quan*/
     protected BufferedReader sourceMap;
     public static Entity[][] background;
@@ -936,7 +936,7 @@ public class Gameplay {
             else entities.add(new Fire(xUnit, yUnit, duration, damage * (friendly ? 1: -1), mixed,  special));
     }
 
-    public void addEnemy(Enemy enemy) {
+    public static void addEnemy(Enemy enemy) {
         enemyStack.get(currentArea).add(enemy);
     }
 }

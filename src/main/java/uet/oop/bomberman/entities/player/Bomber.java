@@ -29,10 +29,10 @@ public class Bomber extends Mobile {
     public static double W_COOLDOWN = 10;
     public static double W_INVISIBLE_COOLDOWN = 2;
     public static double E_COOLDOWN = 10;
-    public static double R_COOLDOWN = 0;
+    public static double R_COOLDOWN = 60;
 
-    public static int D_COOLDOWN = 0;
-    public static int F_COOLDOWN = 0;
+    public static int D_COOLDOWN = 5;
+    public static int F_COOLDOWN = 20;
 
     private long lastQ = 0;
     private long lastW = 0;
@@ -114,7 +114,7 @@ public class Bomber extends Mobile {
 
     /** special skills */
     //bomb
-    private int radius = 20;
+    private int radius = 3;
     private int damage = 4;
     public double timer = 2.5;
     private double bombDuration = 1.5;
@@ -125,7 +125,7 @@ public class Bomber extends Mobile {
     //firewaves
     private int Wdivider = 3;
     private int Wradius = 10;
-    private int Wdamage = 8;
+    private int Wdamage = 5;
     public int Wlevel = 1;
     private MediaPlayer Waudio = Audio.copy(Audio.shooting_fire);
     //superb W
@@ -148,7 +148,7 @@ public class Bomber extends Mobile {
     private MediaPlayer Daudio = Audio.copy(Audio.dodge);
     private DeadAnim dodgeAnim;
     //heal
-    private MediaPlayer Faudio = Audio.copy(Audio.heal);
+    public MediaPlayer Faudio = Audio.copy(Audio.heal);
     //Rep
     private MediaPlayer fatality = Audio.copy(Audio.fatal);
     private  boolean isFatal = false;
@@ -666,7 +666,7 @@ public class Bomber extends Mobile {
             (System.currentTimeMillis() - lastR < R_COOLDOWN * 1000L)) return;
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
-        nukes.add(new Nuke(i, j, timer, Rradius));
+        nukes.add(new Nuke(i, j, timer, Rradius, Rdamage));
         subtractMana(R_MANA_CONSUMING);
         lastR = System.currentTimeMillis();
         Audio.start(Qaudio);

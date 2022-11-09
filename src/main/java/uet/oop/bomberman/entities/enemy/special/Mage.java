@@ -98,8 +98,15 @@ public class Mage extends Enemy {
             sounds.add(new Sound(x, y, Audio.copy(Audio.nuke_explosion), -1, 5 *  Sprite.SCALED_SIZE));
             entities.add(new ShockWave(x, y, false, attackRange / (Sprite.SCALED_SIZE * 1.5), damage * 2, 0.5, false));
         }
-            else entities.add(new Flame(getCenterX(), getCenterY(), 10 * Sprite.SCALED_SIZE,
-                                    temp.getX(), temp.getY(), 2, 1.5, damage, false, true ));
+            else {
+                if(Math.round(Math.random()) >= 1) entities.add(new Flame(getCenterX(), getCenterY(),
+                                                                    10 * Sprite.SCALED_SIZE,
+                                                                            temp.getX(), temp.getY(),
+                                                                        2, 1.5, damage,
+                                                                        false, true ));
+                // Tà đạo vl :)))
+                else Gameplay.addEnemy(new Suicider(x, y));
+        }
         isAttacking = false;
         charging = false;
         lastAttack = System.currentTimeMillis();
