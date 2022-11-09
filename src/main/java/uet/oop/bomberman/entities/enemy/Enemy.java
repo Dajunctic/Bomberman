@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities.enemy;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.entities.functional.Buff;
 import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.generals.Point;
@@ -362,5 +363,11 @@ public abstract class Enemy extends Mobile {
         direction.normalize();
         switchSprite();
         return true;
+    }
+    @Override
+    public void deadAct(Gameplay gameplay) {
+        if(Math.round(Math.random()) == 1) buffs.put(tileCode(tileX, tileY),
+                                                    new Buff(tileX, tileY,
+                                                            (int) Math.floor(Math.random() * 5.9)));
     }
 }

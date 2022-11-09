@@ -83,7 +83,7 @@ public class Suicider extends Enemy {
                 //60 * speed + 3600 * acceleration
                 //if its attacking
 
-                if(attack.isDead() || distance.abs() <= margin) explode();
+                if(attack.isDead() || distance.abs() <= margin * 2) explode();
                 if(status == SERIOUS) speed += acceleration;
                 if(isDead) explode();
         }
@@ -100,13 +100,13 @@ public class Suicider extends Enemy {
         subtractHP(1000);
         isDead = true;
         sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1, 10 * Sprite.SCALED_SIZE));
-        entities.add(new ShockWave(x, y, false, 1.5, damage, 2, false));
+        entities.add(new ShockWave(x, y, false, 2, damage, 2, false));
         setMode(CENTER_MODE);
     }
 
     @Override
     public void deadAct(Gameplay gameplay) {
-
+        super.deadAct(gameplay);
     }
     public boolean isExisted() {
         return !killed.isDead();

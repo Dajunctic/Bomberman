@@ -6,6 +6,7 @@ import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.music.Audio;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,10 +107,11 @@ public class Buff extends Entity {
             }
             case MP -> {
                 player.addMana(player.getMaxMana() / 3);
+                Audio.start(player.Faudio);
             }
             case HP -> {
                 player.addHP(player.getMaxHP() / 4);
-
+                Audio.start(player.Faudio);
             }
             case ITEM_STAFF -> {
                 player.acquiredStaff();

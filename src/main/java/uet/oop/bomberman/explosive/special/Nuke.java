@@ -22,7 +22,7 @@ public class Nuke extends Entity {
     private boolean exploded = false;
     private boolean friendly = true;
     private double duration = 2;
-    private int damage = 20;
+    private int damage = 10;
     public Nuke(double xUnit, double yUnit, double timer) {
         super(xUnit, yUnit);
         x *= Sprite.SCALED_SIZE;
@@ -38,7 +38,7 @@ public class Nuke extends Entity {
         Gameplay.sounds.add(new LargeSound(this.x, this.y, Audio.copy(Audio.nuke), timer));
     }
 
-    public Nuke(double xUnit, double yUnit, double timer, int radius) {
+    public Nuke(double xUnit, double yUnit, double timer, int radius, int damage) {
         super(xUnit, yUnit);
         x *= Sprite.SCALED_SIZE;
         y *= Sprite.SCALED_SIZE;
@@ -52,6 +52,7 @@ public class Nuke extends Entity {
         explosion.setScaleFactor(1 + radius / 4);
         Gameplay.sounds.add(new LargeSound(this.x, this.y, Audio.copy(Audio.nuke), timer));
         this.radius = radius;
+        this.damage = damage;
     }
 
     @Override
