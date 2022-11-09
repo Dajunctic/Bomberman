@@ -68,6 +68,8 @@ public class ShockWave extends Entity {
                 System.out.println("Out of bound");
                 continue;
             }
+
+            if(fires.containsKey(tileCode(tileX, tileY))) continue;
             //destroy
             if(destructive) {
                 Gameplay.set('.', tileX, tileY, true);
@@ -98,8 +100,4 @@ public class ShockWave extends Entity {
     public void render(Layer layer) {
         render(layer.gc, layer.renderer);
     }
-    public void free() {
-        shockwave = null;
-    }
-
 }

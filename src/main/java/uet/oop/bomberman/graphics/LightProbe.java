@@ -3,9 +3,7 @@ package uet.oop.bomberman.graphics;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.BlurType;
 import javafx.scene.effect.GaussianBlur;
-import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -13,18 +11,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Polygon;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.maps.GameMap;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import static java.lang.Math.PI;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.others.Basic.inf;
@@ -37,7 +29,6 @@ public class LightProbe {
     private Point srcTile = new Point(-1,-1);
     private int radius;
     private double density;
-    private Layer parent;
     private double[] xPoints = new double[50];
     private double[] yPoints = new double[50];
     private int nPoints = 0;
@@ -45,12 +36,13 @@ public class LightProbe {
     public static ArrayList<Stop> gradients = new ArrayList<>();
     static {
         gradients.add(new Stop(0, Color.WHITE));
-        gradients.add(new Stop(0.7, Color.rgb(90, 90, 200)));
+        gradients.add(new Stop(0.8, Color.rgb(90, 90, 200)));
         gradients.add(new Stop(0.9, Color.BLACK));
     }
     public Vertex center;
     private RadialGradient texture;
-    public LightProbe(Mobile src, int radius, double density, Layer parent) {
+    private GaussianBlur blur;
+    public LightProbe(Mobile src, int radius, double density) {
         this.src = src;
         this.radius = radius;
         this.density = density;
@@ -60,7 +52,6 @@ public class LightProbe {
         center = new Vertex(canvas.getWidth() / 2, canvas.getHeight() / 2);
         reset();
         init();
-        this.parent = parent;
     }
     /** Cài đặt hiệu ứng */
     public void init() {
@@ -69,12 +60,13 @@ public class LightProbe {
         //fading
         texture = new RadialGradient(0, 0, center.x, center.y, radius * Sprite.SCALED_SIZE,
                                     false, CycleMethod.NO_CYCLE, gradients);
+        blur = new GaussianBlur(0.2);
     }
     /** Vẽ vùng chiếu sáng lên local canvas*/
     public void renderLight() {
         reset();
         createPolygon();
-        drawPolygon(1.1);
+        drawPolygon(1);
     }
     /** Khởi tạo vùng chiếu sáng*/
     public void createPolygon() {
@@ -147,7 +139,6 @@ public class LightProbe {
                 break;
             }
         }
-        /** Tuyển chọn điểm dừng */
         double tileX;
         double tileY;
         if(stopped) {
@@ -162,7 +153,6 @@ public class LightProbe {
             temp.set(tileX, tileY);
         } else {
            double tempDir = (tileX - temp.x) * verDir.y - (tileY - temp.y) * verDir.x;
-            /** Tham số tuyên chọn*/
             if(Math.abs(tempDir) > 0.0015) {
                 addPoint(temp);
                 verDir.set(tileX - temp.x, tileY - temp.y);
@@ -195,11 +185,15 @@ public class LightProbe {
     }
     /** Chuyển đổi tọa độ tile thành tọa độ Descartes nhìn vào điểm sáng*/
     private void normalizeArray(double scale) {
+        double avgX = 0;
         Vertex pov = src.getCenter();
         for(int i = 0; i < nPoints; i++) {
             xPoints[i] = (xPoints[i] * Sprite.SCALED_SIZE - pov.x) * scale + center.x;
             yPoints[i] = (yPoints[i] * Sprite.SCALED_SIZE - pov.y) * scale + center.y;
+            avgX += xPoints[i];
         }
+        avgX /= nPoints;
+        System.out.println("Average x coordinates: " + avgX);
     }
     /** Render vùng sáng lên local canvas*/
     private void drawPolygon(double scale) {
@@ -211,4 +205,13 @@ public class LightProbe {
 //        gc.setEffect(null);
     }
 
+    public void shade(GraphicsContext gc, Renderer renderer) {
+        gc.setEffect(blur);
+        gc.setGlobalBlendMode(BlendMode.MULTIPLY);
+        Vertex origin = renderer.getPov().getCenter();
+//        origin.shift(-lighter.center.x, -lighter.center.y);
+        renderer.renderCenterImg(gc, getImg(), origin.x, origin.y, false, 1);
+        gc.setGlobalBlendMode(BlendMode.SRC_OVER);
+        gc.setEffect(null);
+    }
 }

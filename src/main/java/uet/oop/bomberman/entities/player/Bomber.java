@@ -117,8 +117,7 @@ public class Bomber extends Mobile {
     private int radius = 20;
     private int damage = 4;
     public double timer = 2.5;
-
-    private double bombDuration = 0;
+    private double bombDuration = 1.5;
     public int Qlevel = 1;
 
     List<Bomb> bombs = new ArrayList<>();
@@ -136,7 +135,7 @@ public class Bomber extends Mobile {
     //TNT
     Nuke nuke = null;
     private int Rdamage = 10;
-    private int Rradius = 4;
+    private int Rradius = 3;
     public int Rlevel = 1;
     //dodges
     private int dodgeDistance = 2 * Sprite.SCALED_SIZE;
