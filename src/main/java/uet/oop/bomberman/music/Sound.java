@@ -2,13 +2,10 @@ package uet.oop.bomberman.music;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
-import uet.oop.bomberman.entities.Bomber;
-import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.others.Basic;
-
 import java.net.URISyntaxException;
 
 public class Sound {
@@ -40,18 +37,23 @@ public class Sound {
     public static String _enemy_dead = "/sound/Enemy/dead.mp3";
     public static String _balloon_attack = "/sound/Enemy/balloon_attack.mp3";
 
+    public static String _close_fence = "/sound/Gameplay/close Fence.mp3";
+    public static String _open_fence = "/sound/Gameplay/open Fence.mp3";
 
+    public static String _game_over = "/sound/Gameplay/Game Over.mp3";
+    public static String _level_completed = "/sound/Gameplay/Level Complete.mp3";
+    public static String _stage_theme = "/sound/Gameplay/Stage Theme.mp3";
 
     //properties
     public static double ratio = 1;
     public static double threshold = 8 * Sprite.SCALED_SIZE;
-    private double impact = threshold;
+    private double impact = 8 * Sprite.SCALED_SIZE;
     protected MediaPlayer audio;
     protected Vertex position;
     protected Vertex balance = new Vertex(0,1);
     protected boolean isPlaying = true;
     protected boolean replayable = false;
-    public Sound(double x, double y, String path, double durationm, double impact) throws URISyntaxException {
+    public Sound(double x, double y, String path, double duration, double impact) throws URISyntaxException {
         position = new Vertex(x, y);
         audio = new MediaPlayer(new Media( getClass().getResource(path).toURI().toString()));
         audio.setAutoPlay(true);
@@ -117,6 +119,7 @@ public class Sound {
         Audio.start(audio);
     }
     public void free() {
+        audio.stop();
         audio.dispose();
     }
 }

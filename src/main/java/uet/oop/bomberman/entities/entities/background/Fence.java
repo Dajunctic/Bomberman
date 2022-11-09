@@ -1,14 +1,13 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.entities.background;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.Objects;
-
-import static uet.oop.bomberman.game.Gameplay.tileCode;
 
 
 public class Fence extends Entity {

@@ -1,8 +1,10 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.enemy;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.entities.player.Bomber;
+import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.game.Gameplay;
@@ -14,13 +16,11 @@ import uet.oop.bomberman.others.Physics;
 
 import java.util.*;
 
-import static uet.oop.bomberman.game.BombermanGame.FPS;
-import static uet.oop.bomberman.game.BombermanGame.currentFrame;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.graphics.Sprite.spot;
 import static uet.oop.bomberman.others.Basic.inf;
 
-public abstract class Enemy extends Mobile{
+public abstract class Enemy extends Mobile {
 
     protected static SpriteSheet enemy_appear = new SpriteSheet("/sprites/enemy/appear.png", 9);
     protected Anim enemy;
@@ -91,16 +91,16 @@ public abstract class Enemy extends Mobile{
     /** Tracking player*/
     protected void search(Bomber player) {
         if(!player.vulnerable()) return;
-
-        Vertex line = new Vertex(player.x - x, player.y - y);
+        Vertex playerPos = player.getPosition();
+        Vertex line = new Vertex(playerPos.x - x, playerPos.y - y);
         if(Math.abs(direction.angle(line)) <= sight_angle
             &&  line.abs() <= sight_depth * Sprite.SCALED_SIZE){
 
             if(!checkSight(line)) return;
-            direction.set(player.x - x, player.y - y);
+            direction.set(playerPos.x - x, playerPos.y - y);
             direction.normalize();
             status = SERIOUS;
-            destination = new Vertex( player.x, player.y);
+            destination = new Vertex( playerPos.x, playerPos.y);
             switchSprite();
         }
     }

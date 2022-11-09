@@ -1,22 +1,18 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.explosive.bomb;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Bloom;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
-import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.explosive.Flame;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.Sound;
-import uet.oop.bomberman.others.Physics;
 
 import static uet.oop.bomberman.game.Gameplay.player;
 
-public class Bomb extends Entity{
+public class Bomb extends Entity {
 
     //animation
     DeadAnim explosion = new DeadAnim(SpriteSheet.explosion, 6, 1);

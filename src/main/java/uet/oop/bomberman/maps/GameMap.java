@@ -1,6 +1,10 @@
 package uet.oop.bomberman.maps;
 
 import uet.oop.bomberman.entities.*;
+import uet.oop.bomberman.entities.entities.background.Brick;
+import uet.oop.bomberman.entities.entities.background.Floor;
+import uet.oop.bomberman.entities.entities.background.Wall;
+import uet.oop.bomberman.entities.functional.Functional;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.HashMap;

@@ -1,33 +1,28 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.enemy.special;
 
 import javafx.scene.image.Image;
-import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.entities.player.Bomber;
+import uet.oop.bomberman.entities.enemy.Enemy;
+import uet.oop.bomberman.explosive.special.ShockWave;
 import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.graphics.Anim;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.graphics.SpriteSheet;
-import uet.oop.bomberman.maps.GameMap;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.Sound;
-import uet.oop.bomberman.others.Physics;
 
 import static java.lang.Math.PI;
 import static uet.oop.bomberman.game.Gameplay.*;
-import static uet.oop.bomberman.game.Gameplay.tile_map;
 import static uet.oop.bomberman.graphics.SpriteSheet.explosion;
-import static uet.oop.bomberman.others.Basic.inf;
 
-public class Suicider extends Enemy{
-    private static SpriteSheet suicider = new SpriteSheet("/sprites/enemy/Suicider/move.png", 12);
-    private static SpriteSheet suicider_attack = new SpriteSheet("/sprites/enemy/Suicider/attack.png", 6);
-    private static double acceleration = 0.25;
-    private static double baseSpeed = 1.5;
+public class Suicider extends Enemy {
+    private static final SpriteSheet suicider = new SpriteSheet("/sprites/enemy/Suicider/move.png", 12);
+    private static final SpriteSheet suicider_attack = new SpriteSheet("/sprites/enemy/Suicider/attack.png", 6);
+    private static final double acceleration = 0.25;
+    private static final double baseSpeed = 1.5;
     private boolean exploded = false;
-    private static int damage = 5;
-    private int tileX;
-    private int tiley;
+    private static final int damage = 10;
     public Suicider(double xPixel, double yPixel) {
         super(xPixel, yPixel);
     }
@@ -74,7 +69,7 @@ public class Suicider extends Enemy{
                 } else enemy.update();
                 move();
                 if(player.vulnerable()) {
-                    distance.set(player.x - x, player.y - y);
+                    distance.set(player.getPosition().x - x, player.getPosition().y - y);
 
                     if( distance.abs() <= 60 * speed + 3600 * acceleration && !isAttacking && status == SERIOUS) {
                         isAttacking = true;
@@ -85,7 +80,7 @@ public class Suicider extends Enemy{
                 //60 * speed + 3600 * acceleration
                 //if its attacking
 
-                if(attack.isDead() || distance.abs() <= margin) explode();
+                if(attack.isDead() || distance.abs() <= margin * 2) explode();
                 if(status == SERIOUS) speed += acceleration;
                 if(isDead) explode();
         }
@@ -108,7 +103,7 @@ public class Suicider extends Enemy{
 
     @Override
     public void deadAct(Gameplay gameplay) {
-        super.deadAct(gameplay);
+
     }
     public boolean isExisted() {
         return !killed.isDead();
@@ -116,8 +111,11 @@ public class Suicider extends Enemy{
     @Override
     public void attack(Bomber player) {
     }
-    public void free() {
 
+    @Override
+    public boolean checkCollision(double ref_x, double ref_y, int margin) {
+        boolean checker = super.checkCollision(ref_x, ref_y, margin);
+        if(checker && isAttacking) explode();
+        return checker;
     }
-
 }

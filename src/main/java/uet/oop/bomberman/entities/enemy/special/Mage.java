@@ -1,28 +1,26 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.enemy.special;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.effect.Bloom;
+import uet.oop.bomberman.entities.enemy.Enemy;
+import uet.oop.bomberman.entities.functional.Buff;
+import uet.oop.bomberman.entities.player.Bomber;
+import uet.oop.bomberman.explosive.Flame;
+import uet.oop.bomberman.explosive.special.ShockWave;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.LargeSound;
 import uet.oop.bomberman.music.Sound;
-
-import javax.swing.text.html.HTMLDocument;
-
 import static java.lang.Math.PI;
 import static uet.oop.bomberman.game.Gameplay.*;
-import static uet.oop.bomberman.graphics.Sprite.spot;
 import static uet.oop.bomberman.others.Basic.inf;
-import static uet.oop.bomberman.others.Basic.mapping;
-
-public class Mage extends Enemy{
+public class Mage extends Enemy {
     private static SpriteSheet mage = new SpriteSheet("/sprites/enemy/Mage/move.png", 2);
     private static SpriteSheet mage_dead = new SpriteSheet("/sprites/enemy/Mage/dead.png", 12);
     public static SpriteSheet mage_staff = new SpriteSheet("/sprites/enemy/Mage/staff.png", 13);
-    private int damage = 10;
-    private long cooldown = 2000;
+    private final int damage = 10;
+    private final long cooldown = 2000;
     private final long chargeTime = 2000;
     private long chargeBegin = 0;
     private long lastAttack = 0;
@@ -63,7 +61,7 @@ public class Mage extends Enemy{
                 else {
                     if(System.currentTimeMillis() - chargeBegin >= chargeTime) isAttacking = true;
                 }
-                if(player.vulnerable()) distance.set(player.x - x, player.y - y);
+                if(player.vulnerable()) distance.set(player.getPosition().x - x, player.getPosition().y - y);
                     else distance.set(inf, inf);
                 enemy.update();
 
@@ -83,10 +81,9 @@ public class Mage extends Enemy{
 
         if(!player.vulnerable()) return;
         if(System.currentTimeMillis() - lastAttack <= cooldown) return;
-        Vertex line = new Vertex(player.x - x, player.y - y);
+        Vertex line = new Vertex(player.getPosition().x - x, player.getPosition().y - y);
         if(Math.abs(direction.angle(line)) <= sight_angle
                 &&  line.abs() <= sight_depth * Sprite.SCALED_SIZE && !charging){
-            System.out.println("Charging");
             charging = true;
             chargeBegin = System.currentTimeMillis();
             sounds.add(new LargeSound(x, y, Audio.copy(Audio.nuke), chargeTime / 1000));
@@ -134,8 +131,9 @@ public class Mage extends Enemy{
             int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
             int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
             buffs.put(tileCode(i, j), new Buff(i, j, Buff.ITEM_STAFF));
+        } else {
+            //  RUN :)
+            for(int i = 0; i < 4; i ++) gameplay.addEnemy(new Suicider(x, y));
         }
-        super.deadAct(gameplay);
     }
-
 }

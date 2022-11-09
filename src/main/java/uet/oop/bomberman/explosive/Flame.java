@@ -1,9 +1,10 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.explosive;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
@@ -23,7 +24,7 @@ import java.util.HashSet;
 import static uet.oop.bomberman.game.BombermanGame.FPS;
 import static uet.oop.bomberman.game.Gameplay.*;
 
-public class Flame extends Mobile{
+public class Flame extends Mobile {
     DeadAnim flame;
     double length;
     protected double duration = 2;

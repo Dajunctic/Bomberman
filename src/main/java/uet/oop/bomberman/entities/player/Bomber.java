@@ -1,4 +1,4 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.player;
 
 import java.util.*;
 
@@ -9,12 +9,17 @@ import javafx.scene.image.Image;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import uet.oop.bomberman.explosive.bomb.Bomb;
+import uet.oop.bomberman.explosive.Flame;
+import uet.oop.bomberman.entities.Mobile;
+import uet.oop.bomberman.explosive.special.Nuke;
+import uet.oop.bomberman.game.Ending;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.music.Audio;
 
-import static uet.oop.bomberman.entities.Mage.mage_staff;
+import static uet.oop.bomberman.entities.enemy.special.Mage.mage_staff;
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 
@@ -36,6 +41,14 @@ public class Bomber extends Mobile {
     private long lastD = 0;
     private long lastF = 0;
 
+
+    /**
+     * * Các loại nhân vật
+     */
+    public static final int NUMCHAR = 7;
+    public static final String[] characterName = {"Knight", "Past Rogue", "Machine", "Shiba", "Panda", "Ninja", "Destroyer"};
+    public static int currentCharacter = 6;
+    public static Anim[][] anims = new Anim[7][6];
 
     /**
      * Các trạng thái của nhân vật
@@ -74,14 +87,14 @@ public class Bomber extends Mobile {
     private double dirY = 0;
     private int currentIdleDirection;
 
-    Set<Integer> moveSet = new HashSet<Integer>();
+    private Set<Integer> moveSet = new HashSet<Integer>();
     private boolean moving = false;
     private int firstStatus = 0;
     private int secondStatus = 0;
 
     //toggle attacking in future
     private Vertex facing = new Vertex(0,0);
-
+    private Vertex position = new Vertex(0, 0);
 
     /**
      * Đường dẫn đến folder của Model thôi không cần ảnh.
@@ -109,7 +122,7 @@ public class Bomber extends Mobile {
     public int Qlevel = 1;
 
     List<Bomb> bombs = new ArrayList<>();
-    private static MediaPlayer Qaudio = Audio.copy(Audio.place_bomb);
+    private MediaPlayer Qaudio = Audio.copy(Audio.place_bomb);
     //firewaves
     private int Wdivider = 3;
     private int Wradius = 10;
@@ -118,7 +131,7 @@ public class Bomber extends Mobile {
     private MediaPlayer Waudio = Audio.copy(Audio.shooting_fire);
     //superb W
     private DeadAnim itemStaff = new DeadAnim(mage_staff, 6, 1);
-    private boolean staffEquipped = true;
+    private boolean staffEquipped = false;
     private boolean staffIsUsing = false;
     //TNT
     Nuke nuke = null;
@@ -158,6 +171,22 @@ public class Bomber extends Mobile {
      * Muốn hiểu status time thì đọc Anim.time.
      */
     private void load() {
+
+        for (int i = 0; i < NUMCHAR; i++) {
+            String left = path + "/" +  i + "/left" + ".png";
+            String right = path + "/" + i + "/right" + ".png";
+
+            Anim leftAnim = new Anim(new SpriteSheet(left, 8), 2);
+            Anim rightAnim = new Anim(new SpriteSheet(right, 8), 2);
+
+            anims[i][IDLE] = rightAnim;
+            anims[i][LEFT] = leftAnim;
+            anims[i][RIGHT] = rightAnim;
+            anims[i][UP] = leftAnim;
+            anims[i][DOWN] = leftAnim;
+        }
+
+
         String[] statusString = {"idle", "down", "up", "left", "right", "dead"};
         int[] statusNumberFrame = {2, 3, 3, 3, 3, 8};
         int[] statusTime = {0, 6, 6, 8, 8, 10};
@@ -179,6 +208,10 @@ public class Bomber extends Mobile {
 
         //init buff animation
         dodgeAnim = new DeadAnim(new SpriteSheet("/sprites/Player/Abilities/dodge.png", 9), 5, 1);
+    }
+
+    public void setCurrentCharacter(int currentCharacter) {
+        Bomber.currentCharacter = currentCharacter;
     }
 
     private void setDir(int status, boolean single) {
@@ -297,8 +330,6 @@ public class Bomber extends Mobile {
         resetSpeed();
     }
 
-
-
     //inheritances
     @Override
     public void update() {
@@ -336,7 +367,8 @@ public class Bomber extends Mobile {
     /** Animation updating */
     private void animationUpdate() {
         /* * Moving */
-        statusAnims[currentStatus].update();
+//        statusAnims[currentStatus].update();
+        anims[currentCharacter][currentIdleDirection].update();
         /* * Buffs */
         dodgeAnim.update();
         if(staffIsUsing) {
@@ -344,7 +376,7 @@ public class Bomber extends Mobile {
             if(itemStaff.isDead()) {
                 staffIsUsing = false;
                 itemStaff.reset();
-//                staffEquipped = false;
+                staffEquipped = false;
             }
         }
     }
@@ -352,16 +384,21 @@ public class Bomber extends Mobile {
     public void update(Gameplay gameplay) {
         super.update();
 
-        //movement
-        move(gameplay);
         //animations
         animationUpdate();
 
-        // attributes handling
-        attribute_update(gameplay);
+        if (Ending.status < Ending.PORTAL) {
+            //movement
+            move(gameplay);
 
-        //interior changes
-        visualUpdate();
+            // attributes handling
+            attribute_update(gameplay);
+
+            //interior changes
+            visualUpdate();
+        }
+
+
 
         //handling vulnerabilities
         if(invisible) alpha += fadeInSpeed;
@@ -412,7 +449,9 @@ public class Bomber extends Mobile {
 
     @Override
     public void render(GraphicsContext gc, Renderer renderer) {
-        if(renderer.getPov().isAlly != isAlly && invisible) return;
+        if (Ending.status >= Ending.PORTAL) return;
+
+        if(renderer.getPov().isAlly() != isAlly && invisible) return;
         /* * Render bombs */
         bombs.forEach(g -> g.render(gc, renderer));
         gc.setEffect(effect);
@@ -423,6 +462,7 @@ public class Bomber extends Mobile {
         renderer.renderImg(gc, this.getImg(), x + shiftX, y + shiftY, false);
         gc.setGlobalAlpha(1);
         gc.setEffect(null);
+
         if(staffEquipped) {
             boolean reverse = (currentStatus == LEFT || currentStatus == UP);
             double offset = 10 * (reverse ? 1 : -1.5);
@@ -432,13 +472,15 @@ public class Bomber extends Mobile {
         if(nuke != null) nuke.render(gc, renderer);
         if(!dodgeAnim.isDead()) renderer.renderImg(gc, dodgeAnim.getImage(), oldX + shiftX, oldY + shiftY, false);
 
+
+
         /* * Hiển thị máu và mana */
         renderHP(gc, renderer);
         renderMana(gc, renderer);
     }
     @Override
     public Image getImg() {
-        return statusAnims[currentStatus].getImage();
+        return anims[currentCharacter][currentIdleDirection].getImage();
     }
 
     public void move(Gameplay gameplay) {
@@ -450,7 +492,7 @@ public class Bomber extends Mobile {
         if(!checkCollision(ref_x,ref_y,margin)) {
             x = ref_x;
             y = ref_y;
-
+            position.set(x, y);
             //update tiles
             standingTile();
             checkBuff();
@@ -500,15 +542,14 @@ public class Bomber extends Mobile {
         }
     }
 
-
     public void setDodge() {
-        if (System.currentTimeMillis() - lastD < D_COOLDOWN * 1000) return;
+        if (System.currentTimeMillis() - lastD < D_COOLDOWN * 1000L) return;
         dodging = true;
         lastD = System.currentTimeMillis();
     }
 
     public void recover() {
-        if (System.currentTimeMillis() - lastF < F_COOLDOWN * 1000) return;
+        if (System.currentTimeMillis() - lastF < F_COOLDOWN * 1000L) return;
 
         addHP(HP_RECOVER);
         lastF = System.currentTimeMillis();
@@ -523,12 +564,12 @@ public class Bomber extends Mobile {
 
     @Override
     public double getWidth() {
-        return statusAnims[IDLE].getImage().getWidth();
+        return anims[currentCharacter][IDLE].getImage().getWidth();
     }
 
     @Override
     public double getHeight() {
-        return statusAnims[IDLE].getImage().getHeight();
+        return anims[currentCharacter][IDLE].getImage().getHeight();
     }
 
     /**************************** BUFF AND BUGS ********************************/
@@ -574,13 +615,13 @@ public class Bomber extends Mobile {
     }
     /* * Shoot 3 parallel fire */
     public void shootFireball() {
-        /* * Điều kiện để bắn */
-        if(staffEquipped) {
-            staffIsUsing = true;
-        }
         //if invisible
         if(invisible) {
             if (System.currentTimeMillis() - lastW <= W_INVISIBLE_COOLDOWN * 1000L) return;
+            /* * Điều kiện để bắn */
+            if(staffEquipped) {
+                staffIsUsing = true;
+            }
             //sqawn fires
             double startX =  Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
             double startY =  Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
@@ -592,6 +633,10 @@ public class Bomber extends Mobile {
             //if not invisible
             if ((currentMana < W_MANA_CONSUMING) ||
                     (System.currentTimeMillis() - lastW <= W_COOLDOWN * 1000L))       return;
+            /* * Điều kiện để bắn */
+            if(staffEquipped) {
+                staffIsUsing = true;
+            }
             /* * Spawn flames */
             double startX =  Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
             double startY =  Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
@@ -698,7 +743,6 @@ public class Bomber extends Mobile {
             System.out.println("W upgraded");
             lvlUp();
     }
-
     public void buffInvisible() {
             Elevel ++;
             invisibleDuration += 0.4;
@@ -709,7 +753,6 @@ public class Bomber extends Mobile {
             System.out.println("E upgraded");
             lvlUp();
     }
-
     public void buffNuke() {
             Rlevel ++;
             Rdamage += 5;
@@ -723,6 +766,7 @@ public class Bomber extends Mobile {
         staffEquipped = true;
         staffIsUsing = false;
         itemStaff.reset();
+        Audio.start(buffed);
     }
     public void lvlUp() {
         int hpGap = maxHP - currentHP;
@@ -733,7 +777,8 @@ public class Bomber extends Mobile {
         subtractMana(mpGap);
         Audio.start(buffed);
     }
-    //checks hitting buffs
+
+    /** checks hitting buffs */
     public void checkBuff() {
         Integer index = Gameplay.tileCode(tileX, tileY);
         if(!buffs.containsKey(index)) return;
@@ -741,5 +786,20 @@ public class Bomber extends Mobile {
         buffs.remove(index);
     }
 
+    public void stopSound() {
+        Qaudio.stop();
+        Waudio.stop();
+        Eaudio.stop();
+        fatality.stop();
 
+        buffed.stop();
+        Daudio.stop();
+        Faudio.stop();
+
+        for (Bomb bomb: bombs) bomb.stopSound();
+    }
+
+    public Vertex getPosition() {
+        return position;
+    }
 }

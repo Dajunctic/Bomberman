@@ -3,7 +3,7 @@ package uet.oop.bomberman.maps;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
-import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Sprite;
@@ -156,10 +156,5 @@ public class Minimap extends Entity {
         }
 
         return output;
-    }
-
-    @Override
-    public void free() {
-
     }
 }
