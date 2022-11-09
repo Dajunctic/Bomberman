@@ -62,7 +62,7 @@ Có nhiều loại Enemy trong Bomberman, tuy nhiên trong phiên bản này ch�
 
 - *Jumper* là Enemy di chuyển "thông minh" hơn so với Balloom và nó sẽ nhảy thẳng tới để cắn bạn khi bạn ở trong tầm nhìn của nó.
 
-- ![](src/main/resources/introduce/mage.png) *Mage* là Enemy đặc biệt nhất, nó sẽ dùng gậy và dùng kĩ năng của nó tới bạn.
+- ![](src/main/resources/introduce/mage.png) *Mage* là Enemy đặc biệt nhất, nó sẽ dùng gậy và dùng kĩ năng của nó tới bạn và tạo ra lửa màu xanhxanh.
 
 
 ## Mô tả game play, xử lý va chạm và xử lý bom nổ
@@ -122,7 +122,8 @@ Có nhiều loại Enemy trong Bomberman, tuy nhiên trong phiên bản này ch�
 5. Cài đặt thêm nhiều loại Item khác.
 
 6. Có nhiều nhân vật để chọn và chơi
-
+- ![](src/main/resources/introduce/charater.png)
+- ![](src/main/resources/introduce/charater2.png)
 ## **8. UML Diagram**
 - ![](src/main/resources/introduce/diagram.png)
 
