@@ -258,7 +258,10 @@ public abstract class Enemy extends Mobile{
         if(isAttacking || !appear.isDead()) return;
         if(distanceCheck <= 2 * Sprite.SCALED_SIZE) {
                 stuckTime++;
-                System.out.println("Stucked in " + stuckTime);
+
+
+
+
                 if (stuckTime >= 5) escape();
         }
         else stuckTime = 0;

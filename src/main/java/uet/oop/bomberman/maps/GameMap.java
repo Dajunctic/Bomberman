@@ -17,7 +17,7 @@ public class GameMap {
 
     public static Map<Character, Integer> map = new HashMap<Character, Integer>();
 
-    public static char[] walls = {'2', '!', '#', '@', '(', '&', ';', '=', '|', '$', '%', '*'};
+    public static char[] walls = {'2', '!', '#', '@', '(', '&', ';', '=', '|', '$', '%', '*', '~'};
     public static char[] floors = {'0', '9', '8', '7', 'v', 'b', 'm', 'n', 'a'
             , 'q', 'w', 's', 'z', 'c', 'e', 'i', 'o', 'h', 'j', 'k', 'l', '.'};
 
@@ -130,6 +130,9 @@ public class GameMap {
             }
             case '.' -> {
                 return new Floor(j, i, Sprite.space.getFxImage());
+            }
+            case '~' -> {
+                return new Wall(j, i, Sprite.space.getFxImage());
             }
             case '?' -> {
                 return new Brick(j, i, Sprite.tombBrick.getFxImage());

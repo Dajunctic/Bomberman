@@ -35,13 +35,16 @@ public class Layer {
     private double bufferX;
     private double bufferY;
     private double scale;
+
     /** Attributes của shader */
     public boolean shaderEnable = false;
     public boolean shade = false;
     public boolean lookAtPlayer = false;
+
     /** Canvas của shader, nhưng vì chậm vãi beep nên sẽ không dùng*/
     public Canvas shader;
     public GraphicsContext shaderGc;
+
     /** chuyển đổi trạng thái*/
     public LightProbe lighter = null;
     private int radius = 5;
@@ -75,8 +78,7 @@ public class Layer {
 
     }
     public void setPov(Mobile pov) {
-        if(pov instanceof Bomber) lookAtPlayer = true;
-            else lookAtPlayer = false;
+        lookAtPlayer = pov instanceof Bomber;
         renderer.setPov(pov);
 
         if(shaderEnable && pov != null)
@@ -93,13 +95,14 @@ public class Layer {
     public Triplets details() {
         return new Triplets(bufferX, bufferY, scale);
     }
+
     /** Shade từ điểm sáng*/
     public void shadeDynamic() {
 //        shaderGc.setFill(Color.BLACK);
 //        shaderGc.fillRect(0, 0, shader.getWidth(), shader.getWidth());
         //bake polygon
         lighter.renderLight();
-        gc.setEffect(blur);
+//        gc.setEffect(blur);
         gc.setGlobalBlendMode(BlendMode.MULTIPLY);
         Vertex origin = renderer.getPov().getCenter();
 //        origin.shift(-lighter.center.x, -lighter.center.y);

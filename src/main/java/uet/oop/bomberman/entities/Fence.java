@@ -3,8 +3,7 @@ package uet.oop.bomberman.entities;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.game.Gameplay;
-import uet.oop.bomberman.graphics.Renderer;
-import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.graphics.*;
 
 import java.util.Objects;
 
@@ -30,7 +29,9 @@ public class Fence extends Entity {
     /** up is 1, down is 0 */
     private boolean status;
 
-    public Fence(int xUnit, int yUnit, int type) {
+    private Anim fire;
+
+    public Fence(int xUnit, int yUnit, int type, int fire_type) {
         super(xUnit, yUnit);
         this.tileX = xUnit;
         this.tileY = yUnit;
@@ -39,6 +40,8 @@ public class Fence extends Entity {
 
         this.type = type;
         this.status = true;
+
+        fire = new Anim(SpriteSheet.firePillar.get(fire_type), 4);
     }
 
     public void setStatus(boolean status) {
@@ -47,7 +50,7 @@ public class Fence extends Entity {
         char tile;
 
         if (status == UP) {
-            tile = '@';
+            tile = '~';
         } else {
             tile = '.';
         }
@@ -67,7 +70,7 @@ public class Fence extends Entity {
 
     @Override
     public void update() {
-
+        fire.update();
     }
 
     @Override
@@ -99,10 +102,27 @@ public class Fence extends Entity {
 
         if(type == HORIZONTAL) {
             renderer.renderImg(gc, (status == UP ? horizontalUp : horizontalDown),
-                                        posX + shiftX, posY + shiftY - 40, false);
+                    posX + shiftX,
+                    posY + shiftY , false);
+
+            renderer.renderImg(gc, fire.getImage(),
+                    posX + shiftX - 48,
+                    posY + shiftY - 10 , false);
+            renderer.renderImg(gc, fire.getImage(),
+                    posX + shiftX + 48 * 5,
+                    posY + shiftY - 10 , false);
+
         } else if ( type == VERTICAL) {
             renderer.renderImg(gc, (status == UP ? verticalUp : verticalDown),
-                                        posX + shiftX, posY + shiftY - 30, false);
+                    posX + shiftX,
+                    posY + shiftY, false);
+
+            renderer.renderImg(gc, fire.getImage(),
+                    posX + shiftX ,
+                    posY + shiftY - 10 - 48, false);
+            renderer.renderImg(gc, fire.getImage(),
+                    posX + shiftX ,
+                    posY + shiftY - 10 + 48 * 5, false);
         }
     }
 }

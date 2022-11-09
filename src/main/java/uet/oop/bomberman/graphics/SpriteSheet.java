@@ -9,6 +9,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tất cả sprite (hình ảnh game) được lưu trữ vào một ảnh duy nhất
@@ -47,6 +49,15 @@ public class SpriteSheet {
 
 	/* ************************************ BRICK ******************************** */
 	public static SpriteSheet brick = new SpriteSheet("/sprites/Obstacles/Brick/0.png", 6);
+
+	/* ************************************ FIRE PILLAR *************************** */
+	public static List<SpriteSheet> firePillar = new ArrayList<>();
+	static {
+		firePillar.add(new SpriteSheet("/sprites/Obstacles/Fence/fire0.png", 3));
+		firePillar.add(new SpriteSheet("/sprites/Obstacles/Fence/fire1.png", 3));
+		firePillar.add(new SpriteSheet("/sprites/Obstacles/Fence/fire2.png", 3));
+		firePillar.add(new SpriteSheet("/sprites/Obstacles/Fence/fire3.png", 3));
+	};
 
 	/**
 	 * |--------------------------------------------------------------------------

@@ -121,4 +121,9 @@ public class Bomb extends Entity{
         return bomb.getImage().getHeight();
     }
 
+    public void stopSound() {
+        audio.stop();
+        audio = null;
+    }
+
 }

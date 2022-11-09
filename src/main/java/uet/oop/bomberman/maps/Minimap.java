@@ -1,5 +1,6 @@
 package uet.oop.bomberman.maps;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import uet.oop.bomberman.entities.Bomber;
@@ -7,7 +8,12 @@ import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.util.Objects;
+
 public class Minimap extends Entity {
+    Image minimapFrame = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/minimap_frame.png")));
+
+
     Color [][] board;
     Color [][] defaultBoard;
     private final int defaultScale = 2;
@@ -33,25 +39,25 @@ public class Minimap extends Entity {
 
                 switch (Gameplay.tile_map[i][j]) {
                     case '2', '!', '#', '@', '(', '&', ';', '=', ':', '$', '%' -> {
-                        board[i][j] = new Color(0 ,0 ,0, .5);
+                        board[i][j] = new Color(0 ,0 ,0, 1);
                     }
                     case '0', '7', '8', '9' -> {
-                        board[i][j] = new Color(70/255.0 ,70/255.0 ,70/255.0, .5);
+                        board[i][j] = new Color(70/255.0 ,70/255.0 ,70/255.0, 1);
                     }
                     case 'b', 'm', 'n', 'v' -> {
-                        board[i][j] = new Color(141/255.0 ,174/255.0 ,205/255.0, .5);
+                        board[i][j] = new Color(141/255.0 ,174/255.0 ,205/255.0, 1);
                     }
                     case 'c', 'e', 'i', 'o' ->{
-                        board[i][j] = new Color(0/255.0 ,102/255.0 ,102/255.0, .5);
+                        board[i][j] = new Color(0/255.0 ,102/255.0 ,102/255.0, 1);
                     }
                     case 'h', 'j', 'k', 'l' ->{
-                        board[i][j] = new Color(230/255.0 ,184/255.0 ,0/255.0, .5);
+                        board[i][j] = new Color(230/255.0 ,184/255.0 ,0/255.0, 1);
                     }
                     case 'a', 'q', 'w', 's', 'z' ->{
-                        board[i][j] = new Color(0/255.0 ,204/255.0 ,102/255.0, .5);
+                        board[i][j] = new Color(0/255.0 ,204/255.0 ,102/255.0, 1);
                     }
                     default -> {
-                        board[i][j] = new Color(0, 0, 0, 0);
+                        board[i][j] = new Color(5/255.0, 31/255.0, 40/255.0, 1);
                     }
                 }
 
@@ -67,6 +73,16 @@ public class Minimap extends Entity {
 
     @Override
     public void update() {
+
+    }
+
+    @Override
+    public void render(GraphicsContext gc, double x, double y) {
+        int scaleX = 12;
+        int scaleY = 20;
+
+        gc.drawImage(this.getImg(), x, y);
+        gc.drawImage(minimapFrame, x - scaleX, y - scaleY, getWidth() + scaleX * 2, getHeight() + scaleY * 2.5);
 
     }
 

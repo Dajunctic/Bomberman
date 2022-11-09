@@ -101,8 +101,8 @@ public class Renderer {
     /** Loại trừ ảnh ngoài khung hình*/
     //check on screen
     public boolean onScreen(double x, double y) {
-        return (Math.abs(x - translateX - width / 2) <= width / 2 + Sprite.SCALED_SIZE * 2)
-                && (Math.abs(y - translateY - height / 2) <= height / 2 + Sprite.SCALED_SIZE * 2);
+        return (Math.abs(x - translateX - width / 2) <= width / 2 + Sprite.SCALED_SIZE * 4)
+                && (Math.abs(y - translateY - height / 2) <= height / 2 + Sprite.SCALED_SIZE * 4);
     }
     //render images
     public boolean renderImg(GraphicsContext gc, Image img, double x, double y, boolean reverse) {
@@ -121,6 +121,15 @@ public class Renderer {
          gc.drawImage(img, renderX, renderY,
                 scale * img.getWidth() * (reverse ? -1 : 1), scale * img.getHeight());
     }
+
+    public void renderDirectImg(GraphicsContext gc, Image img, double x, double y, boolean reverse, double scale) {
+
+        double renderX = boundX - translateX + shiftX + (x + (reverse ? img.getWidth(): 0)) * scale;
+        double renderY = y * scale + boundY - translateY + shiftY;
+        gc.drawImage(img, renderX, renderY,
+                scale * img.getWidth() * (reverse ? -1 : 1), scale * img.getHeight());
+    }
+
     //move camera to somewhere
     /** Cài đặt điểm đến của camera */
     public void setGoal(double x, double y) {
@@ -138,8 +147,8 @@ public class Renderer {
         if(!onScreen(x, y)) return;
         double offX = img.getWidth() * (1 - scale);
         double offY = img.getHeight() * (1 - scale);
-        double renderX = boundX - translateX + shiftX + x + (reverse ? img.getWidth(): 0) * scale + offX * (reverse ? -1 : 1);
-        double renderY = y + boundY - translateY + shiftY  + offY;
+        double renderX = boundX - translateX + shiftX + x + (reverse ? img.getWidth(): 0) * scale;// + offX * (reverse ? 0 : 1);
+        double renderY = y + boundY - translateY + shiftY;//  + offY;
         gc.drawImage(img, renderX, renderY,
                 scale * img.getWidth() * (reverse ? -1 : 1)
                     , scale * img.getHeight());
@@ -287,7 +296,7 @@ public class Renderer {
         gc.fillPolygon(x, y, nPoints);
         gc.setFill(Color.BLACK);
     }
-    /** Vẽ polygon từ tập điểm sau chuân hóa*/
+    /** Vẽ polygon từ tập điểm sau chuân hóa */
     public void renderPolygonPreset(GraphicsContext gc, double[] x, double[] y, int nPoints, double radius, double scale) {
         double renderX = boundX - translateX + shiftX;
         double renderY = boundY - translateY + shiftY;

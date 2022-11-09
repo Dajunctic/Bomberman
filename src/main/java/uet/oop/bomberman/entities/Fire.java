@@ -49,8 +49,6 @@ public class Fire extends Entity{
         effector = new Pair<>(damage, friendly);
 
         Gameplay.fires.put(index, effector);
-//        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
-//        System.out.println("________________________________________________");
     }
 
     public Fire(double xUnit, double yUnit, double duration, int damage, boolean friendly, boolean special){
@@ -75,8 +73,6 @@ public class Fire extends Entity{
             if(!friendly) sounds.add(new Sound(x, y, Audio.copy(Audio.bomb_explosion), -1, 5 * Sprite.SCALED_SIZE));
         }
         Gameplay.illuminate(tileX, tileY, SHADE_NORMAL);
-//        System.out.println(String.format("Fire in: %d %d, %d", tileX, tileY, index) + fires.get(index));
-//        System.out.println("________________________________________________");
     }
 
     @Override

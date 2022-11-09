@@ -90,4 +90,11 @@ public class AreaMap {
         return obstacles[j - posY][i - posX];
     }
 
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
 }

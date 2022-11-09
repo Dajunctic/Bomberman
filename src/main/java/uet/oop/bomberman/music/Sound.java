@@ -10,6 +10,7 @@ import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.others.Basic;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 public class Sound {
 
@@ -40,7 +41,12 @@ public class Sound {
     public static String _enemy_dead = "/sound/Enemy/dead.mp3";
     public static String _balloon_attack = "/sound/Enemy/balloon_attack.mp3";
 
+    public static String _close_fence = "/sound/Gameplay/close Fence.mp3";
+    public static String _open_fence = "/sound/Gameplay/open Fence.mp3";
 
+    public static String _game_over = "/sound/Gameplay/Game Over.mp3";
+    public static String _level_completed = "/sound/Gameplay/Level Complete.mp3";
+    public static String _stage_theme = "/sound/Gameplay/Stage Theme.mp3";
 
     //properties
     public static double ratio = 1;

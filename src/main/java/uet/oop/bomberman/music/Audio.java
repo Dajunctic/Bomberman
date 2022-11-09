@@ -30,6 +30,13 @@ public class Audio implements Runnable {
     public static Media enemy_dead;
     public static Media balloon_attack;
 
+    public static Media open_fence;
+    public static Media close_fence;
+
+    public static Media level_completed;
+    public static Media game_over;
+    public static Media stage_theme;
+
     public Audio() {
         try {
             balloon_attack = new Media(getClass().getResource(_balloon_attack).toURI().toString());
@@ -51,6 +58,12 @@ public class Audio implements Runnable {
             flame =  new Media(getClass().getResource(_flame).toURI().toString());
             fire =  new Media(getClass().getResource(_fire).toURI().toString());
             enemy_dead =  new Media(getClass().getResource(_enemy_dead).toURI().toString());
+
+            open_fence = new Media(getClass().getResource(_open_fence).toURI().toString());
+            close_fence = new Media(getClass().getResource(_close_fence).toURI().toString());
+            level_completed = new Media(getClass().getResource(_level_completed).toURI().toString());
+            game_over = new Media(getClass().getResource(_game_over).toURI().toString());
+            stage_theme = new Media(getClass().getResource(_stage_theme).toURI().toString());
         } catch (URISyntaxException e) {
             System.err.println("Load sound failed");
         }
