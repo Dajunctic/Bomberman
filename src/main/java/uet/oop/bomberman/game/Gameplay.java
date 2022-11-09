@@ -5,12 +5,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.generals.Triplets;
 import uet.oop.bomberman.graphics.Layer;
+import uet.oop.bomberman.graphics.LightProbe;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.maps.AreaMap;
@@ -64,6 +64,7 @@ public class Gameplay {
     public Renderer wholeScene = new Renderer(0.5, 0.5, 0, 0, 0, 0,
                                                 BombermanGame.WIDTH* Sprite.SCALED_SIZE,
                                             BombermanGame.HEIGHT  * Sprite.SCALED_SIZE , 0.95);
+    LightProbe playerPov;
 
     //enemy
     public static Layer playerScene = new Layer(0, 0, BombermanGame.WIDTH * Sprite.SCALED_SIZE,
@@ -135,8 +136,8 @@ public class Gameplay {
             checker = new boolean[height][width];
             //init
             for(int i = 0;i < height; i++ )
-                map[i] = new String(sourceMap.readLine());
-            String ref = new String(sourceMap.readLine());
+                map[i] = sourceMap.readLine();
+            String ref = sourceMap.readLine();
 
             String[] info = ref.split(" ");
             switch (info[0]) {
@@ -201,6 +202,7 @@ public class Gameplay {
         wholeScene.setPov(player);
         enemyScene.setPov(player);
         playerScene.setPov(player);
+        playerPov = new LightProbe(player, 5, 50);
     }
 
     /** Tạo map hoàn chỉnh */
@@ -449,7 +451,7 @@ public class Gameplay {
             for (int i = 0; i < sounds.size(); i++) {
                 sounds.get(i).update(player);
                 if (!sounds.get(i).exists()) {
-                    sounds.get(i).stop();
+                    sounds.get(i).free();
                     sounds.remove(i);
                     i--;
                 }
@@ -527,11 +529,8 @@ public class Gameplay {
             render(layer.gc, layer.renderer);
             return;
         }
-        //Initialize
-        ArrayList<Integer> opCode = layer.lighter.tileCodes;
         GraphicsContext gc = layer.gc;
         Renderer renderer = layer.renderer;
-
         //Render >:D
         gc.fillRect(0,0, layer.canvas.getWidth(), layer.canvas.getHeight());
         int low_x =(int) Math.floor(renderer.getTranslateX() / Sprite.SCALED_SIZE);
@@ -577,7 +576,6 @@ public class Gameplay {
         ending.render(layer);
     }
 
-
     /** Render tổng và ghi lên cửa sổ game*/
     public void render(GraphicsContext gc, double canvasWidth, double canvasHeight) {
 
@@ -601,7 +599,6 @@ public class Gameplay {
         if (lose) {
 
             gc.drawImage(badEnding, 0, 0);
-
             return;
         }
 
@@ -878,12 +875,6 @@ public class Gameplay {
                     , wholeScene.getWidth() * v.v3 + coverThicknessX * 2, wholeScene.getHeight() * v.v3 + coverThicknessY * 2);
         }
     }
-    public static void illuminate(int tileX, int tileY, int mode) {
-        enemyScene.illuminate(tileX, tileY, mode);
-    }
-    public static void darken(int tileX, int tileY,int mode) {
-        enemyScene.darken(tileX, tileY, mode);
-    }
 
     public void reset() throws IOException {
         enemyStack.clear();
@@ -925,8 +916,13 @@ public class Gameplay {
     public static void resetSound() {
         for (Sound sound : sounds) {
             sound.stop();
+            sound.free();
         }
 
         sounds.clear();
+    }
+
+    public void addEnemy(Enemy enemy) {
+        enemyStack.get(currentArea).add(enemy);
     }
 }

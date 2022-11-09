@@ -73,7 +73,6 @@ public class Bomber extends Mobile {
     private final double SPEED = 2;
     private double speed_x;
     private double speed_y;
-    private double maxSpeed = Sprite.SCALED_SIZE / 2;
     // gia tốc
     double acceleration = 0.15;
     double brakeAcceleration = -2; // gia tốc phanh
@@ -128,7 +127,7 @@ public class Bomber extends Mobile {
     private MediaPlayer Waudio = Audio.copy(Audio.shooting_fire);
     //superb W
     private DeadAnim itemStaff = new DeadAnim(mage_staff, 6, 1);
-    private boolean staffEquipped = true;
+    private boolean staffEquipped = false;
     private boolean staffIsUsing = false;
     //TNT
     Nuke nuke = null;
@@ -373,7 +372,7 @@ public class Bomber extends Mobile {
             if(itemStaff.isDead()) {
                 staffIsUsing = false;
                 itemStaff.reset();
-//                staffEquipped = false;
+                staffEquipped = false;
             }
         }
     }
@@ -612,13 +611,13 @@ public class Bomber extends Mobile {
     }
     /* * Shoot 3 parallel fire */
     public void shootFireball() {
-        /* * Điều kiện để bắn */
-        if(staffEquipped) {
-            staffIsUsing = true;
-        }
         //if invisible
         if(invisible) {
             if (System.currentTimeMillis() - lastW <= W_INVISIBLE_COOLDOWN * 1000L) return;
+            /* * Điều kiện để bắn */
+            if(staffEquipped) {
+                staffIsUsing = true;
+            }
             //sqawn fires
             double startX =  Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
             double startY =  Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
@@ -630,6 +629,10 @@ public class Bomber extends Mobile {
             //if not invisible
             if ((currentMana < W_MANA_CONSUMING) ||
                     (System.currentTimeMillis() - lastW <= W_COOLDOWN * 1000L))       return;
+            /* * Điều kiện để bắn */
+            if(staffEquipped) {
+                staffIsUsing = true;
+            }
             /* * Spawn flames */
             double startX =  Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
             double startY =  Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE) + 0.5) * Sprite.SCALED_SIZE;
@@ -759,6 +762,7 @@ public class Bomber extends Mobile {
         staffEquipped = true;
         staffIsUsing = false;
         itemStaff.reset();
+        Audio.start(buffed);
     }
     public void lvlUp() {
         int hpGap = maxHP - currentHP;

@@ -2,15 +2,11 @@ package uet.oop.bomberman.music;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.util.Duration;
 import uet.oop.bomberman.entities.Bomber;
-import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.Sprite;
 import uet.oop.bomberman.others.Basic;
-
 import java.net.URISyntaxException;
-import java.util.List;
 
 public class Sound {
 
@@ -51,13 +47,13 @@ public class Sound {
     //properties
     public static double ratio = 1;
     public static double threshold = 8 * Sprite.SCALED_SIZE;
-    private double impact = threshold;
+    private double impact = 8 * Sprite.SCALED_SIZE;
     protected MediaPlayer audio;
     protected Vertex position;
     protected Vertex balance = new Vertex(0,1);
     protected boolean isPlaying = true;
     protected boolean replayable = false;
-    public Sound(double x, double y, String path, double durationm, double impact) throws URISyntaxException {
+    public Sound(double x, double y, String path, double duration, double impact) throws URISyntaxException {
         position = new Vertex(x, y);
         audio = new MediaPlayer(new Media( getClass().getResource(path).toURI().toString()));
         audio.setAutoPlay(true);
@@ -121,5 +117,9 @@ public class Sound {
 
     public void start() {
         Audio.start(audio);
+    }
+    public void free() {
+        audio.stop();
+        audio.dispose();
     }
 }

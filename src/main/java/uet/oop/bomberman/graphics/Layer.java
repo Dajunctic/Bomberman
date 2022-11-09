@@ -14,13 +14,6 @@ import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Triplets;
 import uet.oop.bomberman.generals.Vertex;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import static uet.oop.bomberman.game.Gameplay.decodeTile;
-import static uet.oop.bomberman.game.Gameplay.tileCode;
-
 public class Layer {
     public static final int SHADE_CENTER = -1;
     public static final int SHADE_NORMAL = 1;
@@ -48,8 +41,7 @@ public class Layer {
     /** chuyển đổi trạng thái*/
     public LightProbe lighter = null;
     private int radius = 5;
-    private ArrayList<Integer> staticLightSource = new ArrayList<>();
-    private GaussianBlur blur = new GaussianBlur(Sprite.SCALED_SIZE / 3);
+    private final static GaussianBlur blur = new GaussianBlur(Sprite.SCALED_SIZE / 3);
     public Layer(double bufferX, double bufferY, double width, double height, double scale, boolean shaderEnable) {
         this.bufferX = bufferX;
         this.bufferY = bufferY;
@@ -82,7 +74,7 @@ public class Layer {
         renderer.setPov(pov);
 
         if(shaderEnable && pov != null)
-            if(lighter == null) lighter = new LightProbe(pov, radius, 50, this);
+            if(lighter == null) lighter = new LightProbe(pov, radius, 50);
                 else lighter.setPov(pov);
     }
     public Image getImg() {
@@ -102,17 +94,13 @@ public class Layer {
 //        shaderGc.fillRect(0, 0, shader.getWidth(), shader.getWidth());
         //bake polygon
         lighter.renderLight();
-//        gc.setEffect(blur);
+        gc.setEffect(blur);
         gc.setGlobalBlendMode(BlendMode.MULTIPLY);
         Vertex origin = renderer.getPov().getCenter();
 //        origin.shift(-lighter.center.x, -lighter.center.y);
-        renderer.renderCenterImg(gc, lighter.getImg(), origin.x, origin.y, false, 1.2);
+        renderer.renderCenterImg(gc, lighter.getImg(), origin.x, origin.y, false, 1.1);
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         gc.setEffect(null);
-    }
-    /** Thêm ngoại lệ render*/
-    public void shadeStatic() {
-        lighter.tileCodes.addAll(staticLightSource);
     }
     /** Đổ bóng */
     public void shade() {
@@ -121,22 +109,10 @@ public class Layer {
                 (shaderEnable && !lookAtPlayer && shade)) {
             shade = true;
             shadeDynamic();
-            shadeStatic();
         }   else shade = false;
-
-
     }
     public void turnShader() {
         if(shaderEnable) shade = !shade;
     }
 
-    /** Thêm ngoại lệ vào phơi sáng, nhưng không dùng vì chậm, và không vượt qua được layering protocol*/
-    public void illuminate(int tileX, int tileY, int mode) {
-        int tileCode = tileCode(tileX, tileY) * mode;
-        if(!staticLightSource.contains(tileCode)) staticLightSource.add(tileCode);
-    }
-    public void darken(int tileX, int tileY, int mode) {
-        Integer tileCode = tileCode(tileX, tileY) * mode;
-        if(staticLightSource.contains(tileCode)) staticLightSource.remove(tileCode);
-    }
 }
