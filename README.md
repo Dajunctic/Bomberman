@@ -129,3 +129,4 @@ Có nhiều loại Enemy trong Bomberman, tuy nhiên trong phiên bản này ch�
 
 ## **9. Demo**
 Và để rõ hơn về game thì sau đây là video demo của game.
+https://www.youtube.com/watch?v=XZXgtf1php8
