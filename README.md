@@ -43,7 +43,7 @@ Nhân vật sẽ có 6 kĩ năng trong đó có 3 kĩ năng chính, 1 chiêu cu�
 - *Brick* là đối tượng được đặt lên các ô Grass, không cho phép đặt Bomb lên nhưng có thể bị phá hủy bởi Bomb được đặt gần đó. Bomber và Enemy thông thường không thể di chuyển vào vị trí Brick khi nó chưa bị phá hủy.
 
 - ![](src/main/resources/introduce/horizontal_up.png)*Portal* là 1 cái cổng . Khi tất cả kẻ địch trong màn bị tiêu diệt thì cổng sẽ biến mất và nhân vật có thể di chuyển qua.
-- ![](src/main/resources/introduce/horizontal_up.png)
+
  
 Các *Item* Bomber có thể sử dụng Item bằng cách di chuyển vào vị trí của Item. Thông tin về chức năng của các Item được liệt kê như dưới đây:
 - ![](src/main/resources/introduce/.png)*Buff kĩ năng* Khi sử dụng Item này, Bomber sẽ được tăng sức mạnh kĩ năng một giá trị thích hợp.
@@ -55,6 +55,8 @@ Các *Item* Bomber có thể sử dụng Item bằng cách di chuyển vào vị
 Có nhiều loại Enemy trong Bomberman, tuy nhiên trong phiên bản này chỉ cài đặt 6 loại enemy sau:
 
 - ![](src/main/resources/introduce/enemy.png)*Balloom* là Enemy đơn giản nhất, di chuyển ngẫu nhiên với vận tốc cố định.
+
+- *Suicidal* có di chuyển ngẫu nhiên với tốc độ nhanh hơn Balloom và di chuyển đến nhân vật và tự tử.
 
 - *Gohst* có di chuyển ngẫu nhiên với tốc độ nhanh hơn Balloom và di chuyển được qua tường.
 
