@@ -115,4 +115,7 @@ public class Anim {
         this.setCountTime();
     }
 
+    public void free(){
+        sheet = null;
+    }
 }
