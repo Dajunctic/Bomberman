@@ -4,6 +4,7 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.game.Gameplay;
+import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.maps.GameMap;
@@ -38,15 +39,50 @@ public class Jumper extends Balloon {
         standingTile();
     }
     @Override
-    protected boolean checkSight(Vertex line) {
-        for(double i = 0; i <= 1; i += 1 / (double) sight_depth) {
-            int tileX = (int) ((x + line.getX()*i) / Sprite.SCALED_SIZE);
-            int tileY = (int) ((y + line.getY()*i)/ Sprite.SCALED_SIZE);
-            if(Gameplay.get(tile_map[tileY][tileX], tileX, tileY) == GameMap.WALL) {
-                return false;
+    protected boolean checkSight(Vertex end) {
+        Vertex starter = new Vertex(getCenterX() / Sprite.SCALED_SIZE, getCenterY() / Sprite.SCALED_SIZE);
+        end.divide(Sprite.SCALED_SIZE);
+        Vertex dir = new Vertex(starter, end);
+        dir.normalize();
+        int radius = (int) Math.ceil(starter.distance(end));
+        /** Thuật toán DDA cơ bản*/
+        Vertex rayUnitStepSize =  new Vertex(Math.sqrt(1 + (dir.getY() / dir.getX()) * (dir.getY() / dir.getX()))
+                , Math.sqrt(1 + (dir.getX() / dir.getY()) * (dir.getX() / dir.getY())));
+        Point tileCheck = new Point((int) Math.floor(starter.getX()), (int) Math.floor(starter.getY()));
+        Vertex rayLength = new Vertex(0, 0);
+        Point stepDir = new Point(1, 1);
+        tileCodes.add(tileCode(tileCheck.x, tileCheck.y));
+        if(dir.getX() < 0) {
+            stepDir.setX(-1);
+            rayLength.x = (starter.x - tileCheck.x) * rayUnitStepSize.x;
+        } else rayLength.x = -(starter.x - (tileCheck.x + 1)) * rayUnitStepSize.x;
+
+        if(dir.getY() < 0) {
+            stepDir.setY(-1);
+            rayLength.y = (starter.y - tileCheck.y) * rayUnitStepSize.y;
+        } else rayLength.y = -(starter.y - (tileCheck.y + 1)) * rayUnitStepSize.y;
+        boolean stopped = false;
+        double distance = 0;
+        while(!stopped && distance < radius) {
+            if(rayLength.x < rayLength.y) {
+                tileCheck.x += stepDir.x;
+                distance = rayLength.x;
+                rayLength.x += rayUnitStepSize.x;
+            } else {
+                tileCheck.y += stepDir.y;
+                distance = rayLength.y;
+                rayLength.y += rayUnitStepSize.y;
             }
+            int tileCode = Gameplay.tileCode(tileCheck.x, tileCheck.y);
+            if(distance >= radius) break;
+            if(Gameplay.get(tile_map[tileCheck.y][tileCheck.x], tileCheck.x, tileCheck.y) == GameMap.WALL){
+                stopped = true;
+                tileCodes.clear();
+                return false;
+            } else  if(!tileCodes.contains(tileCode)) tileCodes.add(tileCode);
         }
-        return true;
+        System.out.println(tileCodes);
+        return  true;
     }
 
     @Override
@@ -145,7 +181,7 @@ public class Jumper extends Balloon {
         else killed.update();
 
         //search for player
-        if(enemy.getTime() % frequency == 0) {
+        if(enemy.getTime() % frequency == 0 ) {
             search(player);
         }
     }

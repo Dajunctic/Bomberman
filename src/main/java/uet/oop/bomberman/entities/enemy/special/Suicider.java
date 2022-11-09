@@ -72,15 +72,18 @@ public class Suicider extends Enemy {
                     distance.set(player.getPosition().x - x, player.getPosition().y - y);
 
                     if( distance.abs() <= 60 * speed + 3600 * acceleration && !isAttacking && status == SERIOUS) {
+                        direction.set(distance.x, distance.y);
+                        direction.normalize();
                         isAttacking = true;
                         margin = 10;
+                        switchSprite();
                         return ;
                     }
                 }
                 //60 * speed + 3600 * acceleration
                 //if its attacking
 
-                if(attack.isDead() || distance.abs() <= margin * 2) explode();
+                if(attack.isDead() || distance.abs() <= margin) explode();
                 if(status == SERIOUS) speed += acceleration;
                 if(isDead) explode();
         }
@@ -114,8 +117,7 @@ public class Suicider extends Enemy {
 
     @Override
     public boolean checkCollision(double ref_x, double ref_y, int margin) {
-        boolean checker = super.checkCollision(ref_x, ref_y, margin);
-        if(checker && isAttacking) explode();
-        return checker;
+        if(isAttacking) return  false;
+        else return super.checkCollision(ref_x, ref_y, margin);
     }
 }
