@@ -112,9 +112,10 @@ public class BombermanGame extends Application {
     /** Updating */
     public void update() throws IOException {
         if(currentScreen == GAMEPLAY) {
+
             game.update();
 
-            if (game.ending.getStatus() == Ending.QUIT) {
+            if (game.ending.getStatus() == Ending.QUIT || game.returnMenu) {
                 currentScreen = MENU;
                 menu_bg.play();
                 game.reset();

@@ -49,8 +49,12 @@ public class Gameplay {
 
     public static char[][] tile_map;
     public static boolean[][] checker;
-    public  double translate_x = 0;
-    public  double translate_y = 0;
+    public double translate_x = 0;
+    public double translate_y = 0;
+
+    public boolean lose = false;
+    public boolean returnMenu = false;
+    public boolean loading = false;
 
     /** Canvas Offset - Chỉnh map cân bằng khi phóng to hay thu nhỏ */
     public double offsetX = 0;
@@ -71,7 +75,8 @@ public class Gameplay {
     /** GUI GAME Image */
     Image gameFrame = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/frame.png")));
     Image enemyFrame = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/enemy_frame.png")));
-
+    Image badEnding = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/sprites/bg/bad.png")));
+    Image loadingImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/gui/loading.png")));
 
     /** Minimap cho màn chơi */
     public Minimap minimap;
@@ -411,6 +416,10 @@ public class Gameplay {
         player.update(this);
         ending.update(player);
 
+        if (player.getCurrentHP() == 0) {
+            lose = true;
+        }
+
         if (ending.getStatus() > Ending.NORMAL) return;
 
         skillFrame.update(player);
@@ -574,6 +583,29 @@ public class Gameplay {
 
         offsetX = Math.max(0, (canvasWidth - BombermanGame.WIDTH * Sprite.SCALED_SIZE) / 2);
         offsetY = Math.max(0, (canvasHeight - BombermanGame.HEIGHT * Sprite.SCALED_SIZE) / 2);
+
+        if (loading) {
+            gc.drawImage(loadingImg, 0, 0);
+
+            if (!returnMenu) {
+                try {
+                    reset();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            return;
+        }
+
+        if (lose) {
+
+            gc.drawImage(badEnding, 0, 0);
+
+            return;
+        }
+
+
         /* Game Background */
         playerScene.render(this);
         renderLayer(gc, playerScene, gameFrame, 10, 10);
@@ -786,39 +818,55 @@ public class Gameplay {
         scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()) {
-                    case UP -> {
-                        player.stopMoving(Bomber.UP);
-                    }
-                    case DOWN -> {
-                        player.stopMoving(Bomber.DOWN);
-                    }
-                    case LEFT -> {
-                        player.stopMoving(Bomber.LEFT);
-                    }
-                    case RIGHT -> {
-                        player.stopMoving(Bomber.RIGHT);
-                    }
-                    case Q -> player.placeBomb();
-                    case W -> player.shootFireball();
-                    case E -> player.goInvisible(5);
-                    case R -> player.placeNuke();
-                    case D -> player.setDodge();
-                    case F -> player.recover();
-                    case TAB -> bufferMode = (bufferMode + 1) % 2;
-                    case T -> switchPov();
-                    case P -> enemyScene.turnShader();
-                    case M -> openMinimap = !openMinimap;
+                if (!lose) {
+                    switch (keyEvent.getCode()) {
+                        case UP -> {
+                            player.stopMoving(Bomber.UP);
+                        }
+                        case DOWN -> {
+                            player.stopMoving(Bomber.DOWN);
+                        }
+                        case LEFT -> {
+                            player.stopMoving(Bomber.LEFT);
+                        }
+                        case RIGHT -> {
+                            player.stopMoving(Bomber.RIGHT);
+                        }
+                        case Q -> player.placeBomb();
+                        case W -> player.shootFireball();
+                        case E -> player.goInvisible(5);
+                        case R -> player.placeNuke();
+                        case D -> player.setDodge();
+                        case F -> player.recover();
+                        case TAB -> bufferMode = (bufferMode + 1) % 2;
+                        case T -> switchPov();
+                        case P -> enemyScene.turnShader();
+                        case M -> openMinimap = !openMinimap;
 
 
-                    /* * Hack game */
-                    case END -> {
+                        /* * Hack game */
+                        case END -> {
 //                        wonArea ++;
 //                        openFence();
-                        enemies.clear();
-                        enemyStack.get(currentArea).clear();
+                            enemies.clear();
+                            enemyStack.get(currentArea).clear();
+                        }
+                    }
+                } else {
+                    switch (keyEvent.getCode()) {
+                        case SPACE -> {
+                            returnMenu = true;
+                            loading = true;
+                        }
+                        case ENTER -> {
+//                          reset();
+                            loading = true;
+
+                        }
+
                     }
                 }
+
             }});
     }
     public void renderLayer(GraphicsContext gc, Layer input, Image cover, double coverThicknessX, double coverThicknessY){
@@ -865,6 +913,9 @@ public class Gameplay {
         openMinimap = false;
         chosenEnemy = 0;
         bufferMode = 0;
+        lose = false;
+        returnMenu = false;
+        loading = false;
 
         importing("src/main/resources/maps/map.txt", "src/main/resources/maps/area.txt");
 
