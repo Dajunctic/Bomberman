@@ -52,7 +52,7 @@ public class Buff extends Entity {
         this.y += sizeY;
         this.img = imgs.get(type).getFxImage();
         this.type = type;
-        setMode(CENTER_MODE);
+        setMode(NORMAL_MODE);
     }
 
     @Override
