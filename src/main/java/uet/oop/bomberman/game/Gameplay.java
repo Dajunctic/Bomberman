@@ -414,6 +414,8 @@ public class Gameplay {
         /* * interaction */
         interaction();
 
+        if (lose) return;
+
         /* * update renderer */
         wholeScene.setOffSet(canvas);
         wholeScene.update();
