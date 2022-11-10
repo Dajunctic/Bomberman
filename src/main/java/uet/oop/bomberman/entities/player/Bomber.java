@@ -25,13 +25,13 @@ import static uet.oop.bomberman.game.Gameplay.*;
 
 public class Bomber extends Mobile {
     /** Thời gian dùng chiêu **/
-    public static double Q_COOLDOWN = 5;
+    public static double Q_COOLDOWN = 4.5;
     public static double W_COOLDOWN = 10;
     public static double W_INVISIBLE_COOLDOWN = 2;
     public static double E_COOLDOWN = 10;
     public static double R_COOLDOWN = 60;
 
-    public static int D_COOLDOWN = 5;
+    public static int D_COOLDOWN = 4;
     public static int F_COOLDOWN = 20;
 
     private long lastQ = 0;
@@ -115,7 +115,7 @@ public class Bomber extends Mobile {
     /** special skills */
     //bomb
     private int radius = 3;
-    private int damage = 4;
+    private int damage = 5;
     public double timer = 2.5;
     private double bombDuration = 1.5;
     public int Qlevel = 1;
@@ -125,7 +125,7 @@ public class Bomber extends Mobile {
     //firewaves
     private int Wdivider = 3;
     private int Wradius = 10;
-    private int Wdamage = 5;
+    private int Wdamage = 8;
     public int Wlevel = 1;
     private MediaPlayer Waudio = Audio.copy(Audio.shooting_fire);
     //superb W
@@ -162,7 +162,8 @@ public class Bomber extends Mobile {
         isAlly = true;
         load();
         standingTile();
-        setMana(10000);
+        setMana(500);
+        setHP(1200);
     }
 
     /**
