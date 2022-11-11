@@ -253,7 +253,6 @@ public class Gameplay {
             fence.setStatus(Fence.UP);
         }
     }
-
     public void createTestEnemy() {
         /* * Area 0 */
         int areaX = areaMaps.get(0).getPosX();
@@ -308,7 +307,7 @@ public class Gameplay {
         enemyStack.get(0).add(new Jumper( (10 + areaX) * 48, (7 + areaY) * 48));
         enemyStack.get(0).add(new Jumper( (2 + areaX) * 48, (14 + areaY) * 48));
         enemyStack.get(0).add(new Jumper( (14 + areaX) * 48, (0 + areaY) * 48));
-        enemyStack.get(0).add(new Suicider( (9 + areaX) * 48, (0 + areaY) * 48));
+        enemyStack.get(0).add(new Suicider( (10 + areaX) * 48, (0 + areaY) * 48));
         enemyStack.get(0).add(new Suicider( (9 + areaX) * 48, (8 + areaY) * 48));
         enemyStack.get(0).add(new Ghost( (10 + areaX) * 48, (14 + areaY) * 48));
         enemyStack.get(0).add(new Balloon( (2 + areaX) * 48, (3 + areaY) * 48));
@@ -883,7 +882,6 @@ public class Gameplay {
                     switch (keyEvent.getCode()) {
                         case SPACE -> {
                             returnMenu = true;
-                            game_bg.stop();
                             loading = true;
                         }
                         case ENTER -> {
