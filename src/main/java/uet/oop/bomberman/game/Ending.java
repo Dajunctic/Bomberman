@@ -279,10 +279,10 @@ public class Ending extends Entity {
     public void reset() {
         npcX = NPCX;
         npcY = NPCY;
-
         current_text = "";
         current_char = -1;
         current_line = 0;
         fullLine = false;
+        //up git:))
     }
 }
