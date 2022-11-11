@@ -177,6 +177,7 @@ public abstract class Enemy extends Mobile {
         }
         else {
             if(status == SERIOUS) status = WANDERING;
+            tileCodes.clear();
             switchDirection();
         }
 
