@@ -89,4 +89,5 @@ public class DeadAnim extends Anim{
     public double getHeight() {
         return  sheet.getHeight();
     }
+
 }

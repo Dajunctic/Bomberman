@@ -1,6 +1,6 @@
 package uet.oop.bomberman.music;
 import javafx.scene.media.MediaPlayer;
-import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.generals.Vertex;
 

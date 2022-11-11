@@ -1,7 +1,7 @@
 package uet.oop.bomberman.music;
 
 import javafx.scene.media.MediaPlayer;
-import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.entities.player.Bomber;
 
 import java.net.URISyntaxException;
 

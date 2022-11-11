@@ -1,16 +1,15 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.entities.background;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.DeadAnim;
 import uet.oop.bomberman.graphics.Layer;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.SpriteSheet;
 
-import static uet.oop.bomberman.game.Gameplay.*;
-
-public class Brick extends  Entity{
+public class Brick extends Entity {
 
     protected DeadAnim brick = new DeadAnim(SpriteSheet.brick,4,1);
     protected Image passive;
@@ -93,6 +92,11 @@ public class Brick extends  Entity{
         if( brick == null) return ;
         brick = null;
         Gameplay.set('.', tileX, tileY, true);
+        free();
+    }
+    public void free() {
+        brick = null;
+        passive = null;
     }
     public void render(Layer layer) {
         super.render(layer);

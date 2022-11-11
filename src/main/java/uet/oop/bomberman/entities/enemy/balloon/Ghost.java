@@ -1,14 +1,13 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.enemy.balloon;
 
 import javafx.scene.canvas.GraphicsContext;
+import uet.oop.bomberman.entities.enemy.balloon.Balloon;
 import uet.oop.bomberman.graphics.*;
 
-import static uet.oop.bomberman.game.Gameplay.tileCode;
-
-public class Ghost extends Balloon{
-    private static SpriteSheet ghost = new SpriteSheet("/sprites/enemy/Ghost/move.png", 12);
-    private static SpriteSheet ghost_dead = new SpriteSheet("/sprites/enemy/Ghost/dead.png", 12);
-    private static SpriteSheet ghost_attack = new SpriteSheet("/sprites/enemy/Ghost/attack.png", 7);
+public class Ghost extends Balloon {
+    private static final SpriteSheet ghost = new SpriteSheet("/sprites/enemy/Ghost/move.png", 12);
+    private static final SpriteSheet ghost_dead = new SpriteSheet("/sprites/enemy/Ghost/dead.png", 12);
+    private static final SpriteSheet ghost_attack = new SpriteSheet("/sprites/enemy/Ghost/attack.png", 7);
     public Ghost(double xPixel, double yPixel) {
         super(xPixel, yPixel);
     }
@@ -27,7 +26,10 @@ public class Ghost extends Balloon{
         super.render(gc, renderer);
     }
     public boolean visible(Renderer renderer) {
-        if((isDead || isAttacking) || (!appear.isDead()) || (renderer.getPov().isAlly == isAlly) || !renderer.getPov().vulnerable()) return  true;
-        return false;
+        return (isDead || isAttacking) || (!appear.isDead()) || (renderer.getPov().isAlly() == isAlly) || !renderer.getPov().vulnerable();
+    }
+
+    public void free() {
+
     }
 }

@@ -117,7 +117,8 @@ public class BombermanGame extends Application {
 
             if (game.ending.getStatus() == Ending.QUIT || game.returnMenu) {
                 currentScreen = MENU;
-                menu_bg.play();
+                game_bg.stop();
+                Audio.start(menu_bg);
                 game.reset();
             }
         }

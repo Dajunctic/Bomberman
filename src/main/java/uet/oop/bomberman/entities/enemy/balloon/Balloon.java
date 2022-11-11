@@ -1,21 +1,18 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.enemy.balloon;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import uet.oop.bomberman.entities.player.Bomber;
+import uet.oop.bomberman.entities.enemy.Enemy;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Point;
-import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.music.Audio;
 
-import static uet.oop.bomberman.game.Gameplay.entities;
 import static uet.oop.bomberman.game.Gameplay.killTask;
-import static uet.oop.bomberman.graphics.Sprite.spot;
 import static uet.oop.bomberman.others.Basic.inf;
 
-public class Balloon extends Enemy{
+public class Balloon extends Enemy {
 
     public static SpriteSheet balloonAttack = new SpriteSheet("/sprites/enemy/Balloon/attack.png", 7);
 
@@ -40,7 +37,10 @@ public class Balloon extends Enemy{
     @Override
     public void deadAct(Gameplay gameplay){
         killTask.add(new Point(tileX, tileY));
+        super.deadAct(gameplay);
     }
+
+
 
     @Override
     public boolean isExisted() {
@@ -67,7 +67,7 @@ public class Balloon extends Enemy{
                 }
             } else {
                 move();
-                if(player.vulnerable()) distance.set(player.x - x, player.y - y);
+                if(player.vulnerable()) distance.set(player.getPosition().x - x, player.getPosition().y - y);
                     else distance.set(inf, inf);
                 enemy.update();
 

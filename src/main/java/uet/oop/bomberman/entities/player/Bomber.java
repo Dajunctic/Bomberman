@@ -1,4 +1,4 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.player;
 
 import java.util.*;
 
@@ -9,26 +9,30 @@ import javafx.scene.image.Image;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import uet.oop.bomberman.explosive.bomb.Bomb;
+import uet.oop.bomberman.explosive.Flame;
+import uet.oop.bomberman.entities.Mobile;
+import uet.oop.bomberman.explosive.special.Nuke;
 import uet.oop.bomberman.game.Ending;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.music.Audio;
 
-import static uet.oop.bomberman.entities.Mage.mage_staff;
+import static uet.oop.bomberman.entities.enemy.special.Mage.mage_staff;
 import static uet.oop.bomberman.game.BombermanGame.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 
 public class Bomber extends Mobile {
     /** Thời gian dùng chiêu **/
-    public static double Q_COOLDOWN = 5;
+    public static double Q_COOLDOWN = 4.5;
     public static double W_COOLDOWN = 10;
     public static double W_INVISIBLE_COOLDOWN = 2;
     public static double E_COOLDOWN = 10;
-    public static double R_COOLDOWN = 0;
+    public static double R_COOLDOWN = 60;
 
-    public static int D_COOLDOWN = 0;
-    public static int F_COOLDOWN = 0;
+    public static int D_COOLDOWN = 4;
+    public static int F_COOLDOWN = 20;
 
     private long lastQ = 0;
     private long lastW = 0;
@@ -90,7 +94,7 @@ public class Bomber extends Mobile {
 
     //toggle attacking in future
     private Vertex facing = new Vertex(0,0);
-
+    private Vertex position = new Vertex(0, 0);
 
     /**
      * Đường dẫn đến folder của Model thôi không cần ảnh.
@@ -110,11 +114,10 @@ public class Bomber extends Mobile {
 
     /** special skills */
     //bomb
-    private int radius = 20;
-    private int damage = 4;
+    private int radius = 3;
+    private int damage = 5;
     public double timer = 2.5;
-
-    private double bombDuration = 0;
+    private double bombDuration = 1.5;
     public int Qlevel = 1;
 
     List<Bomb> bombs = new ArrayList<>();
@@ -132,7 +135,7 @@ public class Bomber extends Mobile {
     //TNT
     Nuke nuke = null;
     private int Rdamage = 10;
-    private int Rradius = 4;
+    private int Rradius = 3;
     public int Rlevel = 1;
     //dodges
     private int dodgeDistance = 2 * Sprite.SCALED_SIZE;
@@ -145,7 +148,7 @@ public class Bomber extends Mobile {
     private MediaPlayer Daudio = Audio.copy(Audio.dodge);
     private DeadAnim dodgeAnim;
     //heal
-    private MediaPlayer Faudio = Audio.copy(Audio.heal);
+    public MediaPlayer Faudio = Audio.copy(Audio.heal);
     //Rep
     private MediaPlayer fatality = Audio.copy(Audio.fatal);
     private  boolean isFatal = false;
@@ -159,7 +162,8 @@ public class Bomber extends Mobile {
         isAlly = true;
         load();
         standingTile();
-        setMana(10000);
+        setMana(500);
+        setHP(1200);
     }
 
     /**
@@ -447,7 +451,7 @@ public class Bomber extends Mobile {
     public void render(GraphicsContext gc, Renderer renderer) {
         if (Ending.status >= Ending.PORTAL) return;
 
-        if(renderer.getPov().isAlly != isAlly && invisible) return;
+        if(renderer.getPov().isAlly() != isAlly && invisible) return;
         /* * Render bombs */
         bombs.forEach(g -> g.render(gc, renderer));
         gc.setEffect(effect);
@@ -488,7 +492,7 @@ public class Bomber extends Mobile {
         if(!checkCollision(ref_x,ref_y,margin)) {
             x = ref_x;
             y = ref_y;
-
+            position.set(x, y);
             //update tiles
             standingTile();
             checkBuff();
@@ -663,7 +667,7 @@ public class Bomber extends Mobile {
             (System.currentTimeMillis() - lastR < R_COOLDOWN * 1000L)) return;
         int i = (int) Math.max(0, Math.floor(getCenterX() / Sprite.SCALED_SIZE));
         int j = (int) Math.max(0, Math.floor(getCenterY() / Sprite.SCALED_SIZE));
-        nukes.add(new Nuke(i, j, timer, Rradius));
+        nukes.add(new Nuke(i, j, timer, Rradius, Rdamage));
         subtractMana(R_MANA_CONSUMING);
         lastR = System.currentTimeMillis();
         Audio.start(Qaudio);
@@ -795,4 +799,7 @@ public class Bomber extends Mobile {
         for (Bomb bomb: bombs) bomb.stopSound();
     }
 
+    public Vertex getPosition() {
+        return position;
+    }
 }

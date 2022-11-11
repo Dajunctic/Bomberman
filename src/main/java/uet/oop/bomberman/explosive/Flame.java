@@ -1,9 +1,10 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.explosive;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Vertex;
@@ -23,7 +24,7 @@ import java.util.HashSet;
 import static uet.oop.bomberman.game.BombermanGame.FPS;
 import static uet.oop.bomberman.game.Gameplay.*;
 
-public class Flame extends Mobile{
+public class Flame extends Mobile {
     DeadAnim flame;
     double length;
     protected double duration = 2;
@@ -133,7 +134,6 @@ public class Flame extends Mobile{
             flame.setDead();
             if(audio != null) {
                 audio.stop();
-                audio = null;
             }
 
         }
@@ -142,7 +142,6 @@ public class Flame extends Mobile{
         if(flame.isDead()) {
             if(audio != null) {
                 audio.stop();
-                audio = null;
             }
         }
         if(player != null && audio != null) {
@@ -225,7 +224,7 @@ public class Flame extends Mobile{
 
                         if (!floors.contains(i * 200 + j)) {
                             floors.add(i * 200 + j);
-                            entities.add(new Fire(i, j, Math.max(0.5, duration), damage, friendly, special));
+                            Gameplay.sqawnFire(i, j, Math.max(0.5, duration), damage, friendly, special, true);
                         }
                     }
                 }
@@ -234,5 +233,13 @@ public class Flame extends Mobile{
         }
 
         return false;
+    }
+
+    public void free() {
+        audio.free();
+        audio = null;
+        flame = null;
+        floors.clear();
+        floors = null;
     }
 }

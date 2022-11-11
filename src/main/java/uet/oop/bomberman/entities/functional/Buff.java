@@ -1,18 +1,18 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.functional;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
+import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.Renderer;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.music.Audio;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static uet.oop.bomberman.game.Gameplay.tileCode;
-
 //Buff placing, haven't implemented interface and renderer
-public class Buff extends Entity{
+public class Buff extends Entity {
 
     private double floatingSpeed = 0.2;
     private double floating = 0;
@@ -52,7 +52,7 @@ public class Buff extends Entity{
         this.y += sizeY;
         this.img = imgs.get(type).getFxImage();
         this.type = type;
-        setMode(CENTER_MODE);
+        setMode(NORMAL_MODE);
     }
 
     @Override
@@ -107,15 +107,20 @@ public class Buff extends Entity{
             }
             case MP -> {
                 player.addMana(player.getMaxMana() / 3);
+                Audio.start(player.Faudio);
             }
             case HP -> {
                 player.addHP(player.getMaxHP() / 4);
-
+                Audio.start(player.Faudio);
             }
             case ITEM_STAFF -> {
                 player.acquiredStaff();
             }
         }
         System.out.println("Buff applied");
+    }
+
+    public void free() {
+
     }
 }

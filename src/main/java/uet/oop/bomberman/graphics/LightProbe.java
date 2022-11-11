@@ -37,7 +37,7 @@ public class LightProbe {
     static {
         gradients.add(new Stop(0, Color.WHITE));
         gradients.add(new Stop(0.8, Color.rgb(90, 90, 200)));
-        gradients.add(new Stop(1, Color.BLACK));
+        gradients.add(new Stop(0.9, Color.BLACK));
     }
     public Vertex center;
     private RadialGradient texture;

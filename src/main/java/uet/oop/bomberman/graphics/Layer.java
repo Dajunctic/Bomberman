@@ -8,7 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-import uet.oop.bomberman.entities.Bomber;
+import uet.oop.bomberman.entities.player.Bomber;
 import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.generals.Triplets;
@@ -98,7 +98,7 @@ public class Layer {
         gc.setGlobalBlendMode(BlendMode.MULTIPLY);
         Vertex origin = renderer.getPov().getCenter();
 //        origin.shift(-lighter.center.x, -lighter.center.y);
-        renderer.renderCenterImg(gc, lighter.getImg(), origin.x, origin.y, false, 1.1);
+        renderer.renderCenterImg(gc, lighter.getImg(), origin.x, origin.y, false, 1);
         gc.setGlobalBlendMode(BlendMode.SRC_OVER);
         gc.setEffect(null);
     }

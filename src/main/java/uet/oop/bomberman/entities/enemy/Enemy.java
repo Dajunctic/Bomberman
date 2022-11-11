@@ -1,8 +1,11 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.enemy;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
+import uet.oop.bomberman.entities.functional.Buff;
+import uet.oop.bomberman.entities.player.Bomber;
+import uet.oop.bomberman.entities.Mobile;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.generals.Vertex;
 import uet.oop.bomberman.game.Gameplay;
@@ -14,15 +17,15 @@ import uet.oop.bomberman.others.Physics;
 
 import java.util.*;
 
-import static uet.oop.bomberman.game.BombermanGame.FPS;
-import static uet.oop.bomberman.game.BombermanGame.currentFrame;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.graphics.Sprite.spot;
 import static uet.oop.bomberman.others.Basic.inf;
 
-public abstract class Enemy extends Mobile{
+public abstract class Enemy extends Mobile {
 
-    protected SpriteSheet enemy_appear = new SpriteSheet("/sprites/enemy/appear.png", 9);
+    protected static Sprite checkBox = new Sprite("/sprites/Bg/checkBox.png", Sprite.NORMAL);
+    protected Image checker = checkBox.getFxImage();
+    protected static SpriteSheet enemy_appear = new SpriteSheet("/sprites/enemy/appear.png", 9);
     protected Anim enemy;
     protected DeadAnim appear = new DeadAnim(enemy_appear, 3, 1);
     protected DeadAnim killed;
@@ -40,7 +43,7 @@ public abstract class Enemy extends Mobile{
     protected double sight_angle = Math.PI / 4;
     protected int status = WANDERING;
     protected int strict = 5;
-
+    protected List<Integer> tileCodes = new ArrayList<>();
     protected Vertex destination = new Vertex(0,0);
     protected Vertex distance = new Vertex(inf, inf);
     /** Attack */
@@ -59,7 +62,6 @@ public abstract class Enemy extends Mobile{
     protected long lastCheck = 0;
     public int stuckTime = 0;
     private double distanceCheck = 0;
-    protected List<Integer> blocked = new ArrayList<>();
     public Enemy(double xPixel, double yPixel) {
         super(xPixel, yPixel);
         load();
@@ -71,7 +73,7 @@ public abstract class Enemy extends Mobile{
     }
 
     //reverse the sprite
-    private void switchSprite() {
+    protected void switchSprite() {
         reversed =  (direction.getX() < 0);
     }
     /** random setter */
@@ -92,27 +94,63 @@ public abstract class Enemy extends Mobile{
     /** Tracking player*/
     protected void search(Bomber player) {
         if(!player.vulnerable()) return;
-
-        Vertex line = new Vertex(player.x - x, player.y - y);
+        if(!tileCodes.isEmpty()) return;
+        Vertex playerPos = player.getCenter();
+        Vertex line = new Vertex(playerPos.x - x, playerPos.y - y);
         if(Math.abs(direction.angle(line)) <= sight_angle
             &&  line.abs() <= sight_depth * Sprite.SCALED_SIZE){
-
-            if(!checkSight(line)) return;
-            direction.set(player.x - x, player.y - y);
-            direction.normalize();
+            if(!checkSight(playerPos)) return;
             status = SERIOUS;
-            destination = new Vertex( player.x, player.y);
-            switchSprite();
+            chase();
+
         }
     }
     //check whether path is blocked
-    protected boolean checkSight(Vertex line) {
-        for(double i = 0; i <= 1; i += 1 / (double) sight_depth) {
-            int tileX = (int) (x + line.getX()*i) / Sprite.SCALED_SIZE;
-            int tileY = (int) (y + line.getY()*i) / Sprite.SCALED_SIZE;
-            if(Gameplay.get(tile_map[tileY][tileX], tileX, tileY) != GameMap.FLOOR) return false;
+    // Tạo đường cho enemy đi
+    protected boolean checkSight(Vertex end) {
+        Vertex starter = new Vertex(getCenterX() / Sprite.SCALED_SIZE, getCenterY() / Sprite.SCALED_SIZE);
+        end.divide(Sprite.SCALED_SIZE);
+        Vertex dir = new Vertex(starter, end);
+        dir.normalize();
+        int radius = (int) Math.ceil(starter.distance(end));
+        /** Thuật toán DDA cơ bản*/
+        Vertex rayUnitStepSize =  new Vertex(Math.sqrt(1 + (dir.getY() / dir.getX()) * (dir.getY() / dir.getX()))
+                , Math.sqrt(1 + (dir.getX() / dir.getY()) * (dir.getX() / dir.getY())));
+        Point tileCheck = new Point((int) Math.floor(starter.getX()), (int) Math.floor(starter.getY()));
+        Vertex rayLength = new Vertex(0, 0);
+        Point stepDir = new Point(1, 1);
+        tileCodes.add(tileCode(tileCheck.x, tileCheck.y));
+        if(dir.getX() < 0) {
+            stepDir.setX(-1);
+            rayLength.x = (starter.x - tileCheck.x) * rayUnitStepSize.x;
+        } else rayLength.x = -(starter.x - (tileCheck.x + 1)) * rayUnitStepSize.x;
+
+        if(dir.getY() < 0) {
+            stepDir.setY(-1);
+            rayLength.y = (starter.y - tileCheck.y) * rayUnitStepSize.y;
+        } else rayLength.y = -(starter.y - (tileCheck.y + 1)) * rayUnitStepSize.y;
+        boolean stopped = false;
+        double distance = 0;
+        while(!stopped && distance < radius) {
+            if(rayLength.x < rayLength.y) {
+                tileCheck.x += stepDir.x;
+                distance = rayLength.x;
+                rayLength.x += rayUnitStepSize.x;
+            } else {
+                tileCheck.y += stepDir.y;
+                distance = rayLength.y;
+                rayLength.y += rayUnitStepSize.y;
+            }
+            int tileCode = Gameplay.tileCode(tileCheck.x, tileCheck.y);
+            if(distance >= radius) break;
+            if(Gameplay.get(tile_map[tileCheck.y][tileCheck.x], tileCheck.x, tileCheck.y) != GameMap.FLOOR){
+                stopped = true;
+                tileCodes.clear();
+                return false;
+            } else if(!tileCodes.contains(tileCode)) tileCodes.add(tileCode);
         }
-        return true;
+        System.out.println(tileCodes);
+        return  true;
     }
 
     @Override
@@ -123,19 +161,23 @@ public abstract class Enemy extends Mobile{
             distanceCheck += Vertex.dis(ref_x - x, ref_y - y);
             x = ref_x;
             y = ref_y;
-            if((currentFrame / 2) % FPS == 0) checkStuck();
             //check standing tile
             standingTile();
             //check if it reached its destination
-            if(destination != null)
-                if(status == SERIOUS && destination.distance(x, y) <= margin && !isAttacking) {
-                    destination = null;
-                    status = WANDERING;
-                    switchDirection();
-                }
+            if(!isAttacking) {
+                if(destination != null && destination.distance(x, y) <= 0.5)
+                    if(!chase()) {
+                        destination = null;
+                        switchDirection();
+                        status = WANDERING;
+                        tileCodes.clear();
+                    }
+            }
+
         }
         else {
             if(status == SERIOUS) status = WANDERING;
+            tileCodes.clear();
             switchDirection();
         }
 
@@ -173,7 +215,7 @@ public abstract class Enemy extends Mobile{
                 int tileX = i * Sprite.SCALED_SIZE;
                 int tileY = j * Sprite.SCALED_SIZE;
 
-                Rectangle tileRect = new Rectangle(tileX + margin, tileY + margin, Sprite.SCALED_SIZE - 2 * margin, Sprite.SCALED_SIZE - 2 * margin);
+                Rectangle tileRect = new Rectangle(tileX, tileY, Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
 
                 /* * Kiểm tra tile có phải kiểu WALL hoặc BRICK không! */
 
@@ -181,15 +223,11 @@ public abstract class Enemy extends Mobile{
                         || Gameplay.get(tile_map[j][i], i, j) == GameMap.BRICK) {
 
                     if (Physics.collisionRectToRect(rect, tileRect)) {
-                        check ++;
+                        return true;
                     }
                 }
             }
         }
-        if(check >= 2) {
-            escape();
-        }
-        if(check > 0) return true;
         return false;
     }
 
@@ -199,8 +237,6 @@ public abstract class Enemy extends Mobile{
         if(!isDead) return enemy.getImage();
             else return killed.getImage();
     }
-
-
     @Override
     public void update() {
         if(isDead) return;
@@ -211,7 +247,6 @@ public abstract class Enemy extends Mobile{
         }
     }
     public abstract void update(Bomber player);
-
     @Override
     public void render(GraphicsContext gc, Gameplay gameplay) {
         double dim = (reversed ? -1 : 1);
@@ -241,16 +276,17 @@ public abstract class Enemy extends Mobile{
         renderHP(gc, renderer);
 
         gc.setEffect(effect);
-        // Whether object is on screen
-//        if(!onScreen(gameplay)) return;
 
         //  If spotted bomber
         if(status == SERIOUS) renderer.renderImg(gc, spot.getFxImage(), x + shiftX + this.getWidth() / 2
                 , y + shiftY - 18, false);
+
+        if(!tileCodes.isEmpty()) renderer.renderImg(gc, checker, destination.x, destination.y, false);
         // If it is going backward
         renderer.renderImg(gc, this.getImg(), x + shiftX, y + shiftY, reversed);
         gc.setEffect(null);
     }
+
     public abstract void attack(Bomber player);
 
     protected void checkStuck() {
@@ -258,10 +294,6 @@ public abstract class Enemy extends Mobile{
         if(isAttacking || !appear.isDead()) return;
         if(distanceCheck <= 2 * Sprite.SCALED_SIZE) {
                 stuckTime++;
-
-
-
-
                 if (stuckTime >= 5) escape();
         }
         else stuckTime = 0;
@@ -306,5 +338,37 @@ public abstract class Enemy extends Mobile{
                 }
             }
         }
+    }
+    public void free() {
+        enemy = null;
+        killed = null;
+        appear = null;
+        attack = null;
+        focus = null;
+        distance = null;
+        destination = null;
+    }
+
+
+    public boolean chase() {
+        if(tileCodes.isEmpty()) return false;
+        if(isAttacking) {
+            tileCodes.clear();
+            return false;
+        }
+        if(destination == null) destination = new Vertex(0, 0);
+        Point tile = decodeTile(tileCodes.get(0));
+        tileCodes.remove(0);
+        destination.set(tile.x * Sprite.SCALED_SIZE, tile.y * Sprite.SCALED_SIZE);
+        direction.set(destination.x - x, destination.y - y);
+        direction.normalize();
+        switchSprite();
+        return true;
+    }
+    @Override
+    public void deadAct(Gameplay gameplay) {
+        if(Math.round(Math.random()) == 1) buffs.put(tileCode(tileX, tileY),
+                                                    new Buff(tileX, tileY,
+                                                            (int) Math.floor(Math.random() * 5.9)));
     }
 }

@@ -5,7 +5,16 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.MediaPlayer;
-import javafx.util.Pair;
+import uet.oop.bomberman.entities.enemy.Enemy;
+import uet.oop.bomberman.entities.enemy.balloon.Balloon;
+import uet.oop.bomberman.entities.enemy.balloon.Ghost;
+import uet.oop.bomberman.entities.enemy.balloon.Jumper;
+import uet.oop.bomberman.entities.enemy.special.Mage;
+import uet.oop.bomberman.entities.enemy.special.Suicider;
+import uet.oop.bomberman.entities.entities.background.Fence;
+import uet.oop.bomberman.entities.functional.Buff;
+import uet.oop.bomberman.entities.player.Bomber;
+import uet.oop.bomberman.explosive.Fire;
 import uet.oop.bomberman.generals.Point;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.generals.Triplets;
@@ -19,8 +28,7 @@ import uet.oop.bomberman.maps.Minimap;
 import uet.oop.bomberman.music.Audio;
 import uet.oop.bomberman.music.Sound;
 import uet.oop.bomberman.others.SkillFrame;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.ArrayListMultimap;
+
 import java.io.*;
 import java.util.*;
 
@@ -41,7 +49,7 @@ public class Gameplay {
     public static List<Point> killTask = new ArrayList<>();
     public static Bomber player;
     protected List<Enemy> enemies = new ArrayList<>();
-    protected List<Stack<Enemy>> enemyStack = new ArrayList<>();
+    protected static List<Stack<Enemy>> enemyStack = new ArrayList<>();
     /** Map tổng quan*/
     protected BufferedReader sourceMap;
     public static Entity[][] background;
@@ -92,7 +100,7 @@ public class Gameplay {
 
     /** Các tập hợp entity khác */
     public static ArrayList<Fence> fences = new ArrayList<>(); /* * Hàng rào giữa các màn chơi */
-    public static Multimap<Integer, Pair<Integer, Boolean>>  fires = ArrayListMultimap.create(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
+    public static HashMap<Integer, Fire>  fires = new HashMap<>(); /* * Tọa độ các ô lửa - có thể làm người chơi lẫn enemy bị thương **/
     public static SkillFrame skillFrame = new SkillFrame();
 
     public static Map<Integer, Buff> buffs = new HashMap<>();
@@ -245,7 +253,6 @@ public class Gameplay {
             fence.setStatus(Fence.UP);
         }
     }
-
     public void createTestEnemy() {
         /* * Area 0 */
         int areaX = areaMaps.get(0).getPosX();
@@ -300,14 +307,14 @@ public class Gameplay {
         enemyStack.get(0).add(new Jumper( (10 + areaX) * 48, (7 + areaY) * 48));
         enemyStack.get(0).add(new Jumper( (2 + areaX) * 48, (14 + areaY) * 48));
         enemyStack.get(0).add(new Jumper( (14 + areaX) * 48, (0 + areaY) * 48));
-        enemyStack.get(0).add(new Suicider( (9 + areaX) * 48, (0 + areaY) * 48));
+        enemyStack.get(0).add(new Suicider( (10 + areaX) * 48, (0 + areaY) * 48));
         enemyStack.get(0).add(new Suicider( (9 + areaX) * 48, (8 + areaY) * 48));
         enemyStack.get(0).add(new Ghost( (10 + areaX) * 48, (14 + areaY) * 48));
         enemyStack.get(0).add(new Balloon( (2 + areaX) * 48, (3 + areaY) * 48));
         enemyStack.get(0).add(new Balloon( (14 + areaX) * 48, (2 + areaY) * 48));
         enemyStack.get(0).add(new Suicider( (4 + areaX) * 48, (0 + areaY) * 48));
         enemyStack.get(0).add(new Mage( (4 + areaX) * 48, (9 + areaY) * 48));
-        enemyStack.get(0).add(new Suicider( (7 + areaX) * 48, (14 + areaY) * 48));
+        enemyStack.get(0).add(new Suicider( (6 + areaX) * 48, (14 + areaY) * 48));
 
         buffs.put(tileCode(9,48), new Buff(9, 48, 1));
 
@@ -315,83 +322,103 @@ public class Gameplay {
         areaX = areaMaps.get(1).getPosX();
         areaY = areaMaps.get(1).getPosY();
 
-        enemyStack.get(1).add(new Jumper( (16 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(1).add(new Ghost( (21 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (12 + areaX) * 48, (21 + areaY) * 48));
-        enemyStack.get(1).add(new Ghost( (22 + areaX) * 48, (14 + areaY) * 48));
-        enemyStack.get(1).add(new Suicider( (18 + areaX) * 48, (22 + areaY) * 48));
-        enemyStack.get(1).add(new Mage( (10 + areaX) * 48, (17 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (18 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (12 + areaX) * 48, (7 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (22 + areaX) * 48, (2 + areaY) * 48));
-        enemyStack.get(1).add(new Jumper( (8 + areaX) * 48, (1 + areaY) * 48));
-        enemyStack.get(1).add(new Balloon( (15 + areaX) * 48, (18 + areaY) * 48));
-        enemyStack.get(1).add(new Balloon( (10 + areaX) * 48, (0 + areaY) * 48));
-        enemyStack.get(1).add(new Mage( (20 + areaX) * 48, (2 + areaY) * 48));
-        enemyStack.get(1).add(new Balloon( (17 + areaX) * 48, (20 + areaY) * 48));
-        enemyStack.get(1).add(new Mage( (5 + areaX) * 48, (12 + areaY) * 48));
+
+        enemyStack.get(1).add(new Balloon( (4 + areaX) * 48, (15 + areaY) * 48));
+        enemyStack.get(1).add(new Mage( (2 + areaX) * 48, (20 + areaY) * 48));
+        enemyStack.get(1).add(new Jumper( (2 + areaX) * 48, (12 + areaY) * 48));
+        enemyStack.get(1).add(new Ghost( (8 + areaX) * 48, (21 + areaY) * 48));
+        enemyStack.get(1).add(new Ghost( (22 + areaX) * 48, (17 + areaY) * 48));
+        enemyStack.get(1).add(new Suicider( (20 + areaX) * 48, (22 + areaY) * 48));
+        enemyStack.get(1).add(new Suicider( (22 + areaX) * 48, (16 + areaY) * 48));
+        enemyStack.get(1).add(new Balloon( (4 + areaX) * 48, (11 + areaY) * 48));
+        enemyStack.get(1).add(new Suicider( (14 + areaX) * 48, (20 + areaY) * 48));
+        enemyStack.get(1).add(new Balloon( (12 + areaX) * 48, (7 + areaY) * 48));
+        enemyStack.get(1).add(new Mage( (12 + areaX) * 48, (14 + areaY) * 48));
+        enemyStack.get(1).add(new Jumper( (2 + areaX) * 48, (9 + areaY) * 48));
+        enemyStack.get(1).add(new Balloon( (8 + areaX) * 48, (18 + areaY) * 48));
+        enemyStack.get(1).add(new Balloon( (8 + areaX) * 48, (16 + areaY) * 48));
+        enemyStack.get(1).add(new Jumper( (21 + areaX) * 48, (4 + areaY) * 48));
+        enemyStack.get(1).add(new Mage( (0 + areaX) * 48, (11 + areaY) * 48));
+        enemyStack.get(1).add(new Balloon( (11 + areaX) * 48, (18 + areaY) * 48));
+        enemyStack.get(1).add(new Suicider( (1 + areaX) * 48, (8 + areaY) * 48));
+        enemyStack.get(1).add(new Ghost( (18 + areaX) * 48, (6 + areaY) * 48));
+        enemyStack.get(1).add(new Jumper( (18 + areaX) * 48, (0 + areaY) * 48));
+
 
 
         /* * Area 2 */
         areaX = areaMaps.get(2).getPosX();
         areaY = areaMaps.get(2).getPosY();
 
-        enemyStack.get(2).add(new Mage( (11 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(2).add(new Ghost( (11 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(2).add(new Suicider( (10 + areaX) * 48, (20 + areaY) * 48));
-        enemyStack.get(2).add(new Suicider( (8 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(2).add(new Ghost( (8 + areaX) * 48, (11 + areaY) * 48));
+        enemyStack.get(2).add(new Mage( (7 + areaX) * 48, (11 + areaY) * 48));
+        enemyStack.get(2).add(new Jumper( (20 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(2).add(new Ghost( (10 + areaX) * 48, (8 + areaY) * 48));
         enemyStack.get(2).add(new Ghost( (8 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(2).add(new Mage( (12 + areaX) * 48, (1 + areaY) * 48));
-        enemyStack.get(2).add(new Jumper( (10 + areaX) * 48, (14 + areaY) * 48));
-        enemyStack.get(2).add(new Ghost( (12 + areaX) * 48, (20 + areaY) * 48));
-        enemyStack.get(2).add(new Ghost( (7 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(2).add(new Balloon( (8 + areaX) * 48, (16 + areaY) * 48));
-        enemyStack.get(2).add(new Balloon( (1 + areaX) * 48, (2 + areaY) * 48));
-        enemyStack.get(2).add(new Jumper( (10 + areaX) * 48, (18 + areaY) * 48));
-        enemyStack.get(2).add(new Suicider( (2 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(2).add(new Suicider( (2 + areaX) * 48, (19 + areaY) * 48));
-        enemyStack.get(2).add(new Ghost( (6 + areaX) * 48, (4 + areaY) * 48));
+        enemyStack.get(2).add(new Balloon( (16 + areaX) * 48, (11 + areaY) * 48));
+        enemyStack.get(2).add(new Balloon( (14 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(2).add(new Jumper( (15 + areaX) * 48, (12 + areaY) * 48));
+        enemyStack.get(2).add(new Suicider( (12 + areaX) * 48, (7 + areaY) * 48));
+        enemyStack.get(2).add(new Suicider( (16 + areaX) * 48, (8 + areaY) * 48));
+        enemyStack.get(2).add(new Ghost( (17 + areaX) * 48, (12 + areaY) * 48));
+        enemyStack.get(2).add(new Mage( (18 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(2).add(new Jumper( (8 + areaX) * 48, (2 + areaY) * 48));
+        enemyStack.get(2).add(new Ghost( (19 + areaX) * 48, (2 + areaY) * 48));
+        enemyStack.get(2).add(new Mage( (4 + areaX) * 48, (6 + areaY) * 48));
+
 
 
         /* * Area 3 */
         areaX = areaMaps.get(3).getPosX();
         areaY = areaMaps.get(3).getPosY();
 
-        enemyStack.get(3).add(new Mage( (11 + areaX) * 48, (10 + areaY) * 48));
-        enemyStack.get(3).add(new Mage( (11 + areaX) * 48, (4 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (14 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(3).add(new Balloon( (8 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (8 + areaX) * 48, (8 + areaY) * 48));
-        enemyStack.get(3).add(new Balloon( (12 + areaX) * 48, (2 + areaY) * 48));
-        enemyStack.get(3).add(new Mage( (10 + areaX) * 48, (15 + areaY) * 48));
-        enemyStack.get(3).add(new Balloon( (13 + areaX) * 48, (14 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (7 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(3).add(new Balloon( (8 + areaX) * 48, (16 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (13 + areaX) * 48, (18 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (10 + areaX) * 48, (17 + areaY) * 48));
-        enemyStack.get(3).add(new Ghost( (2 + areaX) * 48, (10 + areaY) * 48));
-        enemyStack.get(3).add(new Suicider( (2 + areaX) * 48, (19 + areaY) * 48));
-        enemyStack.get(3).add(new Jumper( (6 + areaX) * 48, (2 + areaY) * 48));
+        enemyStack.get(3).add(new Balloon( (18 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(3).add(new Mage( (17 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(3).add(new Balloon( (1 + areaX) * 48, (14 + areaY) * 48));
+        enemyStack.get(3).add(new Suicider( (7 + areaX) * 48, (8 + areaY) * 48));
+        enemyStack.get(3).add(new Balloon( (5 + areaX) * 48, (8 + areaY) * 48));
+        enemyStack.get(3).add(new Suicider( (12 + areaX) * 48, (11 + areaY) * 48));
+        enemyStack.get(3).add(new Suicider( (8 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(3).add(new Ghost( (20 + areaX) * 48, (12 + areaY) * 48));
+        enemyStack.get(3).add(new Suicider( (4 + areaX) * 48, (7 + areaY) * 48));
+        enemyStack.get(3).add(new Jumper( (13 + areaX) * 48, (8 + areaY) * 48));
+        enemyStack.get(3).add(new Jumper( (2 + areaX) * 48, (13 + areaY) * 48));
+        enemyStack.get(3).add(new Suicider( (10 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(3).add(new Suicider( (10 + areaX) * 48, (2 + areaY) * 48));
+        enemyStack.get(3).add(new Suicider( (19 + areaX) * 48, (2 + areaY) * 48));
+        enemyStack.get(3).add(new Suicider( (1 + areaX) * 48, (6 + areaY) * 48));
+        enemyStack.get(3).add(new Jumper( (16 + areaX) * 48, (12 + areaY) * 48));
+        enemyStack.get(3).add(new Mage( (20 + areaX) * 48, (7 + areaY) * 48));
+        enemyStack.get(3).add(new Ghost( (20 + areaX) * 48, (8 + areaY) * 48));
+        enemyStack.get(3).add(new Jumper( (2 + areaX) * 48, (8 + areaY) * 48));
+        enemyStack.get(3).add(new Suicider( (0 + areaX) * 48, (1 + areaY) * 48));
+
 
         /* * Area 4 */
         areaX = areaMaps.get(4).getPosX();
         areaY = areaMaps.get(4).getPosY();
 
-        enemyStack.get(4).add(new Balloon( (16 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(4).add(new Jumper( (10 + areaX) * 48, (12 + areaY) * 48));
-        enemyStack.get(4).add(new Ghost( (12 + areaX) * 48, (19 + areaY) * 48));
-        enemyStack.get(4).add(new Ghost( (7 + areaX) * 48, (22 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (7 + areaX) * 48, (18 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (10 + areaX) * 48, (21 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (14 + areaX) * 48, (17 + areaY) * 48));
-        enemyStack.get(4).add(new Jumper( (12 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(4).add(new Balloon( (14 + areaX) * 48, (22 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (8 + areaX) * 48, (4 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (16 + areaX) * 48, (0 + areaY) * 48));
-        enemyStack.get(4).add(new Ghost( (10 + areaX) * 48, (4 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (2 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(4).add(new Suicider( (16 + areaX) * 48, (6 + areaY) * 48));
-        enemyStack.get(4).add(new Ghost( (5 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(4).add(new Suicider( (7 + areaX) * 48, (16 + areaY) * 48));
+        enemyStack.get(4).add(new Suicider( (4 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(4).add(new Jumper( (14 + areaX) * 48, (12 + areaY) * 48));
+        enemyStack.get(4).add(new Balloon( (12 + areaX) * 48, (7 + areaY) * 48));
+        enemyStack.get(4).add(new Suicider( (6 + areaX) * 48, (7 + areaY) * 48));
+        enemyStack.get(4).add(new Suicider( (14 + areaX) * 48, (10 + areaY) * 48));
+        enemyStack.get(4).add(new Ghost( (12 + areaX) * 48, (14 + areaY) * 48));
+        enemyStack.get(4).add(new Suicider( (22 + areaX) * 48, (11 + areaY) * 48));
+        enemyStack.get(4).add(new Suicider( (15 + areaX) * 48, (14 + areaY) * 48));
+        enemyStack.get(4).add(new Ghost( (20 + areaX) * 48, (7 + areaY) * 48));
+        enemyStack.get(4).add(new Mage( (22 + areaX) * 48, (14 + areaY) * 48));
+        enemyStack.get(4).add(new Suicider( (4 + areaX) * 48, (9 + areaY) * 48));
+        enemyStack.get(4).add(new Mage( (22 + areaX) * 48, (1 + areaY) * 48));
+        enemyStack.get(4).add(new Balloon( (22 + areaX) * 48, (16 + areaY) * 48));
+        enemyStack.get(4).add(new Suicider( (21 + areaX) * 48, (4 + areaY) * 48));
+        enemyStack.get(4).add(new Balloon( (16 + areaX) * 48, (11 + areaY) * 48));
+        enemyStack.get(4).add(new Jumper( (16 + areaX) * 48, (6 + areaY) * 48));
+        enemyStack.get(4).add(new Jumper( (5 + areaX) * 48, (8 + areaY) * 48));
+        enemyStack.get(4).add(new Jumper( (22 + areaX) * 48, (6 + areaY) * 48));
+        enemyStack.get(4).add(new Suicider( (20 + areaX) * 48, (0 + areaY) * 48));
+
 
     }
 
@@ -405,6 +432,8 @@ public class Gameplay {
 
         /* * interaction */
         interaction();
+
+        if (lose) return;
 
         /* * update renderer */
         wholeScene.setOffSet(canvas);
@@ -921,8 +950,13 @@ public class Gameplay {
 
         sounds.clear();
     }
+    public static void sqawnFire(double xUnit, double yUnit, double duration, int damage, boolean friendly, boolean special, boolean mixed) {
+        int tileCode = tileCode((int) xUnit, (int) yUnit);
+        if(fires.containsKey(tileCode)) fires.get(tileCode).addDamage(damage * (friendly ? 1: -1));
+            else entities.add(new Fire(xUnit, yUnit, duration, damage * (friendly ? 1: -1), mixed,  special));
+    }
 
-    public void addEnemy(Enemy enemy) {
+    public static void addEnemy(Enemy enemy) {
         enemyStack.get(currentArea).add(enemy);
     }
 }

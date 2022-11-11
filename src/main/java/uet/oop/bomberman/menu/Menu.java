@@ -5,7 +5,6 @@ import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import uet.oop.bomberman.entities.Bomber;
 import uet.oop.bomberman.menu.items.Character;
 import uet.oop.bomberman.menu.items.Episodes;
 import uet.oop.bomberman.menu.items.Options;

@@ -1,7 +1,8 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.explosive.special;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.game.Gameplay;
 import uet.oop.bomberman.graphics.*;
 import uet.oop.bomberman.maps.GameMap;
@@ -10,7 +11,7 @@ import static java.lang.Math.*;
 import static uet.oop.bomberman.game.Gameplay.*;
 import static uet.oop.bomberman.others.Basic.mapping;
 /** Nổ theo hình tròn và ignore obstacles */
-public class ShockWave extends Entity{
+public class ShockWave extends Entity {
     private static SpriteSheet shock_wave = new SpriteSheet("/sprites/Player/Abilities/shockwave.png", 10);
     private int tileX;
     private int tileY;
@@ -67,15 +68,15 @@ public class ShockWave extends Entity{
                 System.out.println("Out of bound");
                 continue;
             }
-            if(!fires.get(tileCode(tileX, tileY)).isEmpty()) continue;
 
+            if(fires.containsKey(tileCode(tileX, tileY))) continue;
             //destroy
             if(destructive) {
                 Gameplay.set('.', tileX, tileY, true);
-                entities.add(new Fire(tileX, tileY, duration, damage, friendly));
+                Gameplay.sqawnFire(tileX, tileY, duration, damage, friendly, true, false);
             } else if (Gameplay.get(tile_map[tileY][tileX], tileX, tileY) != GameMap.WALL) {
                 Gameplay.set('.', tileX, tileY, true);
-                entities.add(new Fire(tileX, tileY, duration, damage, friendly));
+                Gameplay.sqawnFire(tileX, tileY, duration, damage, friendly, true, true);
             }
 
         }
