@@ -14,7 +14,7 @@
 ## **1. Thành viên**
 ### **Họ và tên: Vũ Quý Đạt**
 *MSV 21020106*
-### **Họ và tên: Nguyễn Văn Hưng**
+### **Họ và tên: Nguyễn Tuấn Hưng**
 *MSV 21020205*
 ### **Họ và tên: Nguyễn Văn Hùng**
 *MSV 21021504*
@@ -95,7 +95,10 @@ Có nhiều loại Enemy trong Bomberman, tuy nhiên trong phiên bản này ch�
 | Flash      | D     |
 | Health     | F     |
 | Mini map   | M     |
-
+| Enemy map  | Tab   |
+| Change enemy in enemy map | T |
+|Switch view of enemy | P |
+ 
 
 ## **5. Chức năng đã làm theo yêu cầu**
 1. Thiết kế cây thừa kế cho các đối tượng game
