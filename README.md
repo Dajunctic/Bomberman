@@ -133,4 +133,5 @@ Có nhiều loại Enemy trong Bomberman, tuy nhiên trong phiên bản này ch�
 
 ## **9. Demo**
 Và để rõ hơn về game thì sau đây là video demo của game.
-https://youtu.be/YXp9FSqQnzY
+
+[![Soul Bomber](https://img.youtube.com/vi/YXp9FSqQnzY/default.jpg)](https://youtu.be/YXp9FSqQnzY)
